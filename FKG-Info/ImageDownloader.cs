@@ -58,7 +58,7 @@ namespace FKG_Info
             DownloadedFile file = new DownloadedFile();
             file.Name = fname;
 
-            string path = Program.DataBase.ImagesFolder + "\\" + fname + ".png";
+            string path = Program.DB.ImagesFolder + "\\" + fname + ".png";
 
             try
             {
@@ -88,13 +88,13 @@ namespace FKG_Info
 
                 string url1 = null, url2 = null;
 
-                switch (Program.DataBase.ImageSource)
+                switch (Program.DB.ImageSource)
                 {
-                    case FlowerDB.ImageSources.Nutaku: url1 = Program.DataBase.NutakuURL + hashname; break;
-                    case FlowerDB.ImageSources.NutakuDMM: url2 = Program.DataBase.DMMURL + hashname; goto case FlowerDB.ImageSources.Nutaku;
+                    case FlowerDataBase.ImageSources.Nutaku: url1 = Program.DB.NutakuURL + hashname; break;
+                    case FlowerDataBase.ImageSources.NutakuDMM: url2 = Program.DB.DMMURL + hashname; goto case FlowerDataBase.ImageSources.Nutaku;
 
-                    case FlowerDB.ImageSources.DMM: url1 = Program.DataBase.DMMURL + hashname; break;
-                    case FlowerDB.ImageSources.DMMNutaku: url2 = Program.DataBase.NutakuURL + hashname; goto case FlowerDB.ImageSources.DMM;
+                    case FlowerDataBase.ImageSources.DMM: url1 = Program.DB.DMMURL + hashname; break;
+                    case FlowerDataBase.ImageSources.DMMNutaku: url2 = Program.DB.NutakuURL + hashname; goto case FlowerDataBase.ImageSources.DMM;
 
                     default: return;
                 }
@@ -139,7 +139,7 @@ namespace FKG_Info
                     Files.Add(file);
                 }
 
-                if (Program.DataBase.StoreDownloaded) Save(file);
+                if (Program.DB.StoreDownloaded) Save(file);
             }
 
 
@@ -150,7 +150,7 @@ namespace FKG_Info
 
         private void Save(DownloadedFile file)
         {
-            string path = Program.DataBase.ImagesFolder + "\\" + file.Name + ".png";
+            string path = Program.DB.ImagesFolder + "\\" + file.Name + ".png";
 
             if (File.Exists(path)) return;
 

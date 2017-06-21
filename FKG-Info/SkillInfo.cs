@@ -23,25 +23,24 @@
 
 
 
-        public SkillInfo(string masterData) : this()
+        public SkillInfo(string[] masterData) : this()
         {
-            int parseValue;
-            string[] sfields = masterData.Split(',');
-            if (sfields.Length < 12) return;
+            if (masterData.Length < 14) return;
 
-            if (!int.TryParse(sfields[0], out parseValue)) { ID = 0; return; }
+            int parseValue;
+            if (!int.TryParse(masterData[0], out parseValue)) { ID = 0; return; }
             ID = parseValue;
 
-            KName = sfields[1];
-            KInfo = sfields[6];
+            KName = masterData[1];
+            KInfo = masterData[6];
 
-            int.TryParse(sfields[2], out SkillType);
+            int.TryParse(masterData[2], out SkillType);
 
-            for (int i = 0; i < Params.Length; i++) int.TryParse(sfields[i + 3], out Params[i]);
+            for (int i = 0; i < Params.Length; i++) int.TryParse(masterData[i + 3], out Params[i]);
 
-            int.TryParse(sfields[7], out parseValue);
+            int.TryParse(masterData[7], out parseValue);
             ChanceMin = parseValue;
-            int.TryParse(sfields[8], out parseValue);
+            int.TryParse(masterData[8], out parseValue);
             ChanceMax = parseValue;
 
             ChanceMax = ChanceMin + 5 * ChanceMax;
@@ -53,7 +52,7 @@
         {
             string info = "Name: " + KName + "\r\n", tr;
 
-            FlowerDB db = Program.DataBase;
+            FlowerDataBase db = Program.DB;
 
             info += "Chance: " + ChanceMin + " .. " + ChanceMax + "%\r\n";
 

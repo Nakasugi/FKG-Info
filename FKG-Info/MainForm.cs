@@ -6,13 +6,10 @@ namespace FKG_Info
 {
     public partial class MainForm : Form
     {
-        //public FlowerDB DataBase;
         FlowerInfo.ImageTypes SelectedImageType;
         FlowerInfo.Evolution SelectedEvolution;
 
         ContextMenu CMenu;
-
-        //EventHandler<int> CtMenuClick;
 
 
         public MainForm()
@@ -20,9 +17,6 @@ namespace FKG_Info
             InitializeComponent();
             MainFormInitCustomControls();
 
-            //DataBase = new FlowerDB();
-            //DataBase.LoadXML();
-            //return;
 
             SelectedImageType = FlowerInfo.ImageTypes.Stand;
             SelectedEvolution = FlowerInfo.Evolution.Base;
@@ -85,18 +79,9 @@ namespace FKG_Info
             //GridInfo.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 
 
-            //MFGridInfo.Rows.Add("abc", "def");
-            //MFGridInfo.Rows.Add("zxc", "vbn");
-            ChBoxGame01.Text = Program.DataBase.Game01Name;
-            ChBoxGame02.Text = Program.DataBase.Game02Name;
-            ChBoxGame03.Text = Program.DataBase.Game03Name;
-        }
-
-
-
-        private void BtSave_Click(object sender, EventArgs ev)
-        {
-            Program.DataBase.Save();
+            ChBoxGame01.Text = Program.DB.Game01Name;
+            ChBoxGame02.Text = Program.DB.Game02Name;
+            ChBoxGame03.Text = Program.DB.Game03Name;
         }
 
 
@@ -111,9 +96,9 @@ namespace FKG_Info
                 if (mi.Text == itype) mi.Checked = true;
             }
 
-            if (!Program.DataBase.IsSelected()) return;
+            if (!Program.DB.IsSelected()) return;
 
-            SetBigImage(Program.DataBase.GetSelected());
+            SetBigImage(Program.DB.GetSelected());
         }
 
 
@@ -137,48 +122,15 @@ namespace FKG_Info
         }
 
 
-        /*
-        private void SelectorClosed(object sender, FormClosedEventArgs ev)
-        {
-            if (Program.DataBase.IsSelected())
-            {
-                ReloadFlower(Program.DataBase.GetSelected());
-                BtEdit.Enabled = true;
-                ChBoxGame01.Enabled = true;
-                ChBoxGame02.Enabled = true;
-                ChBoxGame03.Enabled = true;
-            }
-            else
-            {
-                BtEdit.Enabled = false;
-                ChBoxGame01.Enabled = false;
-                ChBoxGame02.Enabled = false;
-                ChBoxGame03.Enabled = false;
-            }
-        }
-        */
-
-        /*
-        private void EditorClosed(object sender, FormClosedEventArgs ev)
-        {
-            if (Program.DataBase.IsSelected())
-            {
-                ReloadFlower(Program.DataBase.GetSelected());
-                BtEdit.Enabled = true;
-            }
-            else BtEdit.Enabled = false;
-        }
-        */
-
 
         private void BtSelect_Click(object sender, EventArgs ev)
         {
             FlowerSelect selector = new FlowerSelect();
             selector.ShowDialog(this);
 
-            if (Program.DataBase.IsSelected())
+            if (Program.DB.IsSelected())
             {
-                ReloadFlower(Program.DataBase.GetSelected());
+                ReloadFlower(Program.DB.GetSelected());
                 ChBoxGame01.Enabled = true;
                 ChBoxGame02.Enabled = true;
                 ChBoxGame03.Enabled = true;
@@ -196,22 +148,22 @@ namespace FKG_Info
         private void PicBoxIconBase_Click(object sender, EventArgs ev)
         {
             SelectedEvolution = FlowerInfo.Evolution.Base;
-            if (!Program.DataBase.IsSelected()) return;
-            SetBigImage(Program.DataBase.GetSelected());
+            if (!Program.DB.IsSelected()) return;
+            SetBigImage(Program.DB.GetSelected());
         }
 
         private void PicBoxIconAwak_Click(object sender, EventArgs ev)
         {
             SelectedEvolution = FlowerInfo.Evolution.Awakened;
-            if (!Program.DataBase.IsSelected()) return;
-            SetBigImage(Program.DataBase.GetSelected());
+            if (!Program.DB.IsSelected()) return;
+            SetBigImage(Program.DB.GetSelected());
         }
 
         private void PicBoxIconBloom_Click(object sender, EventArgs ev)
         {
             SelectedEvolution = FlowerInfo.Evolution.Bloomed;
-            if (!Program.DataBase.IsSelected()) return;
-            SetBigImage(Program.DataBase.GetSelected());
+            if (!Program.DB.IsSelected()) return;
+            SetBigImage(Program.DB.GetSelected());
         }
 
 
@@ -250,26 +202,17 @@ namespace FKG_Info
 
         private void ChBoxGame01_CheckedChanged(object sender, EventArgs ev)
         {
-            if (Program.DataBase.IsSelected()) Program.DataBase.GetSelected().Game01 = ChBoxGame01.Checked;
+            if (Program.DB.IsSelected()) Program.DB.GetSelected().Game01 = ChBoxGame01.Checked;
         }
 
         private void ChBoxGame02_CheckedChanged(object sender, EventArgs ev)
         {
-            if (Program.DataBase.IsSelected()) Program.DataBase.GetSelected().Game02 = ChBoxGame02.Checked;
+            if (Program.DB.IsSelected()) Program.DB.GetSelected().Game02 = ChBoxGame02.Checked;
         }
 
         private void ChBoxGame03_CheckedChanged(object sender, EventArgs ev)
         {
-            if (Program.DataBase.IsSelected()) Program.DataBase.GetSelected().Game03 = ChBoxGame03.Checked;
-        }
-
-
-
-
-        private void bttestdw_Click(object sender, EventArgs ev)
-        {
-            MasterDownloader dw = new MasterDownloader();
-            dw.ShowDialog(this);
+            if (Program.DB.IsSelected()) Program.DB.GetSelected().Game03 = ChBoxGame03.Checked;
         }
 
 
@@ -286,30 +229,19 @@ namespace FKG_Info
 
         private void UpdateBoxInfo()
         {
-            if (!Program.DataBase.IsSelected()) return;
+            if (!Program.DB.IsSelected()) return;
 
-            TxBoxAbilityInfo.Text = Program.DataBase.GetSelected().GetAbilitiesInfo(ChBoxTranslation.Checked, ChBoxBaseAbilities.Checked);
-            TxBoxSkillInfo.Text = Program.DataBase.GetSelected().GetSkillInfo(ChBoxTranslation.Checked);
+            TxBoxAbilityInfo.Text = Program.DB.GetSelected().GetAbilitiesInfo(ChBoxTranslation.Checked, ChBoxBaseAbilities.Checked);
+            TxBoxSkillInfo.Text = Program.DB.GetSelected().GetSkillInfo(ChBoxTranslation.Checked);
         }
 
-        /*
-        private void BtGTranslate_Click(object sender, EventArgs ev)
+
+
+        private void BtMastrerInfo_Click(object sender, EventArgs e)
         {
-            new GoogleTranslator(TxBoxAbilityInfo.Text, SetAbilitiInfo);
+            MasterFilesInfo mi = new MasterFilesInfo();
+
+            mi.ShowDialog(this);
         }
-
-
-
-        private void SetAbilitiInfo(string info)
-        {
-            if (TxBoxAbilityInfo.InvokeRequired)
-            {
-                TxBoxAbilityInfo.Invoke(new Action<string>(SetAbilitiInfo), new object[] { info });
-                return;
-            }
-
-            TxBoxAbilityInfo.Text = info;
-        }
-        */
     }
 }

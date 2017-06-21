@@ -46,6 +46,7 @@
             this.ChBoxBaseAbilities = new System.Windows.Forms.CheckBox();
             this.ChBoxTranslation = new System.Windows.Forms.CheckBox();
             this.TxBoxSkillInfo = new System.Windows.Forms.TextBox();
+            this.BtMastrerInfo = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxBig)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBase)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconAwak)).BeginInit();
@@ -128,14 +129,14 @@
             this.GridInfo.RowHeadersVisible = false;
             this.GridInfo.RowTemplate.Height = 18;
             this.GridInfo.RowTemplate.ReadOnly = true;
-            this.GridInfo.Size = new System.Drawing.Size(312, 256);
+            this.GridInfo.Size = new System.Drawing.Size(312, 254);
             this.GridInfo.TabIndex = 5;
             // 
             // BtSelect
             // 
             this.BtSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.BtSelect.ForeColor = System.Drawing.Color.DarkBlue;
-            this.BtSelect.Location = new System.Drawing.Point(87, 689);
+            this.BtSelect.Location = new System.Drawing.Point(165, 689);
             this.BtSelect.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
             this.BtSelect.Name = "BtSelect";
             this.BtSelect.Size = new System.Drawing.Size(72, 32);
@@ -182,7 +183,7 @@
             // BtOptions
             // 
             this.BtOptions.ForeColor = System.Drawing.Color.DimGray;
-            this.BtOptions.Location = new System.Drawing.Point(9, 689);
+            this.BtOptions.Location = new System.Drawing.Point(87, 689);
             this.BtOptions.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
             this.BtOptions.Name = "BtOptions";
             this.BtOptions.Size = new System.Drawing.Size(72, 32);
@@ -235,18 +236,32 @@
             // 
             this.TxBoxSkillInfo.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.TxBoxSkillInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TxBoxSkillInfo.Location = new System.Drawing.Point(860, 380);
+            this.TxBoxSkillInfo.Location = new System.Drawing.Point(860, 378);
             this.TxBoxSkillInfo.Multiline = true;
             this.TxBoxSkillInfo.Name = "TxBoxSkillInfo";
             this.TxBoxSkillInfo.ReadOnly = true;
-            this.TxBoxSkillInfo.Size = new System.Drawing.Size(312, 84);
+            this.TxBoxSkillInfo.Size = new System.Drawing.Size(312, 86);
             this.TxBoxSkillInfo.TabIndex = 20;
+            // 
+            // BtMastrerInfo
+            // 
+            this.BtMastrerInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BtMastrerInfo.ForeColor = System.Drawing.Color.DarkBlue;
+            this.BtMastrerInfo.Location = new System.Drawing.Point(9, 689);
+            this.BtMastrerInfo.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
+            this.BtMastrerInfo.Name = "BtMastrerInfo";
+            this.BtMastrerInfo.Size = new System.Drawing.Size(72, 32);
+            this.BtMastrerInfo.TabIndex = 21;
+            this.BtMastrerInfo.Text = "i";
+            this.BtMastrerInfo.UseVisualStyleBackColor = true;
+            this.BtMastrerInfo.Click += new System.EventHandler(this.BtMastrerInfo_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 730);
+            this.Controls.Add(this.BtMastrerInfo);
             this.Controls.Add(this.TxBoxSkillInfo);
             this.Controls.Add(this.ChBoxTranslation);
             this.Controls.Add(this.ChBoxBaseAbilities);
@@ -295,6 +310,7 @@
         private System.Windows.Forms.CheckBox ChBoxBaseAbilities;
         private System.Windows.Forms.CheckBox ChBoxTranslation;
         private System.Windows.Forms.TextBox TxBoxSkillInfo;
+        private System.Windows.Forms.Button BtMastrerInfo;
     }
 }
 

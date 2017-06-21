@@ -84,51 +84,50 @@ namespace FKG_Info
 
 
 
-        public FlowerInfo(string masterData) : this()
+        public FlowerInfo(string[] masterData) : this()
         {
-            string[] sfields = masterData.Split(',');
-            if (sfields.Length < 50) return;
+            if (masterData.Length < 54) return;
 
             int parsedValue;
-            if (!int.TryParse(sfields[4], out parsedValue)) return;
+            if (!int.TryParse(masterData[4], out parsedValue)) return;
             if (parsedValue < 1) return;
             if (parsedValue > 999) return;
 
             ID = parsedValue;
-            Name.Kanji = sfields[45].Replace("\"", "");
+            Name.Kanji = masterData[45].Replace("\"", "");
             Name.AutoRomaji();
 
 
-            int.TryParse(sfields[35], out Evol);
+            int.TryParse(masterData[35], out Evol);
 
             switch (Evol)
             {
                 case 1:
-                    int.TryParse(sfields[0], out ImageBase);
-                    int.TryParse(sfields[10], out AbilityBase);
+                    int.TryParse(masterData[0], out ImageBase);
+                    int.TryParse(masterData[10], out AbilityBase);
                     break;
                 case 2:
-                    int.TryParse(sfields[0], out ImageAwakened);
-                    int.TryParse(sfields[11], out AbilityAwak);
+                    int.TryParse(masterData[0], out ImageAwakened);
+                    int.TryParse(masterData[11], out AbilityAwak);
                     break;
                 case 3:
-                    int.TryParse(sfields[0], out ImageBloomed);
-                    int.TryParse(sfields[10], out AbilityBloom1st);
-                    int.TryParse(sfields[11], out AbilityBloom2nd);
+                    int.TryParse(masterData[0], out ImageBloomed);
+                    int.TryParse(masterData[10], out AbilityBloom1st);
+                    int.TryParse(masterData[11], out AbilityBloom2nd);
                     break;
                 default: break;
             }
 
-            int.TryParse(sfields[7], out parsedValue); Rarity = parsedValue;
-            int.TryParse(sfields[3], out parsedValue); Nation = parsedValue;
-            int.TryParse(sfields[8], out parsedValue); AttackType = parsedValue;
-            int.TryParse(sfields[9], out parsedValue); FavoriteGift = parsedValue;
+            int.TryParse(masterData[7], out parsedValue); Rarity = parsedValue;
+            int.TryParse(masterData[3], out parsedValue); Nation = parsedValue;
+            int.TryParse(masterData[8], out parsedValue); AttackType = parsedValue;
+            int.TryParse(masterData[9], out parsedValue); FavoriteGift = parsedValue;
 
 
 
-            int.TryParse(sfields[12], out Skill);
+            int.TryParse(masterData[12], out Skill);
 
-            Stats = new FlowerStats(sfields);
+            Stats = new FlowerStats(masterData);
 
             if ((Nation < 1) || (Nation > 7)) ID = 0;
         }
@@ -148,6 +147,7 @@ namespace FKG_Info
             view.Rows.Add("Nation", GetNation());
             view.Rows.Add("Favorite gift", Gifts[FavoriteGift]);
             view.Rows.Add("Unique ID", ID);
+            view.Rows.Add("Skill ID", Skill);
 
             view.Rows.Add("HitPoints", Stats.GetHitPointsInfo());
             view.Rows.Add("Attack", Stats.GetAttackInfo());
@@ -173,12 +173,12 @@ namespace FKG_Info
 
             AbilityInfo ability;
 
-            ability = Program.DataBase.GetAbility(ab1);
+            ability = Program.DB.GetAbility(ab1);
             if (ability != null) info += ability.GetInfo(translation);
 
             info += Environment.NewLine + Environment.NewLine;
 
-            ability = Program.DataBase.GetAbility(ab2);
+            ability = Program.DB.GetAbility(ab2);
             if (ability != null) info += ability.GetInfo(translation);
 
             return info;
@@ -188,7 +188,7 @@ namespace FKG_Info
 
         public string GetSkillInfo(bool translation)
         {
-            SkillInfo skill = Program.DataBase.GetSkill(Skill);
+            SkillInfo skill = Program.DB.GetSkill(Skill);
 
             if (skill != null) return skill.GetInfo(translation);
 
@@ -201,16 +201,16 @@ namespace FKG_Info
         {
             AbilityInfo ability;
 
-            ability = Program.DataBase.GetAbility(AbilityBase);
+            ability = Program.DB.GetAbility(AbilityBase);
             if (ability != null) if (ability.CheckTypeID(type)) return true;
 
-            ability = Program.DataBase.GetAbility(AbilityAwak);
+            ability = Program.DB.GetAbility(AbilityAwak);
             if (ability != null) if (ability.CheckTypeID(type)) return true;
 
-            ability = Program.DataBase.GetAbility(AbilityBloom1st);
+            ability = Program.DB.GetAbility(AbilityBloom1st);
             if (ability != null) if (ability.CheckTypeID(type)) return true;
 
-            ability = Program.DataBase.GetAbility(AbilityBloom2nd);
+            ability = Program.DB.GetAbility(AbilityBloom2nd);
             if (ability != null) if (ability.CheckTypeID(type)) return true;
 
             return false;
@@ -221,16 +221,16 @@ namespace FKG_Info
         {
             AbilityInfo ability;
 
-            ability = Program.DataBase.GetAbility(AbilityBase);
+            ability = Program.DB.GetAbility(AbilityBase);
             if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
 
-            ability = Program.DataBase.GetAbility(AbilityAwak);
+            ability = Program.DB.GetAbility(AbilityAwak);
             if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
 
-            ability = Program.DataBase.GetAbility(AbilityBloom1st);
+            ability = Program.DB.GetAbility(AbilityBloom1st);
             if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
 
-            ability = Program.DataBase.GetAbility(AbilityBloom2nd);
+            ability = Program.DB.GetAbility(AbilityBloom2nd);
             if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
 
             return false;

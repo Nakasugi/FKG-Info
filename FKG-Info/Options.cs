@@ -12,58 +12,58 @@ namespace FKG_Info
 
         private void Options_Load(object sender, EventArgs ev)
         {
-            TxBoxImgFolder.Text = Program.DataBase.ImagesFolder;
-            TxBoxDataFolder.Text = Program.DataBase.DataFolder;
-            TxBoxURLDMM.Text = Program.DataBase.DMMURL;
-            TxBoxURLNutaku.Text = Program.DataBase.NutakuURL;
-            ChBoxSaveDw.Checked = Program.DataBase.StoreDownloaded;
+            TxBoxImgFolder.Text = Program.DB.ImagesFolder;
+            TxBoxDataFolder.Text = Program.DB.DataFolder;
+            TxBoxURLDMM.Text = Program.DB.DMMURL;
+            TxBoxURLNutaku.Text = Program.DB.NutakuURL;
+            ChBoxSaveDw.Checked = Program.DB.StoreDownloaded;
 
-            switch (Program.DataBase.ImageSource)
+            switch (Program.DB.ImageSource)
             {
-                case FlowerDB.ImageSources.Nutaku: RdBtNutaku.Checked = true; break;
-                case FlowerDB.ImageSources.NutakuDMM: RdBtNutakuDMM.Checked = true; break;
-                case FlowerDB.ImageSources.DMM: RdBtDMM.Checked = true; break;
-                case FlowerDB.ImageSources.DMMNutaku: RdBtDMMNutaku.Checked = true; break;
+                case FlowerDataBase.ImageSources.Nutaku: RdBtNutaku.Checked = true; break;
+                case FlowerDataBase.ImageSources.NutakuDMM: RdBtNutakuDMM.Checked = true; break;
+                case FlowerDataBase.ImageSources.DMM: RdBtDMM.Checked = true; break;
+                case FlowerDataBase.ImageSources.DMMNutaku: RdBtDMMNutaku.Checked = true; break;
 
                 default: RdBtLocal.Checked = true; break;
             }
 
 
-            TxBoxGame01Name.Text = Program.DataBase.Game01Name;
-            TxBoxGame02Name.Text = Program.DataBase.Game02Name;
-            TxBoxGame03Name.Text = Program.DataBase.Game03Name;
+            TxBoxGame01Name.Text = Program.DB.Game01Name;
+            TxBoxGame02Name.Text = Program.DB.Game02Name;
+            TxBoxGame03Name.Text = Program.DB.Game03Name;
         }
 
         private void BtOk_Click(object sender, EventArgs ev)
         {
-            Program.DataBase.ImagesFolder = TxBoxImgFolder.Text;
-            Program.DataBase.DataFolder = TxBoxDataFolder.Text;
-            Program.DataBase.DMMURL = TxBoxURLDMM.Text;
-            Program.DataBase.NutakuURL = TxBoxURLNutaku.Text;
-            Program.DataBase.StoreDownloaded = ChBoxSaveDw.Checked;
+            Program.DB.ImagesFolder = TxBoxImgFolder.Text;
+            Program.DB.DataFolder = TxBoxDataFolder.Text;
+            Program.DB.DMMURL = TxBoxURLDMM.Text;
+            Program.DB.NutakuURL = TxBoxURLNutaku.Text;
+            Program.DB.StoreDownloaded = ChBoxSaveDw.Checked;
 
-            if (!System.IO.Directory.Exists(Program.DataBase.ImagesFolder))
+            if (!System.IO.Directory.Exists(Program.DB.ImagesFolder))
             {
-                try { System.IO.Directory.CreateDirectory(Program.DataBase.ImagesFolder); } catch { }
+                try { System.IO.Directory.CreateDirectory(Program.DB.ImagesFolder); } catch { }
             }
 
-            if (!System.IO.Directory.Exists(Program.DataBase.DataFolder))
+            if (!System.IO.Directory.Exists(Program.DB.DataFolder))
             {
-                try { System.IO.Directory.CreateDirectory(Program.DataBase.DataFolder); } catch { }
+                try { System.IO.Directory.CreateDirectory(Program.DB.DataFolder); } catch { }
             }
 
 
-            if (RdBtLocal.Checked) Program.DataBase.ImageSource = FlowerDB.ImageSources.Local;
-            if (RdBtNutaku.Checked) Program.DataBase.ImageSource = FlowerDB.ImageSources.Nutaku;
-            if (RdBtNutakuDMM.Checked) Program.DataBase.ImageSource = FlowerDB.ImageSources.NutakuDMM;
-            if (RdBtDMM.Checked) Program.DataBase.ImageSource = FlowerDB.ImageSources.DMM;
-            if (RdBtDMMNutaku.Checked) Program.DataBase.ImageSource = FlowerDB.ImageSources.DMMNutaku;
+            if (RdBtLocal.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.Local;
+            if (RdBtNutaku.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.Nutaku;
+            if (RdBtNutakuDMM.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.NutakuDMM;
+            if (RdBtDMM.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.DMM;
+            if (RdBtDMMNutaku.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.DMMNutaku;
 
-            Program.DataBase.Game01Name = TxBoxGame01Name.Text;
-            Program.DataBase.Game02Name = TxBoxGame02Name.Text;
-            Program.DataBase.Game03Name = TxBoxGame03Name.Text;
+            Program.DB.Game01Name = TxBoxGame01Name.Text;
+            Program.DB.Game02Name = TxBoxGame02Name.Text;
+            Program.DB.Game03Name = TxBoxGame03Name.Text;
 
-            Program.DataBase.Save();
+            Program.DB.Save();
 
             Close();
         }

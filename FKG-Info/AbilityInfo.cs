@@ -18,18 +18,17 @@
 
 
 
-        public AbilityInfo(string masterData) : this()
+        public AbilityInfo(string[] masterData) : this()
         {
-            int parseValue;
-            string[] sfields = masterData.Split(',');
-            if (sfields.Length < 12) return;
+            if (masterData.Length < 15) return;
 
-            if (!int.TryParse(sfields[0], out parseValue)) { ID = 0; return; }
+            int parseValue;
+            if (!int.TryParse(masterData[0], out parseValue)) { ID = 0; return; }
             ID = parseValue;
 
-            KInfo = sfields[10];
+            KInfo = masterData[10];
 
-            for (int i = 0; i < Params.Length; i++) int.TryParse(sfields[i + 2], out Params[i]);
+            for (int i = 0; i < Params.Length; i++) int.TryParse(masterData[i + 2], out Params[i]);
         }
 
 
@@ -53,8 +52,8 @@
         
         public bool CheckAbilityShortName(string shortName)
         {
-            if (Program.DataBase.GetAbilityShortName(Params[0]) == shortName) return true;
-            if (Program.DataBase.GetAbilityShortName(Params[4]) == shortName) return true;
+            if (Program.DB.GetAbilityShortName(Params[0]) == shortName) return true;
+            if (Program.DB.GetAbilityShortName(Params[4]) == shortName) return true;
             return false;
         }
         
@@ -70,7 +69,7 @@
             {
                 if (Params[k] == 0) break;
 
-                tr = Program.DataBase.GetAbilityTranslation(Params[k]);
+                tr = Program.DB.GetAbilityTranslation(Params[k]);
                 if (tr == null) return KInfo;
 
                 info += string.Format(tr, Params[k + 1], Params[k + 2], Params[k + 3]) + " ";

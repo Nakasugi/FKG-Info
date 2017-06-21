@@ -36,16 +36,16 @@ namespace FKG_Info
             CmBoxSort.Items.Add(SortType.ByName);
             CmBoxSort.SelectedIndex = 0;
 
-            ChBoxGame01.Text = Program.DataBase.Game01Name;
-            ChBoxGame02.Text = Program.DataBase.Game02Name;
-            ChBoxGame03.Text = Program.DataBase.Game03Name;
+            ChBoxGame01.Text = Program.DB.Game01Name;
+            ChBoxGame02.Text = Program.DB.Game02Name;
+            ChBoxGame03.Text = Program.DB.Game03Name;
 
             //Tips = new List<ToolTip>();
             TTipIndex = -1;
             TTip = new ToolTip();
 
             CmBoxAbility.Items.Add("All");
-            CmBoxAbility.Items.AddRange(Program.DataBase.GetAbilitiesShortNames());
+            CmBoxAbility.Items.AddRange(Program.DB.GetAbilitiesShortNames());
             CmBoxAbility.SelectedIndex = 0;
 
             ReloadList();
@@ -61,12 +61,12 @@ namespace FKG_Info
                 //case SortType.BySkillRaidRMS: Program.DataBase.Flowers.Sort(FlowerInfo.BySkillRaidRMS); break;
                 //case SortType.BySABaseRMS: Program.DataBase.Flowers.Sort(FlowerInfo.BySABaseRMS); break;
                 //case SortType.BySARaidRMS: Program.DataBase.Flowers.Sort(FlowerInfo.BySARaidRMS); break;
-                default: Program.DataBase.Flowers.Sort(); break;
+                default: Program.DB.Flowers.Sort(); break;
             }
 
             LsBoxFlowers.Items.Clear();
 
-            foreach (FlowerInfo Flower in Program.DataBase.Flowers)
+            foreach (FlowerInfo Flower in Program.DB.Flowers)
             {
 
                 if (ChBoxGame01.CheckState != CheckState.Indeterminate)
@@ -127,7 +127,7 @@ namespace FKG_Info
                 LsBoxFlowers.Items.Add(new FlowerInListBox(Flower));
             }
 
-            Program.DataBase.Unselect();
+            Program.DB.Unselect();
             PicBoxIcon.Image = null;
             BtOk.Enabled = false;
         }
@@ -136,7 +136,7 @@ namespace FKG_Info
 
         private void BtCancel_Click(object sender, EventArgs ev)
         {
-            Program.DataBase.Unselect();
+            Program.DB.Unselect();
             this.Close();
         }
 
@@ -163,7 +163,7 @@ namespace FKG_Info
             if (LsBoxFlowers.SelectedIndex != -1)
             {
                 FlowerInfo Flower = ((FlowerInListBox)LsBoxFlowers.Items[LsBoxFlowers.SelectedIndex]).Flower;
-                Program.DataBase.Select(Flower);
+                Program.DB.Select(Flower);
             }
 
             Close();

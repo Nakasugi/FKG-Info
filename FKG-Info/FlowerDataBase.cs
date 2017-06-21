@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Xml;
 
 namespace FKG_Info
 {
-    public class FlowerDB
+    public class FlowerDataBase
     {
         public List<FlowerInfo> Flowers;
         public List<SkillInfo> Skills;
@@ -33,6 +32,14 @@ namespace FKG_Info
         public ImageSources ImageSource;
 
         public bool StoreDownloaded;
+
+
+        public int masterCharaFields;
+        public int masterCharaLines;
+        public int masterSkillFields;
+        public int masterSkillLines;
+        public int masterAbililyFields;
+        public int masterAbilityLines;
 
 
 
@@ -62,7 +69,7 @@ namespace FKG_Info
 
 
 
-        public FlowerDB()
+        public FlowerDataBase()
         {
             Flowers = new List<FlowerInfo>();
             Skills = new List<SkillInfo>();
@@ -77,6 +84,11 @@ namespace FKG_Info
 
             ImageSource = ImageSources.Local;
             StoreDownloaded = false;
+
+
+            masterCharaLines = masterCharaFields = 0;
+            masterSkillLines = masterSkillFields = 0;
+            masterAbilityLines = masterAbililyFields = 0;
 
             Unselect();
         }
@@ -231,9 +243,9 @@ namespace FKG_Info
 
 
         
-        static public FlowerDB Load(string fileName = "info.xml")
+        static public FlowerDataBase Load(string fileName = "info.xml")
         {
-            FlowerDB db = new FlowerDB();
+            FlowerDataBase db = new FlowerDataBase();
 
             XmlDocument xmlData = new XmlDocument();
             if (File.Exists(fileName))
@@ -428,11 +440,18 @@ namespace FKG_Info
         /// <param name="fname"></param>
         private void LoadCharacters(string fname = "dmm_masterCharacter.txt")
         {
+            string[] masterData;
             try
             {
                 FileStream fs = new FileStream(DataFolder + "\\" + fname, FileMode.Open);
                 StreamReader rd = new StreamReader(fs);
-                while (!rd.EndOfStream) Add(new FlowerInfo(rd.ReadLine()));
+                while (!rd.EndOfStream)
+                {
+                    masterData = rd.ReadLine().Split(',');
+                    Add(new FlowerInfo(masterData));
+                    if (masterCharaFields < masterData.Length) masterCharaFields = masterData.Length;
+                    masterCharaLines++;
+                }
                 rd.Close();
             }
             catch { }
@@ -446,11 +465,18 @@ namespace FKG_Info
         /// <param name="fname"></param>
         private void LoadSkills(string fname = "dmm_masterCharacterSkill.txt")
         {
+            string[] masterData;
             try
             {
                 FileStream fs = new FileStream(DataFolder + "\\" + fname, FileMode.Open);
                 StreamReader rd = new StreamReader(fs);
-                while (!rd.EndOfStream) Add(new SkillInfo(rd.ReadLine()));
+                while (!rd.EndOfStream)
+                {
+                    masterData = rd.ReadLine().Split(',');
+                    Add(new SkillInfo(masterData));
+                    if (masterSkillFields < masterData.Length) masterSkillFields = masterData.Length;
+                    masterSkillLines++;
+                }
                 rd.Close();
             }
             catch { }
@@ -464,11 +490,18 @@ namespace FKG_Info
         /// <param name="fname"></param>
         private void LoadAbilities(string fname = "dmm_masterCharacterLeaderSkill.txt")
         {
+            string[] masterData;
             try
             {
                 FileStream fs = new FileStream(DataFolder + "\\" + fname, FileMode.Open);
                 StreamReader rd = new StreamReader(fs);
-                while (!rd.EndOfStream) Add(new AbilityInfo(rd.ReadLine()));
+                while (!rd.EndOfStream)
+                {
+                    masterData = rd.ReadLine().Split(',');
+                    Add(new AbilityInfo(masterData));
+                    if (masterAbililyFields < masterData.Length) masterAbililyFields = masterData.Length;
+                    masterAbilityLines++;
+                }
                 rd.Close();
             }
             catch { }
