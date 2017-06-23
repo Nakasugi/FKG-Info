@@ -50,6 +50,7 @@
     <Compile Include="AbilityInfo.cs" />
     <Compile Include="ComplexName.cs" />
     <Compile Include="FlowerStats.cs" />
+    <Compile Include="getMaster.cs" />
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="FlowerDataBase.cs" />
     <Compile Include="FlowerInfo.cs" />
@@ -131,10 +132,14 @@
     <None Include="Images\Magic.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\Stars-0.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Images\Nerine.ico" />
+    <None Include="Images\Stars_6.png" />
+    <None Include="Images\Stars_5.png" />
+    <None Include="Images\Stars_4.png" />
+    <None Include="Images\Stars_3.png" />
+    <None Include="Images\Stars_2.png" />
+    <None Include="Images\Stars_1.png" />
+    <None Include="Images\Stars_0.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

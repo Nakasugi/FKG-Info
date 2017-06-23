@@ -286,6 +286,13 @@ namespace FKG_Info
 
             }
 
+            if (!Directory.Exists(db.ImagesFolder))
+                db.ImagesFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+
+            if (!Directory.Exists(db.DataFolder))
+                db.DataFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+
+
 
             db.LoadCharacters();
             db.LoadSkills();

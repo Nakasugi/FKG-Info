@@ -144,6 +144,8 @@ namespace FKG_Info
 
         private void LsBox_DrawItem(object sender, DrawItemEventArgs ev)
         {
+            if (ev.Index < 0) return;
+            if (ev.Index >= LsBoxFlowers.Items.Count) return;
             FlowerInListBox item = LsBoxFlowers.Items[ev.Index] as FlowerInListBox;
             item.DrawItem(ev, LsBoxFlowers.Font);
         }

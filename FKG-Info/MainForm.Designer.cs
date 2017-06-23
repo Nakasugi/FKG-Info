@@ -47,6 +47,7 @@
             this.ChBoxTranslation = new System.Windows.Forms.CheckBox();
             this.TxBoxSkillInfo = new System.Windows.Forms.TextBox();
             this.BtMastrerInfo = new System.Windows.Forms.Button();
+            this.BtGetMaster = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxBig)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBase)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconAwak)).BeginInit();
@@ -136,7 +137,7 @@
             // 
             this.BtSelect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.BtSelect.ForeColor = System.Drawing.Color.DarkBlue;
-            this.BtSelect.Location = new System.Drawing.Point(165, 689);
+            this.BtSelect.Location = new System.Drawing.Point(243, 689);
             this.BtSelect.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
             this.BtSelect.Name = "BtSelect";
             this.BtSelect.Size = new System.Drawing.Size(72, 32);
@@ -183,7 +184,7 @@
             // BtOptions
             // 
             this.BtOptions.ForeColor = System.Drawing.Color.DimGray;
-            this.BtOptions.Location = new System.Drawing.Point(87, 689);
+            this.BtOptions.Location = new System.Drawing.Point(165, 689);
             this.BtOptions.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
             this.BtOptions.Name = "BtOptions";
             this.BtOptions.Size = new System.Drawing.Size(72, 32);
@@ -256,11 +257,25 @@
             this.BtMastrerInfo.UseVisualStyleBackColor = true;
             this.BtMastrerInfo.Click += new System.EventHandler(this.BtMastrerInfo_Click);
             // 
+            // BtGetMaster
+            // 
+            this.BtGetMaster.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BtGetMaster.ForeColor = System.Drawing.Color.Maroon;
+            this.BtGetMaster.Location = new System.Drawing.Point(87, 689);
+            this.BtGetMaster.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
+            this.BtGetMaster.Name = "BtGetMaster";
+            this.BtGetMaster.Size = new System.Drawing.Size(72, 32);
+            this.BtGetMaster.TabIndex = 22;
+            this.BtGetMaster.Text = "getMaster";
+            this.BtGetMaster.UseVisualStyleBackColor = true;
+            this.BtGetMaster.Click += new System.EventHandler(this.BtGetMaster_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 730);
+            this.Controls.Add(this.BtGetMaster);
             this.Controls.Add(this.BtMastrerInfo);
             this.Controls.Add(this.TxBoxSkillInfo);
             this.Controls.Add(this.ChBoxTranslation);
@@ -311,6 +326,7 @@
         private System.Windows.Forms.CheckBox ChBoxTranslation;
         private System.Windows.Forms.TextBox TxBoxSkillInfo;
         private System.Windows.Forms.Button BtMastrerInfo;
+        private System.Windows.Forms.Button BtGetMaster;
     }
 }
 

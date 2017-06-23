@@ -14,8 +14,6 @@ namespace FKG_Info
 
         public FlowerInListBox(FlowerInfo flower)
         {
-            string fname;
-
             Flower = flower;
             
             switch (Flower.AttackType)
@@ -30,16 +28,14 @@ namespace FKG_Info
             if (ImgStars == null)
             {
                 ImgStars = new Image[8];
-                for (int i = 0; i < 8; i++)
-                {
-                    ImgStars[i] = null;
-                    fname = Program.WorkFolder + "Stars-" + i + ".png";
-                    if (System.IO.File.Exists(fname))
-                    {
-                        ImgStars[i] = Image.FromFile(fname);
-                    }
-                    else ImgStars[i] = global::FKG_Info.Properties.Resources.Stars_0;
-                }
+
+                ImgStars[0] = Properties.Resources.Stars_0;
+                ImgStars[1] = Properties.Resources.Stars_1;
+                ImgStars[2] = Properties.Resources.Stars_2;
+                ImgStars[3] = Properties.Resources.Stars_3;
+                ImgStars[4] = Properties.Resources.Stars_4;
+                ImgStars[5] = Properties.Resources.Stars_5;
+                ImgStars[6] = Properties.Resources.Stars_6;
             }
         }
 
@@ -52,12 +48,10 @@ namespace FKG_Info
             Brush br = new SolidBrush(ATypeColor);
             nameRect.X += 26; nameRect.Width -= 26;
 
-            //Image Img = Image.FromFile(Program.WorkFolder+"Stars-5.png");
-
             ev.DrawBackground();
             ev.Graphics.DrawImage(ImgStars[Flower.Rarity], starsRect);
             ev.Graphics.DrawString(Flower.Name.Romaji, fnt, br, nameRect);
-            nameRect.X += 140; nameRect.Width -= 140;
+            nameRect.X += 136; nameRect.Width -= 136;
             ev.Graphics.DrawString(Flower.Name.Kanji, fnt, br, nameRect);
         }
     }

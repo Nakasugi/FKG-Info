@@ -243,5 +243,12 @@ namespace FKG_Info
 
             mi.ShowDialog(this);
         }
+
+
+
+        private void BtGetMaster_Click(object sender, EventArgs e)
+        {
+            new getMaster();
+        }
     }
 }

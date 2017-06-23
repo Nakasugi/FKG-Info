@@ -14,8 +14,6 @@ namespace FKG_Info
         public static FlowerDataBase DB;// = new FlowerDB();
         public static ImageDownloader ImageLoader;
 
-        public static string WorkFolder = "F:\\Pictures\\Anime\\FKG\\Img\\";
-
         [STAThread]
         static void Main()
         {

@@ -105,7 +105,67 @@ namespace FKG_Info.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Stars_0 {
             get {
-                object obj = ResourceManager.GetObject("Stars-0", resourceCulture);
+                object obj = ResourceManager.GetObject("Stars_0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_1 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_2 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_3 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_4 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_5 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Stars_6 {
+            get {
+                object obj = ResourceManager.GetObject("Stars_6", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

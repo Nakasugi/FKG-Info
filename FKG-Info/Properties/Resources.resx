@@ -130,7 +130,25 @@
   <data name="Magic" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Magic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Stars-0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars-0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Stars_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Stars_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Stars_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Stars_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Stars_3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Stars_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Stars_5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stars_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Stars_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

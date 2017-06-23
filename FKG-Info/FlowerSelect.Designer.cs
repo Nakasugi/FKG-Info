@@ -59,7 +59,7 @@
             this.LsBoxFlowers.ItemHeight = 16;
             this.LsBoxFlowers.Location = new System.Drawing.Point(12, 13);
             this.LsBoxFlowers.Name = "LsBoxFlowers";
-            this.LsBoxFlowers.Size = new System.Drawing.Size(320, 212);
+            this.LsBoxFlowers.Size = new System.Drawing.Size(396, 212);
             this.LsBoxFlowers.TabIndex = 0;
             this.LsBoxFlowers.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.LsBox_DrawItem);
             this.LsBoxFlowers.SelectedIndexChanged += new System.EventHandler(this.LsBox_SelectedIndexChanged);
@@ -68,7 +68,7 @@
             // BtAll
             // 
             this.BtAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.BtAll.Location = new System.Drawing.Point(338, 188);
+            this.BtAll.Location = new System.Drawing.Point(414, 188);
             this.BtAll.Name = "BtAll";
             this.BtAll.Size = new System.Drawing.Size(38, 38);
             this.BtAll.TabIndex = 5;
@@ -158,7 +158,7 @@
             this.CmBoxNation.FormattingEnabled = true;
             this.CmBoxNation.Location = new System.Drawing.Point(127, 258);
             this.CmBoxNation.Name = "CmBoxNation";
-            this.CmBoxNation.Size = new System.Drawing.Size(120, 21);
+            this.CmBoxNation.Size = new System.Drawing.Size(160, 21);
             this.CmBoxNation.TabIndex = 11;
             this.CmBoxNation.SelectedIndexChanged += new System.EventHandler(this.CmBox_SelectedIndexChanged);
             // 
@@ -188,9 +188,9 @@
             this.CmBoxSort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CmBoxSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CmBoxSort.FormattingEnabled = true;
-            this.CmBoxSort.Location = new System.Drawing.Point(256, 258);
+            this.CmBoxSort.Location = new System.Drawing.Point(293, 258);
             this.CmBoxSort.Name = "CmBoxSort";
-            this.CmBoxSort.Size = new System.Drawing.Size(120, 21);
+            this.CmBoxSort.Size = new System.Drawing.Size(159, 21);
             this.CmBoxSort.TabIndex = 14;
             this.CmBoxSort.SelectedIndexChanged += new System.EventHandler(this.CmBox_SelectedIndexChanged);
             // 
@@ -209,7 +209,7 @@
             this.ChBoxMagic.Checked = true;
             this.ChBoxMagic.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxMagic.Image = global::FKG_Info.Properties.Resources.Magic;
-            this.ChBoxMagic.Location = new System.Drawing.Point(338, 144);
+            this.ChBoxMagic.Location = new System.Drawing.Point(414, 144);
             this.ChBoxMagic.Name = "ChBoxMagic";
             this.ChBoxMagic.Size = new System.Drawing.Size(38, 38);
             this.ChBoxMagic.TabIndex = 4;
@@ -223,7 +223,7 @@
             this.ChBoxPierce.Checked = true;
             this.ChBoxPierce.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxPierce.Image = global::FKG_Info.Properties.Resources.Pierce;
-            this.ChBoxPierce.Location = new System.Drawing.Point(338, 100);
+            this.ChBoxPierce.Location = new System.Drawing.Point(414, 100);
             this.ChBoxPierce.Name = "ChBoxPierce";
             this.ChBoxPierce.Size = new System.Drawing.Size(38, 38);
             this.ChBoxPierce.TabIndex = 3;
@@ -237,7 +237,7 @@
             this.ChBoxBlunt.Checked = true;
             this.ChBoxBlunt.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxBlunt.Image = global::FKG_Info.Properties.Resources.Blunt;
-            this.ChBoxBlunt.Location = new System.Drawing.Point(338, 56);
+            this.ChBoxBlunt.Location = new System.Drawing.Point(414, 56);
             this.ChBoxBlunt.Name = "ChBoxBlunt";
             this.ChBoxBlunt.Size = new System.Drawing.Size(38, 38);
             this.ChBoxBlunt.TabIndex = 2;
@@ -251,7 +251,7 @@
             this.ChBoxSlash.Checked = true;
             this.ChBoxSlash.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxSlash.Image = global::FKG_Info.Properties.Resources.Slash;
-            this.ChBoxSlash.Location = new System.Drawing.Point(338, 12);
+            this.ChBoxSlash.Location = new System.Drawing.Point(414, 12);
             this.ChBoxSlash.Name = "ChBoxSlash";
             this.ChBoxSlash.Size = new System.Drawing.Size(38, 38);
             this.ChBoxSlash.TabIndex = 1;
@@ -263,7 +263,7 @@
             this.ChBoxGame01.AutoSize = true;
             this.ChBoxGame01.Checked = true;
             this.ChBoxGame01.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.ChBoxGame01.Location = new System.Drawing.Point(264, 310);
+            this.ChBoxGame01.Location = new System.Drawing.Point(294, 289);
             this.ChBoxGame01.Name = "ChBoxGame01";
             this.ChBoxGame01.Size = new System.Drawing.Size(66, 17);
             this.ChBoxGame01.TabIndex = 15;
@@ -277,7 +277,7 @@
             this.ChBoxGame02.AutoSize = true;
             this.ChBoxGame02.Checked = true;
             this.ChBoxGame02.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.ChBoxGame02.Location = new System.Drawing.Point(264, 333);
+            this.ChBoxGame02.Location = new System.Drawing.Point(294, 312);
             this.ChBoxGame02.Name = "ChBoxGame02";
             this.ChBoxGame02.Size = new System.Drawing.Size(66, 17);
             this.ChBoxGame02.TabIndex = 16;
@@ -291,7 +291,7 @@
             this.ChBoxGame03.AutoSize = true;
             this.ChBoxGame03.Checked = true;
             this.ChBoxGame03.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.ChBoxGame03.Location = new System.Drawing.Point(264, 356);
+            this.ChBoxGame03.Location = new System.Drawing.Point(294, 335);
             this.ChBoxGame03.Name = "ChBoxGame03";
             this.ChBoxGame03.Size = new System.Drawing.Size(66, 17);
             this.ChBoxGame03.TabIndex = 17;
@@ -307,7 +307,7 @@
             this.CmBoxAbility.FormattingEnabled = true;
             this.CmBoxAbility.Location = new System.Drawing.Point(127, 285);
             this.CmBoxAbility.Name = "CmBoxAbility";
-            this.CmBoxAbility.Size = new System.Drawing.Size(120, 21);
+            this.CmBoxAbility.Size = new System.Drawing.Size(160, 21);
             this.CmBoxAbility.TabIndex = 18;
             this.CmBoxAbility.SelectedIndexChanged += new System.EventHandler(this.CmBoxAbility_SelectedIndexChanged);
             // 
@@ -315,7 +315,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(388, 386);
+            this.ClientSize = new System.Drawing.Size(464, 386);
             this.ControlBox = false;
             this.Controls.Add(this.CmBoxAbility);
             this.Controls.Add(this.ChBoxGame03);
