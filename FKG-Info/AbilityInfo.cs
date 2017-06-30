@@ -58,7 +58,11 @@
         }
         
 
-
+        /// <summary>
+        /// Return (string) ability description.
+        /// </summary>
+        /// <param name="translation"></param>
+        /// <returns></returns>
         public string GetInfo(bool translation = true)
         {
             if (!translation) return KInfo;

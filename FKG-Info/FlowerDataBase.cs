@@ -11,6 +11,8 @@ namespace FKG_Info
         public List<SkillInfo> Skills;
         public List<AbilityInfo> Abilities;
 
+        public MasterData Master;
+
 
         int Selected;
 
@@ -19,6 +21,8 @@ namespace FKG_Info
         public string NutakuURL;
         public string ImagesFolder;
         public string DataFolder;
+
+        private string DefaultFolder;
 
 
         public string Game01Name;
@@ -34,12 +38,12 @@ namespace FKG_Info
         public bool StoreDownloaded;
 
 
-        public int masterCharaFields;
-        public int masterCharaLines;
-        public int masterSkillFields;
-        public int masterSkillLines;
-        public int masterAbililyFields;
-        public int masterAbilityLines;
+        public int _masterCharaFields;
+        public int _masterCharaLines;
+        public int _masterSkillFields;
+        public int _masterSkillLines;
+        public int _masterAbililyFields;
+        public int _masterAbilityLines;
 
 
 
@@ -79,16 +83,18 @@ namespace FKG_Info
 
             DMMURL = "http://dugrqaqinbtcq.cloudfront.net/product/images/character/";
             NutakuURL = "http://cdn.flowerknight.nutaku.net/bin/commons/images/character/";
-            ImagesFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
-            DataFolder = ImagesFolder;
+
+            DefaultFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+            ImagesFolder = DefaultFolder + "\\Images";
+            DataFolder = DefaultFolder + "\\Data";
 
             ImageSource = ImageSources.Local;
             StoreDownloaded = false;
 
 
-            masterCharaLines = masterCharaFields = 0;
-            masterSkillLines = masterSkillFields = 0;
-            masterAbilityLines = masterAbililyFields = 0;
+            _masterCharaLines = _masterCharaFields = 0;
+            _masterSkillLines = _masterSkillFields = 0;
+            _masterAbilityLines = _masterAbililyFields = 0;
 
             Unselect();
         }
@@ -286,18 +292,57 @@ namespace FKG_Info
 
             }
 
-            if (!Directory.Exists(db.ImagesFolder))
-                db.ImagesFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 
             if (!Directory.Exists(db.DataFolder))
-                db.DataFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+            {
+                db.DataFolder = db.DefaultFolder + "\\Data";
 
+                if (!Directory.Exists(db.DataFolder))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(db.DataFolder);
+                    }
+                    catch (Exception exp)
+                    {
+                        System.Windows.Forms.MessageBox.Show(exp.Message, "Directory Error");
+                    }
+                }
+            }
 
+            if (!Directory.Exists(db.ImagesFolder))
+            {
+                db.ImagesFolder = db.DefaultFolder + "\\Images";
 
-            db.LoadCharacters();
-            db.LoadSkills();
-            db.LoadAbilities();
+                if (!Directory.Exists(db.ImagesFolder))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(db.ImagesFolder);
+                    }
+                    catch (Exception exp)
+                    {
+                        System.Windows.Forms.MessageBox.Show(exp.Message, "Directory Error");
+                    }
+                }
+            }
 
+            //db.LoadCharacters();
+            //db.LoadSkills();
+            //db.LoadAbilities();
+
+            db.Master = new MasterData(db.DataFolder + "\\dmmMaster.bin");
+            if (db.Master.Ok)
+            {
+                db.LoadCharacters(db.Master.GetMasterData("masterCharacter"));
+                db.LoadSkills(db.Master.GetMasterData("masterCharacterSkill"));
+                db.LoadAbilities(db.Master.GetMasterData("masterCharacterLeaderSkill"));
+
+                db.LoadNutakuNames();
+            }
+           
+
+            
             db.TranslationAbilities = LoadTranslation(db.DataFolder + "\\en_abilities.txt");
             db.TranslationSkills = LoadTranslation(db.DataFolder + "\\en_skills.txt");
             db.LoadCharaNamesTranslation();
@@ -444,20 +489,22 @@ namespace FKG_Info
         /// <summary>
         /// Loading Characters from Master data
         /// </summary>
-        /// <param name="fname"></param>
-        private void LoadCharacters(string fname = "dmm_masterCharacter.txt")
+        /// <param name="masterData"></param>
+        private void LoadCharacters(string masterData)
         {
-            string[] masterData;
+            string masterLine;
+
             try
             {
-                FileStream fs = new FileStream(DataFolder + "\\" + fname, FileMode.Open);
-                StreamReader rd = new StreamReader(fs);
-                while (!rd.EndOfStream)
+                StringReader rd = new StringReader(masterData);
+                while (true)
                 {
-                    masterData = rd.ReadLine().Split(',');
-                    Add(new FlowerInfo(masterData));
-                    if (masterCharaFields < masterData.Length) masterCharaFields = masterData.Length;
-                    masterCharaLines++;
+                    masterLine = rd.ReadLine();
+                    if (masterLine == null) break;
+                    Add(new FlowerInfo(masterLine.Split(',')));
+
+                    if (_masterCharaFields < masterLine.Length) _masterCharaFields = masterLine.Length;
+                    _masterCharaLines++;
                 }
                 rd.Close();
             }
@@ -469,20 +516,22 @@ namespace FKG_Info
         /// <summary>
         /// Loading Skills from Master data
         /// </summary>
-        /// <param name="fname"></param>
-        private void LoadSkills(string fname = "dmm_masterCharacterSkill.txt")
+        /// <param name="masterData"></param>
+        private void LoadSkills(string masterData)
         {
-            string[] masterData;
+            string masterLine;
+
             try
             {
-                FileStream fs = new FileStream(DataFolder + "\\" + fname, FileMode.Open);
-                StreamReader rd = new StreamReader(fs);
-                while (!rd.EndOfStream)
+                StringReader rd = new StringReader(masterData);
+                while (true)
                 {
-                    masterData = rd.ReadLine().Split(',');
-                    Add(new SkillInfo(masterData));
-                    if (masterSkillFields < masterData.Length) masterSkillFields = masterData.Length;
-                    masterSkillLines++;
+                    masterLine = rd.ReadLine();
+                    if (masterLine == null) break;
+                    Add(new SkillInfo(masterLine.Split(',')));
+
+                    if (_masterSkillFields < masterLine.Length) _masterSkillFields = masterLine.Length;
+                    _masterSkillLines++;
                 }
                 rd.Close();
             }
@@ -494,24 +543,57 @@ namespace FKG_Info
         /// <summary>
         /// Loading Abilities from Master data
         /// </summary>
-        /// <param name="fname"></param>
-        private void LoadAbilities(string fname = "dmm_masterCharacterLeaderSkill.txt")
+        /// <param name="masterData"></param>
+        private void LoadAbilities(string masterData)
         {
-            string[] masterData;
+            string masterLine;
+
             try
             {
-                FileStream fs = new FileStream(DataFolder + "\\" + fname, FileMode.Open);
-                StreamReader rd = new StreamReader(fs);
-                while (!rd.EndOfStream)
+                StringReader rd = new StringReader(masterData);
+                while (true)
                 {
-                    masterData = rd.ReadLine().Split(',');
-                    Add(new AbilityInfo(masterData));
-                    if (masterAbililyFields < masterData.Length) masterAbililyFields = masterData.Length;
-                    masterAbilityLines++;
+                    masterLine = rd.ReadLine();
+                    if (masterLine == null) break;
+                    Add(new AbilityInfo(masterLine.Split(',')));
+
+                    if (_masterAbililyFields < masterLine.Length) _masterAbililyFields = masterLine.Length;
+                    _masterAbilityLines++;
                 }
                 rd.Close();
             }
             catch { }
+        }
+
+
+        /// <summary>
+        /// Loading names from nutaku Master data
+        /// </summary>
+        private void LoadNutakuNames()
+        {
+            MasterData nutaku = new MasterData(DataFolder + "\\nutakuMaster.bin");
+            if (!nutaku.Ok) return;
+
+            string[] chFields;
+
+            FlowerInfo flower;
+            int chID;
+            string chLine;
+            string characters = nutaku.GetMasterData("masterCharacter");
+            StringReader rd = new StringReader(characters);
+
+            while (true)
+            {
+                chLine = rd.ReadLine();
+                if (chLine == null) break;
+
+                chFields = chLine.Split(',');
+                int.TryParse(chFields[4], out chID);
+
+                flower = Flowers.Find(f => f.ID == chID);
+
+                if (flower != null) flower.Name.EngNutaku = chFields[5].Replace("\"", "");
+            }
         }
     }
 }

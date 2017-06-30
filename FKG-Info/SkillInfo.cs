@@ -45,30 +45,35 @@
 
             ChanceMax = ChanceMin + 5 * ChanceMax;
         }
-        
 
 
-        public string GetInfo(bool translation = true)
+        /// <summary>
+        /// Return (string) skill description.
+        /// </summary>
+        /// <param name="translation"></param>
+        /// <param name="mode">0=Full, 1=Name, 2=Chance, 3=Full Desc. By default Full.</param>
+        /// <returns></returns>
+        public string GetInfo(int mode = 0, bool translation = true)
         {
-            string info = "Name: " + KName + "\r\n", tr;
+            string info = "";
 
-            FlowerDataBase db = Program.DB;
-
-            info += "Chance: " + ChanceMin + " .. " + ChanceMax + "%\r\n";
-
-            tr = db.GetSkillTranslation(SkillType);
-
-            if ((tr != null) && (translation))
+            switch (mode)
             {
-                info += string.Format(tr, Params[0], Params[1], Params[2]);
+                case 1: return KName;
+                case 2: return ChanceMin + " .. " + ChanceMax + "%";
+                case 3:
+                    info = KInfo;
+                    if (translation)
+                    {
+                        string tr = Program.DB.GetSkillTranslation(SkillType);
+                        if (tr != null) info = string.Format(tr, Params[0], Params[1], Params[2]);
+                        info = StringHelper.ReplaceSimpleArithmetic(info, '+');
+                    }
+                    return info;
+                default:
+                    info = "Name: " + GetInfo(1) + "\r\nChance: " + GetInfo(2) + "\r\n" + GetInfo(3, translation);
+                    break;
             }
-            else
-            {
-                info += KInfo;
-            }
-
-
-            info = StringHelper.ReplaceSimpleArithmetic(info, '+');
 
             return info;
         }

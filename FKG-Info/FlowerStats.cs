@@ -25,6 +25,9 @@
         private int DefenseAffectionScaling2;
 
 
+        const string Pattern = "{0,-5} +{1,-4}  max={2}";
+
+
         public FlowerStats(string[] masterData)
         {
             int.TryParse(masterData[15], out HitPointsLvMin);
@@ -90,35 +93,17 @@
 
         public string GetHitPointsInfo()
         {
-            string info = HitPointsLvMin.ToString();
-
-            info += ".." + HitPointsLvMax;
-            info += " + " + GetHitPointsAffectionBonus(200);
-            info += ", max = " + GetHitPointsMax();
-
-            return info;
+            return string.Format(Pattern, HitPointsLvMax, GetHitPointsAffectionBonus(200), GetHitPointsMax());
         }
 
         public string GetAttackInfo()
         {
-            string info = AttackLvMin.ToString();
-
-            info += ".." + AttackLvMax;
-            info += " + " + GetAttackAffectionBonus(200);
-            info += ", max = " + GetAttackMax();
-
-            return info;
+            return string.Format(Pattern, AttackLvMax, GetAttackAffectionBonus(200), GetAttackMax());
         }
 
         public string GetDefenseInfo()
         {
-            string info = DefenseLvMin.ToString();
-
-            info += ".." + DefenseLvMax;
-            info += " + " + GetDefenseAffectionBonus(200);
-            info += ", max = " + GetDefenseMax();
-
-            return info;
+            return string.Format(Pattern, DefenseLvMax, GetDefenseAffectionBonus(200), GetDefenseMax());
         }
 
 

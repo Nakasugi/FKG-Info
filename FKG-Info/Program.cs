@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
+
 namespace FKG_Info
 {
     static class Program
@@ -11,7 +12,7 @@ namespace FKG_Info
         /// 
 
 
-        public static FlowerDataBase DB;// = new FlowerDB();
+        public static FlowerDataBase DB;
         public static ImageDownloader ImageLoader;
 
         [STAThread]

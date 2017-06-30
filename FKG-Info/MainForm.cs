@@ -7,7 +7,8 @@ namespace FKG_Info
     public partial class MainForm : Form
     {
         FlowerInfo.ImageTypes SelectedImageType;
-        FlowerInfo.Evolution SelectedEvolution;
+
+        int SelectedEvolution;
 
         ContextMenu CMenu;
 
@@ -15,13 +16,14 @@ namespace FKG_Info
         public MainForm()
         {
             InitializeComponent();
-            MainFormInitCustomControls();
 
+            GridInfo.DefaultCellStyle.SelectionBackColor = Color.White;
+            GridInfo.DefaultCellStyle.SelectionForeColor = Color.Purple;
 
             SelectedImageType = FlowerInfo.ImageTypes.Stand;
             SelectedEvolution = FlowerInfo.Evolution.Base;
 
-            
+            ToolStripMenuItem mi;
             CMenu = new ContextMenu();
 
             foreach (FlowerInfo.ImageTypes itp in Enum.GetValues(typeof(FlowerInfo.ImageTypes)))
@@ -31,57 +33,28 @@ namespace FKG_Info
                 if (itp == FlowerInfo.ImageTypes.IconLarge) continue;
 
                 CMenu.MenuItems.Add(itp.ToString(), (sender, e) => CtMenuClick(itp.ToString()));
+                mi = new ToolStripMenuItem(itp.ToString(), null, (sender, e) => CtMenuClick(itp.ToString()));
+                mi.BackColor = SystemColors.Menu;
+                MMItemImageType.DropDownItems.Add(mi);
             }
 
             CtMenuClick(FlowerInfo.ImageTypes.Stand.ToString());
             PicBoxBig.ContextMenu = CMenu;
-        }
 
+            if (Program.DB.Master.Ok)
+            {
+                string[] exportNames = Program.DB.Master.GetNames();
 
-
-        void MainFormInitCustomControls()
-        {
-            DataGridViewColumn clmn;
-
-                
-            clmn = new DataGridViewColumn();
-
-            clmn.HeaderText = "Type";
-            clmn.Width = 80;
-            clmn.ReadOnly = true;
-            clmn.Name = "type";
-            clmn.Frozen = true;
-            clmn.Resizable = DataGridViewTriState.False;
-            clmn.CellTemplate = new DataGridViewTextBoxCell();
-
-            GridInfo.Columns.Add(clmn);
-
-
-            clmn = new DataGridViewColumn();
-
-            clmn.HeaderText = "Info";
-            clmn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            clmn.Resizable = DataGridViewTriState.False;
-            clmn.ReadOnly = true;
-            clmn.Name = "info";
-            clmn.CellTemplate = new DataGridViewTextBoxCell();
-
-            GridInfo.Columns.Add(clmn);
-
-
-            GridInfo.AllowUserToAddRows = false;
-            GridInfo.AllowUserToDeleteRows = false;
-            GridInfo.AllowUserToResizeRows = false;
-            GridInfo.ReadOnly = true;
-            GridInfo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            GridInfo.DefaultCellStyle.SelectionBackColor = Color.White;
-            GridInfo.DefaultCellStyle.SelectionForeColor = Color.Black;
-            //GridInfo.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-
-
-            ChBoxGame01.Text = Program.DB.Game01Name;
-            ChBoxGame02.Text = Program.DB.Game02Name;
-            ChBoxGame03.Text = Program.DB.Game03Name;
+                foreach (string name in exportNames)
+                {
+                    mi = new ToolStripMenuItem(name, null, (sender, e) => MMItemFileExportMaster_Click(name));
+                    mi.BackColor = SystemColors.Menu;
+                    MMItemFileExportMaster.DropDownItems.Add(mi);
+                }
+            }
+            //ChBoxGame01.Text = Program.DB.Game01Name;
+            //ChBoxGame02.Text = Program.DB.Game02Name;
+            //ChBoxGame03.Text = Program.DB.Game03Name;
         }
 
 
@@ -91,6 +64,12 @@ namespace FKG_Info
             SelectedImageType = (FlowerInfo.ImageTypes)Enum.Parse(typeof(FlowerInfo.ImageTypes), itype);
 
             foreach(MenuItem mi in CMenu.MenuItems)
+            {
+                mi.Checked = false;
+                if (mi.Text == itype) mi.Checked = true;
+            }
+
+            foreach (ToolStripMenuItem mi in MMItemImageType.DropDownItems)
             {
                 mi.Checked = false;
                 if (mi.Text == itype) mi.Checked = true;
@@ -112,13 +91,11 @@ namespace FKG_Info
             SetIconAwak(flower);
             SetIconBloom(flower);
 
-            flower.FillGrid(GridInfo);
+            UpdateFlowerInfo();
 
-            UpdateBoxInfo();
-
-            ChBoxGame01.Checked = flower.Game01;
-            ChBoxGame02.Checked = flower.Game02;
-            ChBoxGame03.Checked = flower.Game03;
+            //ChBoxGame01.Checked = flower.Game01;
+            //ChBoxGame02.Checked = flower.Game02;
+            //ChBoxGame03.Checked = flower.Game03;
         }
 
 
@@ -131,15 +108,15 @@ namespace FKG_Info
             if (Program.DB.IsSelected())
             {
                 ReloadFlower(Program.DB.GetSelected());
-                ChBoxGame01.Enabled = true;
-                ChBoxGame02.Enabled = true;
-                ChBoxGame03.Enabled = true;
+                //ChBoxGame01.Enabled = true;
+                //ChBoxGame02.Enabled = true;
+                //ChBoxGame03.Enabled = true;
             }
             else
             {
-                ChBoxGame01.Enabled = false;
-                ChBoxGame02.Enabled = false;
-                ChBoxGame03.Enabled = false;
+                //ChBoxGame01.Enabled = false;
+                //ChBoxGame02.Enabled = false;
+                //ChBoxGame03.Enabled = false;
             }
         }
 
@@ -147,23 +124,26 @@ namespace FKG_Info
 
         private void PicBoxIconBase_Click(object sender, EventArgs ev)
         {
-            SelectedEvolution = FlowerInfo.Evolution.Base;
             if (!Program.DB.IsSelected()) return;
+            SelectedEvolution = Program.DB.GetSelected().SelectEvolution(FlowerInfo.Evolution.Base);
             SetBigImage(Program.DB.GetSelected());
+            UpdateFlowerInfo();
         }
 
         private void PicBoxIconAwak_Click(object sender, EventArgs ev)
         {
-            SelectedEvolution = FlowerInfo.Evolution.Awakened;
             if (!Program.DB.IsSelected()) return;
+            SelectedEvolution = Program.DB.GetSelected().SelectEvolution(FlowerInfo.Evolution.Awakened);
             SetBigImage(Program.DB.GetSelected());
+            UpdateFlowerInfo();
         }
 
         private void PicBoxIconBloom_Click(object sender, EventArgs ev)
         {
-            SelectedEvolution = FlowerInfo.Evolution.Bloomed;
             if (!Program.DB.IsSelected()) return;
+            SelectedEvolution = Program.DB.GetSelected().SelectEvolution(FlowerInfo.Evolution.Bloomed);
             SetBigImage(Program.DB.GetSelected());
+            UpdateFlowerInfo();
         }
 
 
@@ -192,63 +172,71 @@ namespace FKG_Info
 
 
 
-        private void BtOptions_Click(object sender, EventArgs ev)
+
+        private void ChBoxAbilityTranslation_CheckedChanged(object sender, EventArgs ev)
+        {
+            UpdateFlowerInfo();
+        }
+
+
+
+        private void UpdateFlowerInfo()
+        {
+            if (!Program.DB.IsSelected()) return;
+
+            FlowerInfo flower = Program.DB.GetSelected();
+
+            flower.FillGrid(GridInfo, SelectedEvolution, ChBoxTranslation.Checked);
+        }
+
+
+
+
+        private void MMItemOptions_Click(object sender, EventArgs ev)
         {
             Options opt = new Options();
             opt.ShowDialog(this);
         }
 
-
-
-        private void ChBoxGame01_CheckedChanged(object sender, EventArgs ev)
+        private void MMItemViewMasterSummary_Click(object sender, EventArgs ev)
         {
-            if (Program.DB.IsSelected()) Program.DB.GetSelected().Game01 = ChBoxGame01.Checked;
-        }
-
-        private void ChBoxGame02_CheckedChanged(object sender, EventArgs ev)
-        {
-            if (Program.DB.IsSelected()) Program.DB.GetSelected().Game02 = ChBoxGame02.Checked;
-        }
-
-        private void ChBoxGame03_CheckedChanged(object sender, EventArgs ev)
-        {
-            if (Program.DB.IsSelected()) Program.DB.GetSelected().Game03 = ChBoxGame03.Checked;
-        }
-
-
-
-        private void ChBoxBaseAbilities_CheckedChanged(object sender, EventArgs ev)
-        {
-            UpdateBoxInfo();
-        }
-
-        private void ChBoxAbilityTranslation_CheckedChanged(object sender, EventArgs ev)
-        {
-            UpdateBoxInfo();
-        }
-
-        private void UpdateBoxInfo()
-        {
-            if (!Program.DB.IsSelected()) return;
-
-            TxBoxAbilityInfo.Text = Program.DB.GetSelected().GetAbilitiesInfo(ChBoxTranslation.Checked, ChBoxBaseAbilities.Checked);
-            TxBoxSkillInfo.Text = Program.DB.GetSelected().GetSkillInfo(ChBoxTranslation.Checked);
-        }
-
-
-
-        private void BtMastrerInfo_Click(object sender, EventArgs e)
-        {
-            MasterFilesInfo mi = new MasterFilesInfo();
-
+            MasterSummary mi = new MasterSummary();
             mi.ShowDialog(this);
         }
 
-
-
-        private void BtGetMaster_Click(object sender, EventArgs e)
+        private void MMItemFileGetMaster_Click(object sender, EventArgs ev)
         {
             new getMaster();
+        }
+
+        private void MMItemFileImportMaster_Click(object sender, EventArgs ev)
+        {
+            OpenFileDialog fileOpen = new OpenFileDialog();
+
+
+            fileOpen.InitialDirectory = Program.DB.DataFolder;
+            fileOpen.Filter = "Any file (*.*)|*.*";
+            fileOpen.FilterIndex = 0;
+            fileOpen.RestoreDirectory = true;
+
+            if (fileOpen.ShowDialog() != DialogResult.OK) return;
+
+            MasterData md = new MasterData(fileOpen.FileName);
+            if (md.Ok) Program.DB.Master = md;
+        }
+
+        private void MMItemFileExportMaster_Click(string name)
+        {
+            SaveFileDialog fileSave = new SaveFileDialog();
+
+            fileSave.InitialDirectory = Program.DB.DataFolder;
+            fileSave.Filter = "Text file|*.txt";
+            fileSave.FilterIndex = 0;
+            fileSave.FileName = name;
+
+            if (fileSave.ShowDialog() != DialogResult.OK) return;
+
+            Program.DB.Master.Export(name, fileSave.FileName);
         }
     }
 }

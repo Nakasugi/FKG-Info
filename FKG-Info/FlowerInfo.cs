@@ -13,23 +13,25 @@ namespace FKG_Info
         public int Nation { get; private set; }
         public int AttackType { get; private set; }
         public int FavoriteGift { get; private set; }
+        public int Family { get; private set; }
 
-        public int Skill;
+        private int Skill;
 
-        public int AbilityBase;
-        public int AbilityAwak;
+        private int[] Ability1;
+        private int[] Ability2;
 
-        public int AbilityBloom1st;
-        public int AbilityBloom2nd;
-
-        public int ImageBase, ImageAwakened, ImageBloomed;
+        private int[] ImageID;
 
 
         public bool Game01, Game02, Game03;
 
         private int Evol;
 
-        FlowerStats Stats;
+        private FlowerStats[] Stats;
+
+        private const int EVOL_NUM = 3;
+
+        private int EvolMax;
 
 
 
@@ -54,7 +56,7 @@ namespace FKG_Info
             "Blossom Hill",
             "Bergamot Valley",
             "Lily Wood",
-            "nation_06",
+            "Kodaibana",
             "Lotus Lake"
         };
 
@@ -73,13 +75,28 @@ namespace FKG_Info
 
  
         public enum ImageTypes { IconSmall, IconMedium, IconLarge, Cutin, Bustup, Stand, StandSmall, Home };
-        public enum Evolution { Base, Awakened, Bloomed };
+
+        public struct Evolution
+        {
+            public const int Base = 0;
+            public const int Awakened = 1;
+            public const int Bloomed = 2;
+        };
 
 
 
         public FlowerInfo()
         {
+            ID = 0;
+            EvolMax = 0;
+
             Name = new ComplexName();
+
+            Ability1 = new int[EVOL_NUM];
+            Ability2 = new int[EVOL_NUM];
+            ImageID = new int[EVOL_NUM];
+
+            Stats = new FlowerStats[EVOL_NUM];
         }
 
 
@@ -98,36 +115,27 @@ namespace FKG_Info
             Name.AutoRomaji();
 
 
-            int.TryParse(masterData[35], out Evol);
+            int.TryParse(masterData[35], out Evol); Evol--;
+            if ((Evol < 0) || (Evol > 2)) { ID = 0; return; }
 
-            switch (Evol)
-            {
-                case 1:
-                    int.TryParse(masterData[0], out ImageBase);
-                    int.TryParse(masterData[10], out AbilityBase);
-                    break;
-                case 2:
-                    int.TryParse(masterData[0], out ImageAwakened);
-                    int.TryParse(masterData[11], out AbilityAwak);
-                    break;
-                case 3:
-                    int.TryParse(masterData[0], out ImageBloomed);
-                    int.TryParse(masterData[10], out AbilityBloom1st);
-                    int.TryParse(masterData[11], out AbilityBloom2nd);
-                    break;
-                default: break;
-            }
+            EvolMax = Evol;
 
+            
+
+            int.TryParse(masterData[0], out ImageID[Evol]);
+            int.TryParse(masterData[10], out Ability1[Evol]);
+            int.TryParse(masterData[11], out Ability2[Evol]);
+
+            int.TryParse(masterData[2], out parsedValue); Family = parsedValue;
             int.TryParse(masterData[7], out parsedValue); Rarity = parsedValue;
             int.TryParse(masterData[3], out parsedValue); Nation = parsedValue;
             int.TryParse(masterData[8], out parsedValue); AttackType = parsedValue;
             int.TryParse(masterData[9], out parsedValue); FavoriteGift = parsedValue;
 
 
-
             int.TryParse(masterData[12], out Skill);
 
-            Stats = new FlowerStats(masterData);
+            Stats[Evol] = new FlowerStats(masterData);
 
             if ((Nation < 1) || (Nation > 7)) ID = 0;
         }
@@ -135,62 +143,86 @@ namespace FKG_Info
 
 
         //======================================================
-        public void FillGrid(System.Windows.Forms.DataGridView view)
+        public void FillGrid(System.Windows.Forms.DataGridView view, int evol, bool translation = true)
         {
+            if ((evol < 0) || (evol > EvolMax)) evol = EvolMax;
+
+            int id;
+
             view.Rows.Clear();
             view.Rows.Add("Kanji", Name.Kanji);
             view.Rows.Add("Romaji", Name.Romaji);
-            view.Rows.Add("English Nutaku", Name.EngNutaku);
-            view.Rows.Add("English DMM", Name.EngDMM);
+            view.Rows.Add("Eng DMM", Name.EngDMM);
+            view.Rows.Add("Eng Nutaku", Name.EngNutaku);
             view.Rows.Add("Rarity", GetStars());
             view.Rows.Add("Type", GetAttackType());
             view.Rows.Add("Nation", GetNation());
-            view.Rows.Add("Favorite gift", Gifts[FavoriteGift]);
+            view.Rows.Add("Favorite Gift", Gifts[FavoriteGift]);
             view.Rows.Add("Unique ID", ID);
-            view.Rows.Add("Skill ID", Skill);
 
-            view.Rows.Add("HitPoints", Stats.GetHitPointsInfo());
-            view.Rows.Add("Attack", Stats.GetAttackInfo());
-            view.Rows.Add("Defense", Stats.GetDefenseInfo());
+            System.Windows.Forms.DataGridViewCellStyle statsStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            statsStyle.Font = new System.Drawing.Font("Consolas", 9);
+            statsStyle.ForeColor = System.Drawing.Color.DarkRed;
+
+            id = view.Rows.Add("HitPoints", Stats[evol].GetHitPointsInfo());
+            view.Rows[id].DefaultCellStyle = statsStyle;
+            id = view.Rows.Add("Attack", Stats[evol].GetAttackInfo());
+            view.Rows[id].DefaultCellStyle = statsStyle;
+            id = view.Rows.Add("Defense", Stats[evol].GetDefenseInfo());
+            view.Rows[id].DefaultCellStyle = statsStyle;
+
+            view.Rows.Add("Skill Name", GetSkillInfo(1));
+            view.Rows.Add("Skill Chance", GetSkillInfo(2));
+            id = view.Rows.Add("Skill Desc\r\nID " + Skill, GetSkillInfo(3, translation));
+            view.Rows[id].Height = (view.Rows[id].Height - 2) * 3 + 1;
+
+            id = view.Rows.Add("Ability 1\r\n\r\nID " + Ability1[evol], GetAbilitiesInfo(1, evol, translation));
+            view.Rows[id].Height = (view.Rows[id].Height - 2) * 5;
+
+            id = view.Rows.Add("Ability 2\r\n\r\nID " + Ability2[evol], GetAbilitiesInfo(2, evol, translation));
+            view.Rows[id].Height = (view.Rows[id].Height - 2) * 5;
         }
 
 
-        public string GetAbilitiesInfo(bool translation, bool noBloomed = false)
+        /// <summary>
+        /// Return (string) ablilties description
+        /// </summary>
+        /// <param name="mode">0=Both, 1=1st, 2=2nd</param>
+        /// <param name="evol"></param>
+        /// <param name="translation"></param>
+        /// <returns></returns>
+        public string GetAbilitiesInfo(int mode, int evol, bool translation = true)
         {
-            string info = "";
+            if ((evol < 0) || (evol > EvolMax)) evol = EvolMax;
 
-            int ab1 = AbilityBase;
-            int ab2 = AbilityAwak;
+            if ((mode < 0) || (mode > 2))
+                return GetAbilitiesInfo(0, evol, translation);
 
-            if (noBloomed == false)
-            {
-                if ((AbilityBloom1st != 0) && (AbilityBloom2nd != 0))
-                {
-                    ab1 = AbilityBloom1st;
-                    ab2 = AbilityBloom2nd;
-                }
-            }
+            if (mode == 0)
+                return GetAbilitiesInfo(1, evol, translation) + "\r\n\r\n" + GetAbilitiesInfo(2, evol, translation);
 
-            AbilityInfo ability;
+            int id = 0;
+            if (mode == 1) id = Ability1[evol];
+            if (mode == 2) id = Ability2[evol];
 
-            ability = Program.DB.GetAbility(ab1);
-            if (ability != null) info += ability.GetInfo(translation);
+            AbilityInfo ability = Program.DB.GetAbility(id);
+            if (ability != null) return ability.GetInfo(translation);
 
-            info += Environment.NewLine + Environment.NewLine;
-
-            ability = Program.DB.GetAbility(ab2);
-            if (ability != null) info += ability.GetInfo(translation);
-
-            return info;
+            return null;
         }
 
 
-
-        public string GetSkillInfo(bool translation)
+        /// <summary>
+        /// Return (string) skill description.
+        /// </summary>
+        /// <param name="mode">0=Full, 1=Name, 2=Chance, 3=Full Desc. By default Full.</param>
+        /// <param name="translation"></param>
+        /// <returns></returns>
+        public string GetSkillInfo(int mode = 0, bool translation = true)
         {
             SkillInfo skill = Program.DB.GetSkill(Skill);
 
-            if (skill != null) return skill.GetInfo(translation);
+            if (skill != null) return skill.GetInfo(mode, translation);
 
             return null;
         }
@@ -201,39 +233,48 @@ namespace FKG_Info
         {
             AbilityInfo ability;
 
-            ability = Program.DB.GetAbility(AbilityBase);
-            if (ability != null) if (ability.CheckTypeID(type)) return true;
+            foreach (int ab1 in Ability1)
+            {
+                ability = Program.DB.GetAbility(ab1);
+                if (ability != null) if (ability.CheckTypeID(type)) return true;
+            }
 
-            ability = Program.DB.GetAbility(AbilityAwak);
-            if (ability != null) if (ability.CheckTypeID(type)) return true;
-
-            ability = Program.DB.GetAbility(AbilityBloom1st);
-            if (ability != null) if (ability.CheckTypeID(type)) return true;
-
-            ability = Program.DB.GetAbility(AbilityBloom2nd);
-            if (ability != null) if (ability.CheckTypeID(type)) return true;
+            foreach (int ab2 in Ability2)
+            {
+                ability = Program.DB.GetAbility(ab2);
+                if (ability != null) if (ability.CheckTypeID(type)) return true;
+            }
 
             return false;
         }
+
 
 
         public bool CheckAbilityShortName(string shortName)
         {
             AbilityInfo ability;
 
-            ability = Program.DB.GetAbility(AbilityBase);
-            if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
+            foreach (int ab1 in Ability1)
+            {
+                ability = Program.DB.GetAbility(ab1);
+                if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
+            }
 
-            ability = Program.DB.GetAbility(AbilityAwak);
-            if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
-
-            ability = Program.DB.GetAbility(AbilityBloom1st);
-            if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
-
-            ability = Program.DB.GetAbility(AbilityBloom2nd);
-            if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
+            foreach (int ab2 in Ability2)
+            {
+                ability = Program.DB.GetAbility(ab2);
+                if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
+            }
 
             return false;
+        }
+
+
+        public int SelectEvolution(int evol)
+        {
+            if (evol < 0) return 0;
+            if (evol > EvolMax) return EvolMax;
+            return evol;
         }
 
 
@@ -254,7 +295,7 @@ namespace FKG_Info
 
 
         
-        public string GetImageName(Evolution evol, ImageTypes type)
+        public string GetImageName(int evol, ImageTypes type)
         {
             if (GetImageEvolID(evol) == 0) return null;
 
@@ -282,15 +323,9 @@ namespace FKG_Info
 
 
 
-        public int GetImageEvolID(Evolution evol)
+        public int GetImageEvolID(int evol)
         {
-            switch (evol)
-            {
-                case Evolution.Base: return ImageBase;
-                case Evolution.Awakened: return ImageAwakened;
-                case Evolution.Bloomed: return ImageBloomed;
-                default: return 0;
-            }
+            return ImageID[evol];
         }
 
 
@@ -567,25 +602,16 @@ namespace FKG_Info
 
         public void Update(FlowerInfo flower)
         {
-            if (Evol < flower.Evol) Stats = flower.Stats;
+            int evol = flower.Evol;
 
-            switch (flower.Evol)
-            {
-                case 1:
-                    ImageBase = flower.ImageBase;
-                    AbilityBase = flower.AbilityBase;
-                    break;
-                case 2:
-                    ImageAwakened = flower.ImageAwakened;
-                    AbilityAwak = flower.AbilityAwak;
-                    break;
-                case 3:
-                    ImageBloomed = flower.ImageBloomed;
-                    AbilityBloom1st = flower.AbilityBloom1st;
-                    AbilityBloom2nd = flower.AbilityBloom2nd;
-                    break;
-                default: break;
-            }
+            if (EvolMax < evol) EvolMax = evol;
+
+            ImageID[evol] = flower.ImageID[evol];
+
+            Ability1[evol] = flower.Ability1[evol];
+            Ability2[evol] = flower.Ability2[evol];
+
+            Stats[evol] = flower.Stats[evol];
         }
     }
 }
