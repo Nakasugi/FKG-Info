@@ -48,19 +48,41 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbilityInfo.cs" />
+    <Compile Include="AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdvPictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ComplexName.cs" />
+    <Compile Include="EquipmentInfo.cs" />
+    <Compile Include="EquipmentSelectControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EquipmentSelectControl.Designer.cs">
+      <DependentUpon>EquipmentSelectControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExportMasterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportMasterForm.Designer.cs">
+      <DependentUpon>ExportMasterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FlowerSelectControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FlowerSelectControl.Designer.cs">
+      <DependentUpon>FlowerSelectControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="FlowerStats.cs" />
+    <Compile Include="BaseInfo.cs" />
     <Compile Include="getMaster.cs" />
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="FlowerDataBase.cs" />
     <Compile Include="FlowerInfo.cs" />
-    <Compile Include="FlowerInListBox.cs" />
-    <Compile Include="FlowerSelect.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FlowerSelect.Designer.cs">
-      <DependentUpon>FlowerSelect.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,34 +90,43 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MasterData.cs" />
-    <Compile Include="MasterSummary.cs">
+    <Compile Include="MasterSummaryForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MasterSummary.Designer.cs">
-      <DependentUpon>MasterSummary.cs</DependentUpon>
+    <Compile Include="MasterSummaryForm.Designer.cs">
+      <DependentUpon>MasterSummaryForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Options.cs">
+    <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Options.Designer.cs">
-      <DependentUpon>Options.cs</DependentUpon>
+    <Compile Include="OptionsForm.Designer.cs">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkillInfo.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="XMLHelper.cs" />
-    <EmbeddedResource Include="FlowerSelect.resx">
-      <DependentUpon>FlowerSelect.cs</DependentUpon>
+    <EmbeddedResource Include="AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EquipmentSelectControl.resx">
+      <DependentUpon>EquipmentSelectControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportMasterForm.resx">
+      <DependentUpon>ExportMasterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FlowerSelectControl.resx">
+      <DependentUpon>FlowerSelectControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MasterSummary.resx">
-      <DependentUpon>MasterSummary.cs</DependentUpon>
+    <EmbeddedResource Include="MasterSummaryForm.resx">
+      <DependentUpon>MasterSummaryForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Options.resx">
-      <DependentUpon>Options.cs</DependentUpon>
+    <EmbeddedResource Include="OptionsForm.resx">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -133,7 +164,27 @@
     <None Include="Images\Magic.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Images\icon_l_default.png" />
+    <None Include="Images\equip_default.png" />
+    <None Include="Images\ice_bracelet.png" />
+    <None Include="Images\ice_earrings.png" />
+    <None Include="Images\ice_necklace.png" />
+    <None Include="Images\ice_ring.png" />
+    <None Include="Images\equip_personal.png" />
+    <None Include="Images\equip_weapon.png" />
     <Content Include="Images\Nerine.ico" />
+    <None Include="Images\NerineAbout\nerine_ab_02_03.png" />
+    <None Include="Images\NerineAbout\nerine_ab_02_02.png" />
+    <None Include="Images\NerineAbout\nerine_ab_02_01.png" />
+    <None Include="Images\NerineAbout\nerine_ab_02_00.png" />
+    <None Include="Images\NerineAbout\nerine_ab_01_03.png" />
+    <None Include="Images\NerineAbout\nerine_ab_01_02.png" />
+    <None Include="Images\NerineAbout\nerine_ab_01_01.png" />
+    <None Include="Images\NerineAbout\nerine_ab_01_00.png" />
+    <None Include="Images\NerineAbout\nerine_ab_00_03.png" />
+    <None Include="Images\NerineAbout\nerine_ab_00_02.png" />
+    <None Include="Images\NerineAbout\nerine_ab_00_01.png" />
+    <None Include="Images\NerineAbout\nerine_ab_00_00.png" />
     <None Include="Images\Stars_6.png" />
     <None Include="Images\Stars_5.png" />
     <None Include="Images\Stars_4.png" />

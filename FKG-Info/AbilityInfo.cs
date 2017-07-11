@@ -1,9 +1,7 @@
 ﻿namespace FKG_Info
 {
-    public class AbilityInfo
+    public class AbilityInfo : BaseInfo
     {
-        public int ID { get; private set; }
-
         private string KInfo;
 
         private int[] Params;
@@ -12,6 +10,8 @@
         
         public AbilityInfo()
         {
+            BaseType = ObjectType.Ability;
+
             KInfo = null;
             Params = new int[8];
         }

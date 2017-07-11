@@ -7,84 +7,129 @@ using System.Threading;
 
 namespace FKG_Info
 {
-    class ImageDownloader
+    public class ImageDownloader
     {
-        class DownloadedFile
+        private const int MAX_LOADERS_CH = 16;
+        private const int MAX_LOADERS_EQ = 32;
+
+        public class DownloadedFile
         {
             public string Name;
-            public Image Img;
+            public Image Image;
         }
 
 
 
-        List<DownloadedFile> Files;
+        List<DownloadedFile> ChFiles;
+        List<DownloadedFile> EqFiles;
 
         private object Locker = new object();
 
+        public int Count { get; private set; }
+        public int Queue { get; private set; }
 
 
-        public delegate void DownloadCompletedCallback(Image img);
+        public delegate void DownloadCompletedCallback(DownloadedFile ifile);
 
 
 
         public ImageDownloader()
         {
-            Files = new List<DownloadedFile>();
+            ChFiles = new List<DownloadedFile>();
+            EqFiles = new List<DownloadedFile>();
+
+            Count = 0;
         }
 
 
 
-        public void GetImage(string fname, DownloadCompletedCallback cbDelegate)
+        public void GetChImage(string fname, DownloadCompletedCallback cbDelegate)
         {
-            if (fname == null) { cbDelegate?.Invoke(null); return; }
+            if (GetImage(fname, ChFiles, cbDelegate)) return;
 
-            DownloadedFile file = Files.Find(f => f.Name == fname);
-
-            if (file != null)
-            {
-                cbDelegate?.Invoke(file.Img);
-                return;
-            }
-
-            Thread th = new Thread(() => Download(fname, cbDelegate));
-            th.Name = "FKG Downloder";
+            Thread th = new Thread(() => ChDownload(fname, cbDelegate));
+            th.Name = "FKG Chara Downloder";
             th.Start();
         }
 
 
 
-        void Download(string fname, DownloadCompletedCallback cbDelegate)
+        public void GetEqImage(string fname, DownloadCompletedCallback cbDelegate)
+        {
+            if (GetImage(fname, EqFiles, cbDelegate)) return;
+
+            Thread th = new Thread(() => EqDownload(fname, cbDelegate));
+            th.Name = "FKG Equip Downloder";
+            th.Start();
+        }
+
+
+
+        private bool GetImage(string fname, List<DownloadedFile> files, DownloadCompletedCallback cbDelegate)
+        {
+            if (fname == null) { cbDelegate?.Invoke(null); return true; }
+
+            DownloadedFile file;
+
+            lock (Locker) file = files.Find(f => f.Name == fname);
+
+            if (file != null)
+            {
+                cbDelegate?.Invoke(file);
+                return true;
+            }
+
+            return false;
+        }
+
+
+
+
+        /// <summary>
+        /// Downloading character images and icons
+        /// </summary>
+        /// <param name="fname"></param>
+        /// <param name="cbDelegate"></param>
+        void ChDownload(string fname, DownloadCompletedCallback cbDelegate)
         {
             DownloadedFile file = new DownloadedFile();
+
             file.Name = fname;
 
-            string path = Program.DB.ImagesFolder + "\\" + fname + ".png";
+            string path = Program.DB.ImagesFolder, suffix = "s/";
+
+            string checkIcon = fname.Substring(0, 4);
+            if (checkIcon == "icon")
+            {
+                suffix = "i/";
+                path = Program.DB.IconsFolder;
+            }
+            path += "\\" + fname + ".png";
 
             try
             {
-                file.Img = Image.FromFile(path);
+                file.Image = Image.FromFile(path);
             }
             catch
             {
-                file.Img = null;
+                file.Image = null;
             }
 
 
-            if (file.Img == null)
+            if (file.Image == null)
             {
+                lock (Locker) Queue++;
+                while (Count >= MAX_LOADERS_CH)
+                {
+                    if (!Program.DB.Running) return;
+
+                    Thread.Sleep(200 + 10 * Queue);
+                }
+                lock (Locker) Count++;
+
                 WebClient wc = new WebClient();
 
-                string hashname = StringHelper.GetHash(fname) + ".bin";
-
-                string checkIcon = fname.Substring(0, 4);
-                if (checkIcon == "icon")
-                {
-                    hashname = "i/" + hashname;
-                }
-                else
-                {
-                    hashname = "s/" + hashname;
-                }
+                string hashname = suffix + StringHelper.GetMD5Hash(fname) + ".bin";
 
                 string url1 = null, url2 = null;
 
@@ -96,7 +141,10 @@ namespace FKG_Info
                     case FlowerDataBase.ImageSources.DMM: url1 = Program.DB.DMMURL + hashname; break;
                     case FlowerDataBase.ImageSources.DMMNutaku: url2 = Program.DB.NutakuURL + hashname; goto case FlowerDataBase.ImageSources.DMM;
 
-                    default: return;
+                    default:
+                        lock (Locker) { Count--; Queue--; }
+                        cbDelegate?.Invoke(null);
+                        return;
                 }
 
 
@@ -123,46 +171,157 @@ namespace FKG_Info
 
                 try
                 {
-                    file.Img = Image.FromStream(stream);
+                    file.Image = Image.FromStream(stream);
                 }
                 catch
                 {
-                    file.Img = null;
+                    file.Image = null;
                 }
+
+                lock (Locker) { Count--; Queue--; }
             }
 
 
-            if (file.Img != null)
+            if (file.Image != null)
             {
-                lock (Locker)
-                {
-                    Files.Add(file);
-                }
-
-                if (Program.DB.StoreDownloaded) Save(file);
+                lock (Locker) ChFiles.Add(file);
+                SaveFile(file.Image, path);
             }
 
-
-            cbDelegate?.Invoke(file.Img);
+            cbDelegate?.Invoke(file);
         }
 
 
 
-        private void Save(DownloadedFile file)
+        /// <summary>
+        /// Downloading quipment images
+        /// </summary>
+        /// <param name="eq"></param>
+        /// <param name="cbDelegate"></param>
+        void EqDownload(string fname, DownloadCompletedCallback cbDelegate)
         {
-            string path = Program.DB.ImagesFolder + "\\" + file.Name + ".png";
+            DownloadedFile file = new DownloadedFile();
 
-            if (File.Exists(path)) return;
+            file.Name = fname;
+            string path = Program.DB.EquipFolder + "\\" + fname + ".png";
 
             try
             {
-                file.Img.Save(path, System.Drawing.Imaging.ImageFormat.Png);
+                file.Image = Image.FromFile(path);
             }
-            catch { }
+            catch
+            {
+                file.Image = null;
+            }
+
+
+            if (file.Image == null)
+            {
+
+                lock (Locker) Queue++;
+                while (Count >= MAX_LOADERS_EQ)
+                {
+                    if (!Program.DB.Running) return;
+
+                    Thread.Sleep(200 + 10 * Queue);
+                }
+                lock (Locker) Count++;
+
+                WebClient wc = new WebClient();
+
+
+                string url1 = null, url2 = null;
+
+                switch (Program.DB.ImageSource)
+                {
+                    case FlowerDataBase.ImageSources.Nutaku: url1 = Program.DB.NutakuURL; break;
+                    case FlowerDataBase.ImageSources.NutakuDMM: url2 = Program.DB.DMMURL; goto case FlowerDataBase.ImageSources.Nutaku;
+
+                    case FlowerDataBase.ImageSources.DMM: url1 = Program.DB.DMMURL; break;
+                    case FlowerDataBase.ImageSources.DMMNutaku: url2 = Program.DB.NutakuURL; goto case FlowerDataBase.ImageSources.DMM;
+
+                    default:
+                        lock (Locker) { Count--; Queue--; }
+                        cbDelegate?.Invoke(null);
+                        return;
+                }
+
+                url1 = url1.Replace("character/", "") + "item/100x100/" + fname + ".png";
+                url2 = url2.Replace("character/", "") + "item/100x100/" + fname + ".png";
+
+
+                MemoryStream stream;
+                byte[] buffer;
+
+                try
+                {
+                    buffer = wc.DownloadData(url1);
+                    stream = new MemoryStream(buffer);
+                }
+                catch
+                {
+                    try
+                    {
+                        {
+                            buffer = wc.DownloadData(url2);
+                            stream = new MemoryStream(buffer);
+                        }
+                    }
+                    catch { stream = null; }
+                }
+
+
+                try
+                {
+                    file.Image = Image.FromStream(stream);
+                }
+                catch
+                {
+                    file.Image = null;
+                }
+
+                lock (Locker) { Count--; Queue--; }
+            }
+
+
+            if (file.Image != null)
+            {
+                lock (Locker) EqFiles.Add(file);
+                SaveFile(file.Image, path);
+            }
+
+            cbDelegate?.Invoke(file);
         }
 
 
 
+        /// <summary>
+        /// Saving image if needed
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="path"></param>
+        private void SaveFile(Image image, string path)
+        {
+            if (Program.DB.StoreDownloaded)
+            {
+                if (!File.Exists(path))
+                {
+                    try
+                    {
+                        image.Save(path, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+
+
+        /// <summary>
+        /// Extract Zip
+        /// </summary>
+        /// <param name="srcStream"></param>
+        /// <returns></returns>
         static MemoryStream DeflateSream(MemoryStream srcStream)
         {
             MemoryStream dstStream = new MemoryStream();

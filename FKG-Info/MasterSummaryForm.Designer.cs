@@ -1,6 +1,6 @@
 ﻿namespace FKG_Info
 {
-    partial class MasterSummary
+    partial class MasterSummaryForm
     {
         /// <summary>
         /// Required designer variable.

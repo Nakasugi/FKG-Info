@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace FKG_Info
 {
-    public partial class MasterSummary : Form
+    public partial class MasterSummaryForm : Form
     {
-        public MasterSummary()
+        public MasterSummaryForm()
         {
             InitializeComponent();
         }

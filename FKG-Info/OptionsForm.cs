@@ -3,12 +3,14 @@ using System.Windows.Forms;
 
 namespace FKG_Info
 {
-    public partial class Options : Form
+    public partial class OptionsForm : Form
     {
-        public Options()
+        public OptionsForm()
         {
             InitializeComponent();
         }
+
+
 
         private void Options_Load(object sender, EventArgs ev)
         {
@@ -27,12 +29,9 @@ namespace FKG_Info
 
                 default: RdBtLocal.Checked = true; break;
             }
-
-
-            TxBoxGame01Name.Text = Program.DB.Game01Name;
-            TxBoxGame02Name.Text = Program.DB.Game02Name;
-            TxBoxGame03Name.Text = Program.DB.Game03Name;
         }
+
+
 
         private void BtOk_Click(object sender, EventArgs ev)
         {
@@ -59,51 +58,9 @@ namespace FKG_Info
             if (RdBtDMM.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.DMM;
             if (RdBtDMMNutaku.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.DMMNutaku;
 
-            Program.DB.Game01Name = TxBoxGame01Name.Text;
-            Program.DB.Game02Name = TxBoxGame02Name.Text;
-            Program.DB.Game03Name = TxBoxGame03Name.Text;
-
-            Program.DB.Save();
+            Program.DB.SaveOptions();
 
             Close();
         }
-
-
-
-        /*
-        private void BtImportDMM_Click(object sender, EventArgs ev)
-        {
-            OpenFileDialog of = new OpenFileDialog();
-
-
-            of.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-            of.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            of.FilterIndex = 0;
-            of.Multiselect = false;
-            of.RestoreDirectory = true;
-
-            if (of.ShowDialog() != DialogResult.OK) return;
-
-            System.IO.FileStream fs;
-            System.IO.StreamReader rd;
-
-            try
-            {
-                fs = new System.IO.FileStream(of.FileName, System.IO.FileMode.Open);
-                rd = new System.IO.StreamReader(fs);
-            }
-            catch { return; }
-
-            string st;
-
-            while (!rd.EndOfStream)
-            {
-                st = rd.ReadLine();
-                Program.DataBase.Add(new FlowerInfo(st));
-            }
-
-            rd.Close();
-        }
-        */
     }
 }

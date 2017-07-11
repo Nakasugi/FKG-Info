@@ -98,7 +98,7 @@ namespace FKG_Info
         
         
 
-        public string GetMasterData(string masterName)
+        public string GetData(string masterName)
         {
             return Data.Find(D => D.Name == masterName).Data;
         }
@@ -116,7 +116,7 @@ namespace FKG_Info
 
         public void Export(string masterName, string fileName)
         {
-            File.WriteAllText(fileName, GetMasterData(masterName));
+            File.WriteAllText(fileName, GetData(masterName));
         }
     }
 }

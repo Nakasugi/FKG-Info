@@ -4,11 +4,10 @@
 
 namespace FKG_Info
 {
-    public class FlowerInfo : IComparable
+    public class FlowerInfo : BaseInfo
     {
         public ComplexName Name;
  
-        public int ID { get; private set; }
         public int Rarity{ get; private set; }
         public int Nation { get; private set; }
         public int AttackType { get; private set; }
@@ -87,6 +86,8 @@ namespace FKG_Info
 
         public FlowerInfo()
         {
+            BaseType = ObjectType.Flower;
+
             ID = 0;
             EvolMax = 0;
 
@@ -181,6 +182,10 @@ namespace FKG_Info
 
             id = view.Rows.Add("Ability 2\r\n\r\nID " + Ability2[evol], GetAbilitiesInfo(2, evol, translation));
             view.Rows[id].Height = (view.Rows[id].Height - 2) * 5;
+
+            EquipmentInfo eq = Program.DB.GetFlowerEquipment(ID);
+            if (eq != null) view.Rows.Add("Equipment", eq.KName);
+            
         }
 
 
@@ -270,6 +275,11 @@ namespace FKG_Info
         }
 
 
+
+        
+
+
+
         public int SelectEvolution(int evol)
         {
             if (evol < 0) return 0;
@@ -333,9 +343,11 @@ namespace FKG_Info
         //======================================================
         // IComparable:
         //======================================================
-        public int CompareTo(object obj)
+        public override int CompareTo(object obj)
         {
             FlowerInfo cmpFlower = obj as FlowerInfo;
+
+            if (cmpFlower == null) return 0;
 
             // Top rare first
             if (Rarity < cmpFlower.Rarity) return 1;
@@ -347,9 +359,10 @@ namespace FKG_Info
             //string S0 = Name.Romaji.Substring(0, 2);
             //string S1 = Flower.Name.Romaji.Substring(0, 2);
             int Res = String.Compare(Name.Romaji, cmpFlower.Name.Romaji);
-            if (Res != 0) return Res;
+
+            if (Res == 0) return base.CompareTo(obj);
                  
-            return 0;
+            return Res;
         }
 
 

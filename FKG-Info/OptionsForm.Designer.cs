@@ -1,6 +1,6 @@
 ﻿namespace FKG_Info
 {
-    partial class Options
+    partial class OptionsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -41,12 +41,6 @@
             this.RdBtDMMNutaku = new System.Windows.Forms.RadioButton();
             this.ChBoxSaveDw = new System.Windows.Forms.CheckBox();
             this.BtOk = new System.Windows.Forms.Button();
-            this.TxBoxGame01Name = new System.Windows.Forms.TextBox();
-            this.TxBoxGame02Name = new System.Windows.Forms.TextBox();
-            this.TxBoxGame03Name = new System.Windows.Forms.TextBox();
-            this._TXBoxInfo05 = new System.Windows.Forms.TextBox();
-            this._TXBoxInfo06 = new System.Windows.Forms.TextBox();
-            this._TXBoxInfo07 = new System.Windows.Forms.TextBox();
             this.TxBoxDataFolder = new System.Windows.Forms.TextBox();
             this._TXBoxInfo02 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -179,63 +173,6 @@
             this.BtOk.UseVisualStyleBackColor = true;
             this.BtOk.Click += new System.EventHandler(this.BtOk_Click);
             // 
-            // TxBoxGame01Name
-            // 
-            this.TxBoxGame01Name.Location = new System.Drawing.Point(356, 220);
-            this.TxBoxGame01Name.Name = "TxBoxGame01Name";
-            this.TxBoxGame01Name.Size = new System.Drawing.Size(128, 20);
-            this.TxBoxGame01Name.TabIndex = 10;
-            // 
-            // TxBoxGame02Name
-            // 
-            this.TxBoxGame02Name.Location = new System.Drawing.Point(356, 246);
-            this.TxBoxGame02Name.Name = "TxBoxGame02Name";
-            this.TxBoxGame02Name.Size = new System.Drawing.Size(128, 20);
-            this.TxBoxGame02Name.TabIndex = 11;
-            // 
-            // TxBoxGame03Name
-            // 
-            this.TxBoxGame03Name.Location = new System.Drawing.Point(356, 272);
-            this.TxBoxGame03Name.Name = "TxBoxGame03Name";
-            this.TxBoxGame03Name.Size = new System.Drawing.Size(128, 20);
-            this.TxBoxGame03Name.TabIndex = 12;
-            // 
-            // _TXBoxInfo05
-            // 
-            this._TXBoxInfo05.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this._TXBoxInfo05.Location = new System.Drawing.Point(302, 220);
-            this._TXBoxInfo05.Name = "_TXBoxInfo05";
-            this._TXBoxInfo05.ReadOnly = true;
-            this._TXBoxInfo05.Size = new System.Drawing.Size(48, 20);
-            this._TXBoxInfo05.TabIndex = 99;
-            this._TXBoxInfo05.TabStop = false;
-            this._TXBoxInfo05.Text = "Game01";
-            this._TXBoxInfo05.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // _TXBoxInfo06
-            // 
-            this._TXBoxInfo06.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this._TXBoxInfo06.Location = new System.Drawing.Point(302, 246);
-            this._TXBoxInfo06.Name = "_TXBoxInfo06";
-            this._TXBoxInfo06.ReadOnly = true;
-            this._TXBoxInfo06.Size = new System.Drawing.Size(48, 20);
-            this._TXBoxInfo06.TabIndex = 99;
-            this._TXBoxInfo06.TabStop = false;
-            this._TXBoxInfo06.Text = "Game02";
-            this._TXBoxInfo06.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // _TXBoxInfo07
-            // 
-            this._TXBoxInfo07.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this._TXBoxInfo07.Location = new System.Drawing.Point(302, 272);
-            this._TXBoxInfo07.Name = "_TXBoxInfo07";
-            this._TXBoxInfo07.ReadOnly = true;
-            this._TXBoxInfo07.Size = new System.Drawing.Size(48, 20);
-            this._TXBoxInfo07.TabIndex = 99;
-            this._TXBoxInfo07.TabStop = false;
-            this._TXBoxInfo07.Text = "Game03";
-            this._TXBoxInfo07.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
             // TxBoxDataFolder
             // 
             this.TxBoxDataFolder.Location = new System.Drawing.Point(12, 90);
@@ -254,7 +191,7 @@
             this._TXBoxInfo02.TabStop = false;
             this._TXBoxInfo02.Text = "Data base files folder";
             // 
-            // Options
+            // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -262,12 +199,6 @@
             this.ControlBox = false;
             this.Controls.Add(this.TxBoxDataFolder);
             this.Controls.Add(this._TXBoxInfo02);
-            this.Controls.Add(this._TXBoxInfo07);
-            this.Controls.Add(this._TXBoxInfo06);
-            this.Controls.Add(this._TXBoxInfo05);
-            this.Controls.Add(this.TxBoxGame03Name);
-            this.Controls.Add(this.TxBoxGame02Name);
-            this.Controls.Add(this.TxBoxGame01Name);
             this.Controls.Add(this.BtOk);
             this.Controls.Add(this.ChBoxSaveDw);
             this.Controls.Add(this.RdBtDMMNutaku);
@@ -284,7 +215,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Options";
+            this.Name = "OptionsForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -310,12 +241,6 @@
         private System.Windows.Forms.RadioButton RdBtDMMNutaku;
         private System.Windows.Forms.CheckBox ChBoxSaveDw;
         private System.Windows.Forms.Button BtOk;
-        private System.Windows.Forms.TextBox TxBoxGame01Name;
-        private System.Windows.Forms.TextBox TxBoxGame02Name;
-        private System.Windows.Forms.TextBox TxBoxGame03Name;
-        private System.Windows.Forms.TextBox _TXBoxInfo05;
-        private System.Windows.Forms.TextBox _TXBoxInfo06;
-        private System.Windows.Forms.TextBox _TXBoxInfo07;
         private System.Windows.Forms.TextBox TxBoxDataFolder;
         private System.Windows.Forms.TextBox _TXBoxInfo02;
     }

@@ -10,8 +10,11 @@ namespace FKG_Info
         public List<FlowerInfo> Flowers;
         public List<SkillInfo> Skills;
         public List<AbilityInfo> Abilities;
+        public List<EquipmentInfo> Equipments;
 
         public MasterData Master;
+
+        public bool Running;
 
 
         int Selected;
@@ -21,13 +24,10 @@ namespace FKG_Info
         public string NutakuURL;
         public string ImagesFolder;
         public string DataFolder;
+        public string IconsFolder;
+        public string EquipFolder;
 
         private string DefaultFolder;
-
-
-        public string Game01Name;
-        public string Game02Name;
-        public string Game03Name;
 
 
 
@@ -44,6 +44,15 @@ namespace FKG_Info
         public int _masterSkillLines;
         public int _masterAbililyFields;
         public int _masterAbilityLines;
+
+
+
+        public bool SelectorR2;
+        public bool SelectorR3;
+        public bool SelectorR4;
+        public bool SelectorR5;
+        public bool SelectorR6;
+
 
 
 
@@ -66,18 +75,28 @@ namespace FKG_Info
             public const string DataFolder = "DataFolder";
             public const string ImageSource = "ImageSource";
             public const string StoreDownloaded = "StoreDownloaded";
-            public const string Game01Name = "Game01Name";
-            public const string Game02Name = "Game02Name";
-            public const string Game03Name = "Game03Name";
         };
+
+
+
+        struct FolderNames
+        {
+            public const string Data = "Data";
+            public const string Images = "Images";
+            public const string Icons = "Icons";
+            public const string Equip = "Equipment";
+        }
 
 
 
         public FlowerDataBase()
         {
+            Running = true;
+
             Flowers = new List<FlowerInfo>();
             Skills = new List<SkillInfo>();
             Abilities = new List<AbilityInfo>();
+            Equipments = new List<EquipmentInfo>();
 
             TranslationAbilities = new List<TranslationInfo>();
 
@@ -85,74 +104,74 @@ namespace FKG_Info
             NutakuURL = "http://cdn.flowerknight.nutaku.net/bin/commons/images/character/";
 
             DefaultFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
-            ImagesFolder = DefaultFolder + "\\Images";
-            DataFolder = DefaultFolder + "\\Data";
+            DataFolder = DefaultFolder + "\\" + FolderNames.Data;
+            ImagesFolder = DefaultFolder + "\\" + FolderNames.Images;
+            IconsFolder = ImagesFolder + "\\" + FolderNames.Icons;
+            EquipFolder = ImagesFolder + "\\" + FolderNames.Equip;
 
-            ImageSource = ImageSources.Local;
-            StoreDownloaded = false;
+            ImageSource = ImageSources.NutakuDMM;
+            StoreDownloaded = true;
 
 
             _masterCharaLines = _masterCharaFields = 0;
             _masterSkillLines = _masterSkillFields = 0;
             _masterAbilityLines = _masterAbililyFields = 0;
 
+            SelectorR2 = SelectorR3 = SelectorR4 = SelectorR5 = SelectorR6 = true;
+
             Unselect();
         }
 
 
 
-        private void Add(FlowerInfo newFlower)
+        private void Add(BaseInfo newInfo)
         {
-            if (newFlower.ID == 0) return;
+            if (newInfo.ID == 0) return;
 
-            FlowerInfo exist = Flowers.Find(f => f.ID == newFlower.ID);
+            switch (newInfo.BaseType)
+            {
+                case BaseInfo.ObjectType.Flower:
+                    FlowerInfo flower = Flowers.Find(f => f.ID == newInfo.ID);
+                    if (flower == null)
+                    {
+                        Flowers.Add((FlowerInfo)newInfo);
+                    }
+                    else
+                    {
+                        flower.Update((FlowerInfo)newInfo);
+                    }
+                    break;
+                case BaseInfo.ObjectType.Skill:
+                    SkillInfo skill = Skills.Find(sk => sk.ID == newInfo.ID);
+                    if (skill == null) Skills.Add((SkillInfo)newInfo);
+                    break;
+                case BaseInfo.ObjectType.Ability:
+                    AbilityInfo ability = Abilities.Find(ab => ab.ID == newInfo.ID);
+                    if (ability == null) Abilities.Add((AbilityInfo)newInfo);
+                    break;
+                case BaseInfo.ObjectType.Equipment:
+                    EquipmentInfo exist = Equipments.Find(eq => eq.ID == newInfo.ID);
+                    if (exist == null) Equipments.Add((EquipmentInfo)newInfo);
+                    break;
+                default: break;
+            }
 
-            if (exist == null)
-            {
-                Flowers.Add(newFlower);
-            }
-            else
-            {
-                exist.Update(newFlower);
-            }
         }
 
 
 
-        private void Add(SkillInfo newSkill)
-        {
-            if (newSkill.ID == 0) return;
-
-            SkillInfo exist = Skills.Find(f => f.ID == newSkill.ID);
-
-            if (exist == null)
-            {
-                Skills.Add(newSkill);
-            }
-        }
-
-
-
-        private void Add(AbilityInfo newAbility)
-        {
-            if (newAbility.ID == 0) return;
-
-            AbilityInfo exist = Abilities.Find(f => f.ID == newAbility.ID);
-
-            if (exist == null)
-            {
-                Abilities.Add(newAbility);
-            }
-        }
-
-        
-        
         public FlowerInfo GetSelected() { if (IsSelected()) return Flowers[Selected]; return null; }
         public void Select(int n) { Selected = n; }
         public void Select(FlowerInfo flower) { Selected = Flowers.IndexOf(flower); }
         public void Unselect() { Selected = -1; }
         public bool IsSelected() { return Selected != -1; }
 
+
+
+        public EquipmentInfo GetFlowerEquipment(int flowerID)
+        {
+            return Equipments.Find(eq => eq.ChekFlowerID(flowerID));
+        }
 
 
         public SkillInfo GetSkill(int id = -1)
@@ -249,7 +268,7 @@ namespace FKG_Info
 
 
         
-        static public FlowerDataBase Load(string fileName = "info.xml")
+        static public FlowerDataBase Load(string fileName = "options.xml")
         {
             FlowerDataBase db = new FlowerDataBase();
 
@@ -266,10 +285,6 @@ namespace FKG_Info
                 db.ImagesFolder = XmlHelper.GetText(opt, NodeName.ImagesFolder);
                 db.DataFolder = XmlHelper.GetText(opt, NodeName.DataFolder);
 
-                db.Game01Name = XmlHelper.GetText(opt, NodeName.Game01Name);
-                db.Game02Name = XmlHelper.GetText(opt, NodeName.Game02Name);
-                db.Game03Name = XmlHelper.GetText(opt, NodeName.Game03Name);
-
                 if (XmlHelper.GetText(opt, NodeName.StoreDownloaded) == "True") db.StoreDownloaded = true;
 
                 try
@@ -280,6 +295,9 @@ namespace FKG_Info
                 {
                     db.ImageSource = ImageSources.Local;
                 }
+
+                db.IconsFolder = db.ImagesFolder + "\\" + FolderNames.Icons;
+                db.EquipFolder = db.ImagesFolder + "\\" + FolderNames.Equip;
 
                 /*
                 XmlNodeList nodeList = xmlData.DocumentElement.SelectNodes("//Flower");
@@ -293,38 +311,28 @@ namespace FKG_Info
             }
 
 
-            if (!Directory.Exists(db.DataFolder))
+            if(!CheckFolder(db.DataFolder))
             {
-                db.DataFolder = db.DefaultFolder + "\\Data";
-
-                if (!Directory.Exists(db.DataFolder))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(db.DataFolder);
-                    }
-                    catch (Exception exp)
-                    {
-                        System.Windows.Forms.MessageBox.Show(exp.Message, "Directory Error");
-                    }
-                }
+                db.DataFolder = db.DefaultFolder + "\\" + FolderNames.Data;
+                CheckFolder(db.DataFolder);
             }
 
-            if (!Directory.Exists(db.ImagesFolder))
+            if (!CheckFolder(db.ImagesFolder))
             {
-                db.ImagesFolder = db.DefaultFolder + "\\Images";
+                db.ImagesFolder = db.DefaultFolder + "\\" + FolderNames.Images;
+                CheckFolder(db.ImagesFolder);
+            }
 
-                if (!Directory.Exists(db.ImagesFolder))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(db.ImagesFolder);
-                    }
-                    catch (Exception exp)
-                    {
-                        System.Windows.Forms.MessageBox.Show(exp.Message, "Directory Error");
-                    }
-                }
+            if (!CheckFolder(db.IconsFolder))
+            {
+                db.IconsFolder = db.ImagesFolder + "\\" + FolderNames.Icons;
+                CheckFolder(db.IconsFolder);
+            }
+
+            if (!CheckFolder(db.EquipFolder))
+            {
+                db.EquipFolder = db.ImagesFolder + "\\" + FolderNames.Equip;
+                CheckFolder(db.EquipFolder);
             }
 
             //db.LoadCharacters();
@@ -334,9 +342,10 @@ namespace FKG_Info
             db.Master = new MasterData(db.DataFolder + "\\dmmMaster.bin");
             if (db.Master.Ok)
             {
-                db.LoadCharacters(db.Master.GetMasterData("masterCharacter"));
-                db.LoadSkills(db.Master.GetMasterData("masterCharacterSkill"));
-                db.LoadAbilities(db.Master.GetMasterData("masterCharacterLeaderSkill"));
+                db.LoadMasterData(db.Master.GetData("masterCharacter"), BaseInfo.ObjectType.Flower);
+                db.LoadMasterData(db.Master.GetData("masterCharacterSkill"), BaseInfo.ObjectType.Skill);
+                db.LoadMasterData(db.Master.GetData("masterCharacterLeaderSkill"), BaseInfo.ObjectType.Ability);
+                db.LoadMasterData(db.Master.GetData("masterCharacterEquipment"), BaseInfo.ObjectType.Equipment);
 
                 db.LoadNutakuNames();
             }
@@ -347,13 +356,38 @@ namespace FKG_Info
             db.TranslationSkills = LoadTranslation(db.DataFolder + "\\en_skills.txt");
             db.LoadCharaNamesTranslation();
 
+
+            EquipmentInfo.SearchSets(db.Equipments);
+
+
             return db;
         }
 
 
-        public void Save(string fileName = "info.xml")
+
+        public static bool CheckFolder(string folder)
         {
-            string bakName = "info_bak.xml";
+            if (!Directory.Exists(folder))
+            {
+                try
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                catch (Exception exp)
+                {
+                    System.Windows.Forms.MessageBox.Show(exp.Message, "Directory Error");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+
+        public void SaveOptions(string fileName = "options.xml")
+        {
+            string bakName = "options_bak.xml";
 
             if (File.Exists(bakName)) File.Delete(bakName);
             if (File.Exists(fileName)) File.Move(fileName, bakName);
@@ -373,9 +407,6 @@ namespace FKG_Info
             xmlWriter.WriteElementString(NodeName.DataFolder, DataFolder);
             xmlWriter.WriteElementString(NodeName.ImageSource, ImageSource.ToString());
             xmlWriter.WriteElementString(NodeName.StoreDownloaded, StoreDownloaded.ToString());
-            xmlWriter.WriteElementString(NodeName.Game01Name, Game01Name);
-            xmlWriter.WriteElementString(NodeName.Game02Name, Game02Name);
-            xmlWriter.WriteElementString(NodeName.Game03Name, Game03Name);
             xmlWriter.WriteEndElement();
 
             /*
@@ -487,83 +518,47 @@ namespace FKG_Info
 
 
         /// <summary>
-        /// Loading Characters from Master data
+        /// Loading Master Data
         /// </summary>
         /// <param name="masterData"></param>
-        private void LoadCharacters(string masterData)
+        /// <param name="baseType"></param>
+        private void LoadMasterData(string masterData, BaseInfo.ObjectType baseType)
         {
             string masterLine;
 
-            try
+            StringReader rd = new StringReader(masterData);
+            while (true)
             {
-                StringReader rd = new StringReader(masterData);
-                while (true)
-                {
-                    masterLine = rd.ReadLine();
-                    if (masterLine == null) break;
-                    Add(new FlowerInfo(masterLine.Split(',')));
+                masterLine = rd.ReadLine();
+                if (masterLine == null) break;
 
-                    if (_masterCharaFields < masterLine.Length) _masterCharaFields = masterLine.Length;
-                    _masterCharaLines++;
+                
+                switch (baseType)
+                {
+                    case BaseInfo.ObjectType.Flower:
+                        Add(new FlowerInfo(masterLine.Split(',')));
+                        if (_masterCharaFields < masterLine.Length) _masterCharaFields = masterLine.Length;
+                        _masterCharaLines++;
+                        break;
+                    case BaseInfo.ObjectType.Skill:
+                        Add(new SkillInfo(masterLine.Split(',')));
+                        if (_masterSkillFields < masterLine.Length) _masterSkillFields = masterLine.Length;
+                        _masterSkillLines++;
+                        break;
+                    case BaseInfo.ObjectType.Ability:
+                        Add(new AbilityInfo(masterLine.Split(',')));
+                        if (_masterAbililyFields < masterLine.Length) _masterAbililyFields = masterLine.Length;
+                        _masterAbilityLines++;
+                        break;
+                    case BaseInfo.ObjectType.Equipment:
+                        Add(new EquipmentInfo(masterLine.Split(',')));
+                        break;
+                    default: break;
                 }
-                rd.Close();
             }
-            catch { }
+            rd.Close();
         }
 
-
-
-        /// <summary>
-        /// Loading Skills from Master data
-        /// </summary>
-        /// <param name="masterData"></param>
-        private void LoadSkills(string masterData)
-        {
-            string masterLine;
-
-            try
-            {
-                StringReader rd = new StringReader(masterData);
-                while (true)
-                {
-                    masterLine = rd.ReadLine();
-                    if (masterLine == null) break;
-                    Add(new SkillInfo(masterLine.Split(',')));
-
-                    if (_masterSkillFields < masterLine.Length) _masterSkillFields = masterLine.Length;
-                    _masterSkillLines++;
-                }
-                rd.Close();
-            }
-            catch { }
-        }
-
-
-
-        /// <summary>
-        /// Loading Abilities from Master data
-        /// </summary>
-        /// <param name="masterData"></param>
-        private void LoadAbilities(string masterData)
-        {
-            string masterLine;
-
-            try
-            {
-                StringReader rd = new StringReader(masterData);
-                while (true)
-                {
-                    masterLine = rd.ReadLine();
-                    if (masterLine == null) break;
-                    Add(new AbilityInfo(masterLine.Split(',')));
-
-                    if (_masterAbililyFields < masterLine.Length) _masterAbililyFields = masterLine.Length;
-                    _masterAbilityLines++;
-                }
-                rd.Close();
-            }
-            catch { }
-        }
 
 
         /// <summary>
@@ -579,7 +574,7 @@ namespace FKG_Info
             FlowerInfo flower;
             int chID;
             string chLine;
-            string characters = nutaku.GetMasterData("masterCharacter");
+            string characters = nutaku.GetData("masterCharacter");
             StringReader rd = new StringReader(characters);
 
             while (true)

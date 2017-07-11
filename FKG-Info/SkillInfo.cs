@@ -1,9 +1,7 @@
 ﻿namespace FKG_Info
 {
-    public class SkillInfo
+    public class SkillInfo : BaseInfo
     {
-        public int ID { get; private set; }
-
         public string KName;
         public string KInfo;
 
@@ -18,6 +16,8 @@
 
         public SkillInfo()
         {
+            BaseType = ObjectType.Skill;
+
             Params = new int[3];
         }
 
@@ -66,8 +66,11 @@
                     if (translation)
                     {
                         string tr = Program.DB.GetSkillTranslation(SkillType);
-                        if (tr != null) info = string.Format(tr, Params[0], Params[1], Params[2]);
-                        info = StringHelper.ReplaceSimpleArithmetic(info, '+');
+                        float v0 = 0.01f * Params[0];
+                        float v1 = 0.01f * Params[1];
+                        float v2 = 0.01f * Params[2];
+                        float v3 = v0 + v1;
+                        if (tr != null) info = string.Format(tr, v0, v1, v2, v3, Params[1]);
                     }
                     return info;
                 default:

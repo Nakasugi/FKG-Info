@@ -151,4 +151,64 @@
   <data name="Stars_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Stars_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="nerine_ab_00_00" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_00_00.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_00_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_00_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_00_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_00_02.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_00_03" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_00_03.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_01_00" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_01_00.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_01_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_01_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_01_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_01_02.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_01_03" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_01_03.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_02_00" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_02_00.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_02_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_02_01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_02_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_02_02.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nerine_ab_02_03" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\NerineAbout\nerine_ab_02_03.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_l_default" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icon_l_default.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="equip_default" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\equip_default.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ice_bracelet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\ice_bracelet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ice_earrings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\ice_earrings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ice_necklace" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\ice_necklace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ice_ring" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\ice_ring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="equip_personal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\equip_personal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="equip_weapon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\equip_weapon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

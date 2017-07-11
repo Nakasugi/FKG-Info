@@ -71,7 +71,7 @@ namespace FKG_Info
         /// </summary>
         /// <param name="original"></param>
         /// <returns></returns>
-        public static string GetHash(string original)
+        public static string GetMD5Hash(string original)
         {
             byte[] bytes;
             MD5 md5 = new MD5CryptoServiceProvider();
