@@ -19,6 +19,10 @@ namespace FKG_Info
         private Timer UpdateStatus;
 
 
+        private enum Mode { Characters, Equipments, Furnitures, Enemies }
+        private Mode CurrentMode;
+
+
 
         public class MenuColorTable : ProfessionalColorTable
         {
@@ -70,20 +74,6 @@ namespace FKG_Info
             foreach (ToolStripMenuItem item in MMItemMode.DropDownItems)
                 item.Click += (s, e) => MenuClick_Mode(item.Name);
 
-            // fill export menu
-            /*
-            if (Program.DB.Master.Ok)
-            {
-                string[] exportNames = Program.DB.Master.GetNames();
-
-                foreach (string name in exportNames)
-                {
-                    mi = new ToolStripMenuItem(name, null, (s, e) => MMItemFileExportMaster_Click(name));
-                    mi.BackColor = SystemColors.Menu;
-                    MMItemFileExportMaster.DropDownItems.Add(mi);
-                }
-            }
-            */
             MainMenu.Renderer= new ToolStripProfessionalRenderer(new MenuColorTable());
 
             UpdateStatus = new Timer();
@@ -92,10 +82,17 @@ namespace FKG_Info
             UpdateStatus.Start();
             
             FSC = null;
+
+            CurrentMode = Mode.Characters;
+            FlowerSelect_Click(this, null);
         }
 
         
 
+        /// <summary>
+        /// Select image type
+        /// </summary>
+        /// <param name="itype"></param>
         private void MenuClick_ImageType(string itype)
         {
             SelectedImageType = (FlowerInfo.ImageTypes)Enum.Parse(typeof(FlowerInfo.ImageTypes), itype);
@@ -113,11 +110,18 @@ namespace FKG_Info
             }
 
             if (!Program.DB.IsSelected()) return;
-            PicBoxBig.AsyncLoadChImage(Program.DB.GetSelected(), SelectedEvolution, SelectedImageType);
+
+            FlowerInfo flower = Program.DB.GetSelected();
+            flower.SelectImageType(SelectedEvolution, SelectedImageType);
+            PicBoxBig.AsyncLoadChImage(flower);
         }
 
 
 
+        /// <summary>
+        /// Select current mode
+        /// </summary>
+        /// <param name="mode"></param>
         private void MenuClick_Mode(string mode)
         {
             bool changed = false;
@@ -140,9 +144,6 @@ namespace FKG_Info
 
             if (!changed) return;
 
-            BtSelect.Enabled = true;
-            MMItemSelect.Enabled = true;
-
             CloseChSelector();
             CloseEqSelector();
 
@@ -150,10 +151,42 @@ namespace FKG_Info
             PicBoxIconAwak.Clear();
             PicBoxIconBloom.Clear();
 
+            Program.DB.Unselect();
+            GridInfo.Rows.Clear();
+
+            if (mode == MMItemModeChara.Name)
+            {
+                CurrentMode = Mode.Characters;
+                PicBoxBig.Visible = false;
+                FSC = new FlowerSelectControl(this);
+
+                BtSelect.Enabled = true;
+                MMItemSelect.Enabled = true;
+            }
+
             if (mode == MMItemModeEquip.Name)
             {
+                CurrentMode = Mode.Equipments;
                 PicBoxBig.Visible = false;
                 ESC = new EquipmentSelectControl(this);
+
+                BtSelect.Enabled = false;
+                MMItemSelect.Enabled = false;
+            }
+
+            if (mode == MMItemModeFurniture.Name)
+            {
+                CurrentMode = Mode.Furnitures;
+                PicBoxBig.Visible = false;
+
+                BtSelect.Enabled = false;
+                MMItemSelect.Enabled = false;
+            }
+
+            if (mode == MMItemModeEnemy.Name)
+            {
+                CurrentMode = Mode.Enemies;
+                PicBoxBig.Visible = false;
 
                 BtSelect.Enabled = false;
                 MMItemSelect.Enabled = false;
@@ -187,11 +220,15 @@ namespace FKG_Info
 
 
 
-        public void SelectFromSelector(FlowerInfo flower, bool selectorClose)
+        public void SelectFromSelector(FlowerInfo flower, bool selectorHide)
         {
             Program.DB.Select(flower);
 
-            if (selectorClose) CloseChSelector();
+            if (selectorHide)
+            {
+                FSC.Visible = false;
+                PicBoxBig.Visible = true;
+            }
 
             ReloadFlower();
         }
@@ -211,12 +248,17 @@ namespace FKG_Info
             if (!Program.DB.IsSelected()) return;
             FlowerInfo flower = Program.DB.GetSelected();
 
-            SelectedEvolution = FlowerInfo.Evolution.Base;
+            flower.SelectImageType(flower.CheckEvolutionValue(SelectedEvolution), SelectedImageType);
+            PicBoxBig.AsyncLoadChImage(flower);
 
-            PicBoxBig.AsyncLoadChImage(flower, SelectedEvolution, SelectedImageType);
-            PicBoxIconBase.AsyncLoadChImage(flower, FlowerInfo.Evolution.Base, FlowerInfo.ImageTypes.IconLarge);
-            PicBoxIconAwak.AsyncLoadChImage(flower, FlowerInfo.Evolution.Awakened, FlowerInfo.ImageTypes.IconLarge);
-            PicBoxIconBloom.AsyncLoadChImage(flower, FlowerInfo.Evolution.Bloomed, FlowerInfo.ImageTypes.IconLarge);
+            flower.SelectImageType(FlowerInfo.Evolution.Base, FlowerInfo.ImageTypes.IconLarge);
+            PicBoxIconBase.AsyncLoadChImage(flower);
+
+            flower.SelectImageType(FlowerInfo.Evolution.Awakened, FlowerInfo.ImageTypes.IconLarge);
+            PicBoxIconAwak.AsyncLoadChImage(flower);
+
+            flower.SelectImageType(FlowerInfo.Evolution.Bloomed, FlowerInfo.ImageTypes.IconLarge);
+            PicBoxIconBloom.AsyncLoadChImage(flower);
 
             UpdateFlowerInfo();
         }
@@ -236,12 +278,16 @@ namespace FKG_Info
 
         private void FlowerSelect_Click(object sender, EventArgs ev)
         {
-            if (FSC != null) { CloseChSelector(); return; }
+            if (CurrentMode != Mode.Characters) return;
 
-            PicBoxBig.Visible = false;
+            if (FSC != null)
+            {
+                FSC.Visible ^= true;
+                PicBoxBig.Visible ^= true;
+                return;
+            }
+
             FSC = new FlowerSelectControl(this);
-            FSC.Location = new Point(0, 26);
-            Controls.Add(FSC);
         }
 
 
@@ -270,30 +316,37 @@ namespace FKG_Info
         {
             if (!Program.DB.IsSelected()) return;
 
-            if (FSC != null) CloseChSelector();
+            FSC.Visible = false;
+            PicBoxBig.Visible = true;
         }
 
         private void PicBoxIconBase_Click(object sender, EventArgs ev)
         {
             if (!Program.DB.IsSelected()) return;
-            SelectedEvolution = Program.DB.GetSelected().SelectEvolution(FlowerInfo.Evolution.Base);
-            PicBoxBig.AsyncLoadChImage(Program.DB.GetSelected(), SelectedEvolution, SelectedImageType);
+            FlowerInfo flower = Program.DB.GetSelected();
+            SelectedEvolution = FlowerInfo.Evolution.Base;
+            flower.SelectImageType(SelectedEvolution, SelectedImageType);
+            PicBoxBig.AsyncLoadChImage(flower);
             UpdateFlowerInfo();
         }
 
         private void PicBoxIconAwak_Click(object sender, EventArgs ev)
         {
             if (!Program.DB.IsSelected()) return;
-            SelectedEvolution = Program.DB.GetSelected().SelectEvolution(FlowerInfo.Evolution.Awakened);
-            PicBoxBig.AsyncLoadChImage(Program.DB.GetSelected(), SelectedEvolution, SelectedImageType);
+            FlowerInfo flower = Program.DB.GetSelected();
+            SelectedEvolution = flower.CheckEvolutionValue(FlowerInfo.Evolution.Awakened);
+            flower.SelectImageType(SelectedEvolution, SelectedImageType);
+            PicBoxBig.AsyncLoadChImage(flower);
             UpdateFlowerInfo();
         }
 
         private void PicBoxIconBloom_Click(object sender, EventArgs ev)
         {
             if (!Program.DB.IsSelected()) return;
-            SelectedEvolution = Program.DB.GetSelected().SelectEvolution(FlowerInfo.Evolution.Bloomed);
-            PicBoxBig.AsyncLoadChImage(Program.DB.GetSelected(), SelectedEvolution, SelectedImageType);
+            FlowerInfo flower = Program.DB.GetSelected();
+            SelectedEvolution = flower.CheckEvolutionValue(FlowerInfo.Evolution.Bloomed);
+            flower.SelectImageType(SelectedEvolution, SelectedImageType);
+            PicBoxBig.AsyncLoadChImage(flower);
             UpdateFlowerInfo();
         }
         
@@ -372,5 +425,9 @@ namespace FKG_Info
         {
             Program.DB.Running = false;
         }
+
+
+
+        public void LoadingControlsMessage(bool visible) { _lbWait.Visible = visible; _lbWait.Refresh(); }
     }
 }

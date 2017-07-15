@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace FKG_Info
 {
-    class AdvPictureBox : PictureBox, IComparable
+    public partial class AdvPictureBox : PictureBox
     {
         private string LastName;
         private object Locker;
@@ -17,14 +18,29 @@ namespace FKG_Info
 
         private enum Type { Base, FlowerIcon, EquipmentIcon }
 
-        Type PictureType;
+        private Type PictureType;
+        private bool PartialIcon;
 
 
 
         public AdvPictureBox() : base()
         {
-            PictureType = Type.Base;
+            InitializeComponent();
+
             Locker = new object();
+            PictureType = Type.Base;
+        }
+
+        public AdvPictureBox(IContainer container) : this()
+        {
+            container.Add(this);
+        }
+
+
+
+        public AdvPictureBox(bool partialIcon = false) : this()
+        {
+            PartialIcon = partialIcon;
         }
 
 
@@ -56,12 +72,13 @@ namespace FKG_Info
 
 
 
-        public void AsyncLoadChImage(FlowerInfo flower, int evol, FlowerInfo.ImageTypes itype)
+        public void AsyncLoadChImage(FlowerInfo flower)
         {
-            string name = flower.GetImageName(evol, itype);
+            string name = flower.GetImageName();
+            
             lock (Locker) LastName = name;
 
-            Program.ImageLoader.GetChImage(name, CallBacksetImage);
+            Program.ImageLoader.GetImage(flower, CallBackSetImage);
         }
 
 
@@ -69,9 +86,10 @@ namespace FKG_Info
         public void AsyncLoadEqImage(EquipmentInfo equip)
         {
             string name = equip.GetImageName();
+
             lock (Locker) LastName = name;
 
-            Program.ImageLoader.GetEqImage(name, CallBacksetImage);
+            Program.ImageLoader.GetImage(equip, CallBackSetImage);
         }
 
 
@@ -80,7 +98,7 @@ namespace FKG_Info
 
 
 
-        private void CallBacksetImage(ImageDownloader.DownloadedFile ifile)
+        private void CallBackSetImage(ImageDownloader.DownloadedFile ifile)
         {
             if (ifile == null) { Image = null; return; }
 
@@ -102,28 +120,6 @@ namespace FKG_Info
                 }
             }
         }
-
-
-
-        public int CompareTo(object obj)
-        {
-            switch (PictureType)
-            {
-                case Type.FlowerIcon: return Flower.CompareTo(((AdvPictureBox)obj).Flower);
-                case Type.EquipmentIcon: return Equipment.CompareTo(((AdvPictureBox)obj).Equipment);
-                default: return 0;
-            }
-        }
-
-
-
-        public static int ByEqName(AdvPictureBox pb1, AdvPictureBox pb2) { return EquipmentInfo.SortByName(pb1.Equipment, pb2.Equipment); }
-        public static int ByEqAttack(AdvPictureBox pb1, AdvPictureBox pb2) { return EquipmentInfo.SortByAttack(pb1.Equipment, pb2.Equipment); }
-        public static int ByEqDefense(AdvPictureBox pb1, AdvPictureBox pb2) { return EquipmentInfo.SortByDefense(pb1.Equipment, pb2.Equipment); }
-        public static int ByEqTotal(AdvPictureBox pb1, AdvPictureBox pb2) { return EquipmentInfo.SortByTotal(pb1.Equipment, pb2.Equipment); }
-        public static int ByEqSetAttack(AdvPictureBox pb1, AdvPictureBox pb2) { return EquipmentInfo.SortBySetAttack(pb1.Equipment, pb2.Equipment); }
-        public static int ByEqSetDefense(AdvPictureBox pb1, AdvPictureBox pb2) { return EquipmentInfo.SortBySetDefense(pb1.Equipment, pb2.Equipment); }
-        public static int ByEqSetTotal(AdvPictureBox pb1, AdvPictureBox pb2) { return EquipmentInfo.SortBySetTotal(pb1.Equipment, pb2.Equipment); }
 
 
 

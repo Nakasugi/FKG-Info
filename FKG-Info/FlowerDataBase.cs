@@ -38,23 +38,20 @@ namespace FKG_Info
         public bool StoreDownloaded;
 
 
-        public int _masterCharaFields;
-        public int _masterCharaLines;
-        public int _masterSkillFields;
-        public int _masterSkillLines;
-        public int _masterAbililyFields;
-        public int _masterAbilityLines;
+        public class SummaryInfo
+        {
+            public int MrCharaFields;
+            public int MrCharaLines;
+            public int MrSkillFields;
+            public int MrSkillLines;
+            public int MrAbililyFields;
+            public int MrAbilityLines;
+            public int TotalCharacters;
+            public int TotalMaterials;
+            public int TotalEquipments;
+        }
 
-
-
-        public bool SelectorR2;
-        public bool SelectorR3;
-        public bool SelectorR4;
-        public bool SelectorR5;
-        public bool SelectorR6;
-
-
-
+        public SummaryInfo Summary;
 
         class TranslationInfo
         {
@@ -100,8 +97,8 @@ namespace FKG_Info
 
             TranslationAbilities = new List<TranslationInfo>();
 
-            DMMURL = "http://dugrqaqinbtcq.cloudfront.net/product/images/character/";
-            NutakuURL = "http://cdn.flowerknight.nutaku.net/bin/commons/images/character/";
+            DMMURL = "http://dugrqaqinbtcq.cloudfront.net/product/images/";
+            NutakuURL = "http://cdn.flowerknight.nutaku.net/bin/commons/images/";
 
             DefaultFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
             DataFolder = DefaultFolder + "\\" + FolderNames.Data;
@@ -109,15 +106,10 @@ namespace FKG_Info
             IconsFolder = ImagesFolder + "\\" + FolderNames.Icons;
             EquipFolder = ImagesFolder + "\\" + FolderNames.Equip;
 
-            ImageSource = ImageSources.NutakuDMM;
+            ImageSource = ImageSources.DMM;
             StoreDownloaded = true;
 
-
-            _masterCharaLines = _masterCharaFields = 0;
-            _masterSkillLines = _masterSkillFields = 0;
-            _masterAbilityLines = _masterAbililyFields = 0;
-
-            SelectorR2 = SelectorR3 = SelectorR4 = SelectorR5 = SelectorR6 = true;
+            Summary = new SummaryInfo();
 
             Unselect();
         }
@@ -359,13 +351,16 @@ namespace FKG_Info
 
             EquipmentInfo.SearchSets(db.Equipments);
 
+            db.Summary.TotalCharacters = db.Flowers.FindAll(f => !f.NoKnight).Count;
+            db.Summary.TotalMaterials = db.Flowers.FindAll(f => f.NoKnight).Count;
+            db.Summary.TotalEquipments = db.Equipments.Count;
 
             return db;
         }
 
 
 
-        public static bool CheckFolder(string folder)
+        private static bool CheckFolder(string folder)
         {
             if (!Directory.Exists(folder))
             {
@@ -383,6 +378,36 @@ namespace FKG_Info
             return true;
         }
 
+
+
+        /// <summary>
+        /// Get Nutaku or DMM urls
+        /// </summary>
+        /// <param name="type">1 = 1st, 2 = 2nd</param>
+        /// <returns></returns>
+        public string GetUrl(int type = 0)
+        {
+            switch (ImageSource)
+            {
+                case ImageSources.Nutaku:
+                    if (type == 1) return NutakuURL;
+                    break;
+                case ImageSources.NutakuDMM:
+                    if (type == 1) return NutakuURL;
+                    if (type == 2) return DMMURL;
+                    break;
+                case ImageSources.DMM:
+                    if (type == 1) return DMMURL;
+                    break;
+                case ImageSources.DMMNutaku:
+                    if (type == 1) return DMMURL;
+                    if (type == 2) return NutakuURL;
+                    break;
+                default: break;
+            }
+
+            return null;
+        }
 
 
         public void SaveOptions(string fileName = "options.xml")
@@ -433,7 +458,7 @@ namespace FKG_Info
 
             string[] mName;
 
-            FlowerInfo flower;
+            List<FlowerInfo> flowers = new List<FlowerInfo>();
 
             try
             {
@@ -448,9 +473,9 @@ namespace FKG_Info
                 st = rd.ReadLine();
                 mName = st.Split(';');
 
-                flower = Flowers.Find(fw => fw.Name.Kanji == mName[0]);
+                flowers = Flowers.FindAll(fw => fw.ShortName == mName[0]);
 
-                if (flower != null) flower.Name.EngDMM = mName[1];
+                foreach (FlowerInfo flower in flowers) flower.Name.EngDMM = mName[1];
             }
 
             rd.Close();
@@ -525,6 +550,7 @@ namespace FKG_Info
         private void LoadMasterData(string masterData, BaseInfo.ObjectType baseType)
         {
             string masterLine;
+            string[] masterFields;
 
             StringReader rd = new StringReader(masterData);
             while (true)
@@ -532,26 +558,27 @@ namespace FKG_Info
                 masterLine = rd.ReadLine();
                 if (masterLine == null) break;
 
+                masterFields = masterLine.Split(',');
                 
                 switch (baseType)
                 {
                     case BaseInfo.ObjectType.Flower:
-                        Add(new FlowerInfo(masterLine.Split(',')));
-                        if (_masterCharaFields < masterLine.Length) _masterCharaFields = masterLine.Length;
-                        _masterCharaLines++;
+                        Add(new FlowerInfo(masterFields));
+                        if (Summary.MrCharaFields < masterFields.Length) Summary.MrCharaFields = masterFields.Length;
+                        Summary.MrCharaLines++;
                         break;
                     case BaseInfo.ObjectType.Skill:
-                        Add(new SkillInfo(masterLine.Split(',')));
-                        if (_masterSkillFields < masterLine.Length) _masterSkillFields = masterLine.Length;
-                        _masterSkillLines++;
+                        Add(new SkillInfo(masterFields));
+                        if (Summary.MrSkillFields < masterFields.Length) Summary.MrSkillFields = masterFields.Length;
+                        Summary.MrSkillLines++;
                         break;
                     case BaseInfo.ObjectType.Ability:
-                        Add(new AbilityInfo(masterLine.Split(',')));
-                        if (_masterAbililyFields < masterLine.Length) _masterAbililyFields = masterLine.Length;
-                        _masterAbilityLines++;
+                        Add(new AbilityInfo(masterFields));
+                        if (Summary.MrAbililyFields < masterFields.Length) Summary.MrAbililyFields = masterFields.Length;
+                        Summary.MrAbilityLines++;
                         break;
                     case BaseInfo.ObjectType.Equipment:
-                        Add(new EquipmentInfo(masterLine.Split(',')));
+                        Add(new EquipmentInfo(masterFields));
                         break;
                     default: break;
                 }

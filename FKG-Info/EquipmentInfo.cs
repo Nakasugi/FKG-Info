@@ -115,107 +115,60 @@
         }
 
 
-        // ==================================================================================
-        // Sort by Name
-        public static int SortByName(EquipmentInfo eq1, EquipmentInfo eq2)
+
+        public override int CompareTo(object obj, SortBy sortType)
         {
-            if (eq1 == null || eq2 == null) return 0;
-            int res = eq1.KName.CompareTo(eq2.KName);
-            if (res == 0) return eq1.CompareTo(eq2);
-            return res;
-        }
+            EquipmentInfo eq = obj as EquipmentInfo;
 
-        // Sort by Attack
-        public static int SortByAttack(EquipmentInfo eq1, EquipmentInfo eq2, bool def = true)
-        {
-            if (eq1 == null || eq2 == null) return 0;
+            if (eq == null) return 1;
 
-            if (eq1.AttackMax < eq2.AttackMax) return 1;
-            if (eq1.AttackMax > eq2.AttackMax) return -1;
-            int res = 0;
-            if (def) res = SortByDefense(eq1, eq2, false);
-            if (res == 0) return eq1.CompareTo(eq2);
-            return res;
-        }
+            bool cmp1stStep = true;
+            int cmp1, cmp2;
 
-        // Sort by Defense
-        public static int SortByDefense(EquipmentInfo eq1, EquipmentInfo eq2, bool atk = true)
-        {
-            if (eq1 == null || eq2 == null) return 0;
+            switch (sortType)
+            {
+                case SortBy.Name:
+                    cmp1 = KName.CompareTo(eq.KName);
+                    if (cmp1 != 0) return cmp1;
+                    break;
+                case SortBy.Attack:
+                    if (AttackMax < eq.AttackMax) return 1;
+                    if (AttackMax > eq.AttackMax) return -1;
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.TotalStats; }
+                    break;
+                case SortBy.Defense:
+                    if (DefenseMax < eq.DefenseMax) return 1;
+                    if (DefenseMax > eq.DefenseMax) return -1;
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.TotalStats; }
+                    break;
+                case SortBy.TotalStats:
+                    cmp1 = AttackMax + DefenseMax;
+                    cmp2 = eq.AttackMax + eq.DefenseMax;
+                    if (cmp1 < cmp2) return 1;
+                    if (cmp1 > cmp2) return -1;
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.Attack; }
+                    break;
+                case SortBy.SetAttack:
+                    if (ESetAtkMax < eq.ESetAtkMax) return 1;
+                    if (ESetAtkMax > eq.ESetAtkMax) return -1;
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.SetTotalStats; }
+                    break;
+                case SortBy.SetDefense:
+                    if (ESetDefMax < eq.ESetDefMax) return 1;
+                    if (ESetDefMax > eq.ESetDefMax) return -1;
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.SetTotalStats; }
+                    break;
+                case SortBy.SetTotalStats:
+                    cmp1 = ESetAtkMax + ESetDefMax;
+                    cmp2 = eq.ESetAtkMax + eq.ESetDefMax;
+                    if (cmp1 < cmp2) return 1;
+                    if (cmp1 > cmp2) return -1;
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.SetAttack; }
+                    break;
+                default: break;
+            }
 
-            if (eq1.DefenseMax < eq2.DefenseMax) return 1;
-            if (eq1.DefenseMax > eq2.DefenseMax) return -1;
-            int res = 0;
-            if (atk) res = SortByAttack(eq1, eq2, false);
-            if (res == 0) return eq1.CompareTo(eq2);
-            return res;
-        }
-
-        // Sort by Total
-        public static int SortByTotal(EquipmentInfo eq1, EquipmentInfo eq2)
-        {
-            if (eq1 == null || eq2 == null) return 0;
-
-            int st1 = eq1.AttackMax + eq1.DefenseMax;
-            int st2 = eq2.AttackMax + eq2.DefenseMax;
-
-            if (st1 < st2) return 1;
-            if (st1 > st2) return -1;
-            return SortByAttack(eq1, eq2);
-        }
-
-        // Sort by Attack
-        public static int SortBySetAttack(EquipmentInfo eq1, EquipmentInfo eq2, bool def = true)
-        {
-            if (eq1 == null || eq2 == null) return 0;
-
-            if (eq1.ESetID == eq2.ESetID) return eq1.CompareTo(eq2);
-            if ((eq1.ESetID == 0) && (eq2.ESetID == 0)) return eq1.CompareTo(eq2);
-            if (eq1.ESetID == 0) return 1;
-            if (eq2.ESetID == 0) return -1;
-
-            if (eq1.ESetAtkMax < eq2.ESetAtkMax) return 1;
-            if (eq1.ESetAtkMax > eq2.ESetAtkMax) return -1;
-            int res = 0;
-            if (def) res = SortBySetDefense(eq1, eq2, false);
-            if (res == 0) return eq1.CompareTo(eq2);
-            return res;
-        }
-
-        // Sort by Defense
-        public static int SortBySetDefense(EquipmentInfo eq1, EquipmentInfo eq2, bool atk = true)
-        {
-            if (eq1 == null || eq2 == null) return 0;
-
-            if (eq1.ESetID == eq2.ESetID) return eq1.CompareTo(eq2);
-            if ((eq1.ESetID == 0) && (eq2.ESetID == 0)) return eq1.CompareTo(eq2);
-            if (eq1.ESetID == 0) return 1;
-            if (eq2.ESetID == 0) return -1;
-
-            if (eq1.ESetDefMax < eq2.ESetDefMax) return 1;
-            if (eq1.ESetDefMax > eq2.ESetDefMax) return -1;
-            int res = 0;
-            if (atk) res = SortBySetAttack(eq1, eq2, false);
-            if (res == 0) return eq1.CompareTo(eq2);
-            return res;
-        }
-
-        // Sort by Total
-        public static int SortBySetTotal(EquipmentInfo eq1, EquipmentInfo eq2)
-        {
-            if (eq1 == null || eq2 == null) return 0;
-
-            if (eq1.ESetID == eq2.ESetID) return eq1.CompareTo(eq2);
-            if ((eq1.ESetID == 0) && (eq2.ESetID == 0)) return eq1.CompareTo(eq2);
-            if (eq1.ESetID == 0) return 1;
-            if (eq2.ESetID == 0) return -1;
-
-            int st1 = eq1.ESetAtkMax + eq1.ESetDefMax;
-            int st2 = eq2.ESetAtkMax + eq2.ESetDefMax;
-
-            if (st1 < st2) return 1;
-            if (st1 > st2) return -1;
-            return SortBySetAttack(eq1, eq2);
+            return base.CompareTo(obj, sortType);
         }
 
 

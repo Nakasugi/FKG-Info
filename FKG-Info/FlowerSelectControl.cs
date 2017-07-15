@@ -14,39 +14,58 @@ namespace FKG_Info
 
         private ToolTip TTip;
 
+        private const string TEXT_SEARCH = "Search...";
 
 
-        struct SortType
+        private Timer SearchTimer;
+
+
+        struct SortBy
         {
             public const string Default = "Default";
+            public const string Category = "By Category";
         }
 
 
 
+        /// <summary>
+        /// Just Constructor
+        /// </summary>
+        /// <param name="main"></param>
         public FlowerSelectControl(MainForm main)
         {
+            Visible = false;
+            main.LoadingControlsMessage(true);
+            SuspendLayout();
             InitializeComponent();
 
             Parent = main;
-
             Reloading = true;
-
-            ChBoxS2.Checked = Program.DB.SelectorR2;
-            ChBoxS3.Checked = Program.DB.SelectorR3;
-            ChBoxS4.Checked = Program.DB.SelectorR4;
-            ChBoxS5.Checked = Program.DB.SelectorR5;
-            ChBoxS6.Checked = Program.DB.SelectorR6;
+            Location = new Point(0, 26);
 
             foreach (string nt in FlowerInfo.Nations) CmBoxNation.Items.Add(nt);
-            CmBoxNation.Items[0] = "All";
+            CmBoxNation.Items[0] = "All Nations";
             CmBoxNation.SelectedIndex = 0;
 
-            CmBoxSort.Items.Add(SortType.Default);
-            CmBoxSort.SelectedIndex = 0;
-
-            CmBoxAbility.Items.Add("All");
+            CmBoxAbility.Items.Add("All Abilities");
             CmBoxAbility.Items.AddRange(Program.DB.GetAbilitiesShortNames());
             CmBoxAbility.SelectedIndex = 0;
+
+            foreach (FlowerInfo.SpecFilter spec in Enum.GetValues(typeof(FlowerInfo.SpecFilter)))
+                CmBoxSpecFilter.Items.Add(spec.ToString().Replace("_", " "));
+            CmBoxSpecFilter.SelectedIndex = 0;
+
+            foreach (System.Reflection.FieldInfo fi in typeof(SortBy).GetFields())
+                CmBoxSort.Items.Add(fi.GetValue(null).ToString());
+            CmBoxSort.SelectedIndex = 0;
+
+            SearchTimer = new Timer();
+            SearchTimer.Interval = 1000;
+            SearchTimer.Tick += (s, e) => OnSearchTimer();
+
+            //TxBoxSearch.Text = "🔍 Search...";
+            TxBoxSearch.Text = TEXT_SEARCH;
+            TxBoxSearch.ForeColor = SystemColors.GrayText;
 
             TTip = new ToolTip();
 
@@ -57,22 +76,29 @@ namespace FKG_Info
 
             foreach (FlowerInfo flower in Flowers)
             {
+                flower.SelectImageType(FlowerInfo.Evolution.Base, FlowerInfo.ImageTypes.IconLarge);
                 picBox = new AdvPictureBox((MainForm)Parent, flower);
                 picBox.Name = flower.ID.ToString();
                 picBox.Width = 100;
                 picBox.Height = 100;
                 picBox.Image = Properties.Resources.icon_l_default;
-                picBox.AsyncLoadChImage(flower, 0, FlowerInfo.ImageTypes.IconLarge);
+                picBox.AsyncLoadChImage(flower);
+                picBox.Visible = false;
                 Icons.Add(picBox);
 
                 string ttip = flower.Name.Kanji + "\r\n" + flower.Name.Romaji;
                 if (flower.Name.EngDMM != null) ttip += "\r\nDMM: " + flower.Name.EngDMM;
                 if (flower.Name.EngNutaku != null) ttip += "\r\nNutaku: " + flower.Name.EngNutaku;
                 TTip.SetToolTip(picBox, ttip);
+
+                PanelFlowers.Controls.Add(picBox);
             }
 
             Reloading = false;
             ReloadList();
+            ResumeLayout();
+            main.LoadingControlsMessage(false);
+            Visible = true;
         }
 
 
@@ -82,43 +108,70 @@ namespace FKG_Info
             if (Reloading) return;
             Reloading = true;
 
-            foreach(FlowerInfo flower in Flowers)
+            string tofind = TxBoxSearch.Text;
+            bool searching = (tofind.Length > 1) && (tofind != TEXT_SEARCH);
+
+            FlowerInfo.SpecFilter spec = (FlowerInfo.SpecFilter)Enum.Parse(typeof(FlowerInfo.SpecFilter), CmBoxSpecFilter.Text.Replace(" ", "_"));
+
+            foreach (FlowerInfo flower in Flowers)
             {
                 flower.Filter = false;
 
                 switch (flower.Rarity)
                 {
-                    case 0x02: if (!ChBoxS2.Checked) continue; break;
-                    case 0x03: if (!ChBoxS3.Checked) continue; break;
-                    case 0x04: if (!ChBoxS4.Checked) continue; break;
-                    case 0x05: if (!ChBoxS5.Checked) continue; break;
-                    case 0x06: if (!ChBoxS6.Checked) continue; break;
+                    case 0x02: if (ChBoxS2.Checked) break; continue;
+                    case 0x03: if (ChBoxS3.Checked) break; continue;
+                    case 0x04: if (ChBoxS4.Checked) break; continue;
+                    case 0x05: if (ChBoxS5.Checked) break; continue;
+                    case 0x06: if (ChBoxS6.Checked) break; continue;
                     default: break;
                 }
 
                 switch (flower.AttackType)
                 {
-                    case 1: if (!ChBoxSlash.Checked) continue; break;
-                    case 2: if (!ChBoxBlunt.Checked) continue; break;
-                    case 3: if (!ChBoxPierce.Checked) continue; break;
-                    case 4: if (!ChBoxMagic.Checked) continue; break;
+                    case 1: if (ChBoxSlash.Checked) break; continue;
+                    case 2: if (ChBoxBlunt.Checked) break; continue;
+                    case 3: if (ChBoxPierce.Checked) break; continue;
+                    case 4: if (ChBoxMagic.Checked) break; continue;
                     default: break;
                 }
 
-                if (CmBoxNation.Text != "All")
+                switch (spec)
+                {
+                    case FlowerInfo.SpecFilter.All_Knights: if (flower.NoKnight) continue; break;
+                    case FlowerInfo.SpecFilter.Has_Bloom_Form: if (flower.HasBloomForm()) break; continue;
+                    case FlowerInfo.SpecFilter.Has_Bloom_CG: if(flower.HasBloomForm(1)) break; continue;
+                    case FlowerInfo.SpecFilter.No_Bloom_CG: if (flower.HasBloomForm(2)) break; continue;
+                    default: if(flower.CheckCategory(spec)) break; continue;
+                }
+                
+
+                if (CmBoxNation.Text != "All Nations")
                 {
                     if (flower.GetNation() != CmBoxNation.Text) continue;
                 }
 
-                if (CmBoxAbility.Text != "All")
+                if (CmBoxAbility.Text != "All Abilities")
                 {
                     if (!flower.CheckAbilityShortName(CmBoxAbility.Text)) continue;
                 }
 
+
+                if (searching) if (!flower.CheckNames(tofind)) continue;
+
                 flower.Filter = true;
             }
-            
-            Icons.Sort();
+
+
+            BaseInfo.SortBy sortType = BaseInfo.SortBy.Default;
+            switch (CmBoxSort.Text)
+            {
+                case SortBy.Category: sortType = BaseInfo.SortBy.Category; break;
+                default: break;
+            }
+
+            Icons.Sort((pb1, pb2) => pb1.Flower.CompareTo(pb2.Flower, sortType));
+
             RedrawPanel();
             Reloading = false;
         }
@@ -130,15 +183,18 @@ namespace FKG_Info
             int x = 2, y = 2;
 
             PanelFlowers.SuspendLayout();
-            PanelFlowers.Controls.Clear();
             PanelFlowers.VerticalScroll.Value = 0;
 
             foreach (AdvPictureBox pic in Icons)
             {
-                if (!pic.Flower.Filter) continue;
+                if (!pic.Flower.Filter)
+                {
+                    pic.Visible = false;
+                    continue;
+                }
 
                 pic.Location = new Point(x, y);
-                PanelFlowers.Controls.Add(pic);
+                pic.Visible = true;
 
                 x += 104;
                 if (x >= 728) { x = 2; y += 104; }
@@ -153,12 +209,6 @@ namespace FKG_Info
         {
             if (Reloading) return;
 
-            Program.DB.SelectorR2 = ChBoxS2.Checked;
-            Program.DB.SelectorR3 = ChBoxS3.Checked;
-            Program.DB.SelectorR4 = ChBoxS4.Checked;
-            Program.DB.SelectorR5 = ChBoxS5.Checked;
-            Program.DB.SelectorR6 = ChBoxS6.Checked;
-
             ReloadList();
         }
 
@@ -171,6 +221,37 @@ namespace FKG_Info
             ChBoxPierce.Checked = !ChBoxPierce.Checked;
             ChBoxMagic.Checked = !ChBoxMagic.Checked;
             ReloadList();
+        }
+
+
+
+        private void TxBoxSearch_FocusEnter(object sender, EventArgs ev)
+        {
+            if ((TxBoxSearch.Text == TEXT_SEARCH) || (TxBoxSearch.Text.Length < 2)) TxBoxSearch.Text = "";
+            TxBoxSearch.ForeColor = SystemColors.WindowText;
+        }
+
+        private void TxBoxSearch_FocusLeave(object sender, EventArgs ev)
+        {
+            if (TxBoxSearch.Text.Length < 2)
+            {
+                TxBoxSearch.Text = TEXT_SEARCH;
+                TxBoxSearch.ForeColor = SystemColors.GrayText;
+            }
+        }
+
+
+
+        private void OnSearchTimer()
+        {
+            SearchTimer.Stop();
+            ReloadList();
+        }
+
+        private void TxBoxSearch_TextChanged(object sender, EventArgs ev)
+        {
+            SearchTimer.Stop();
+            SearchTimer.Start();
         }
     }
 }

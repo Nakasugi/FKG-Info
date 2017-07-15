@@ -57,10 +57,11 @@
             this.MMItemSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemAbout = new System.Windows.Forms.ToolStripMenuItem();
             this._lbLoading = new System.Windows.Forms.Label();
-            this.PicBoxIconBloom = new FKG_Info.AdvPictureBox();
-            this.PicBoxIconAwak = new FKG_Info.AdvPictureBox();
-            this.PicBoxIconBase = new FKG_Info.AdvPictureBox();
+            this.PicBoxIconBloom = new FKG_Info.AdvPictureBox(true);
+            this.PicBoxIconAwak = new FKG_Info.AdvPictureBox(true);
+            this.PicBoxIconBase = new FKG_Info.AdvPictureBox(true);
             this.PicBoxBig = new FKG_Info.AdvPictureBox();
+            this._lbWait = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBloom)).BeginInit();
@@ -183,7 +184,7 @@
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.MainMenu.Size = new System.Drawing.Size(475, 24);
+            this.MainMenu.Size = new System.Drawing.Size(383, 24);
             this.MainMenu.TabIndex = 23;
             this.MainMenu.Text = "MainMenu";
             // 
@@ -201,28 +202,28 @@
             // MMItemFileImportMaster
             // 
             this.MMItemFileImportMaster.Name = "MMItemFileImportMaster";
-            this.MMItemFileImportMaster.Size = new System.Drawing.Size(152, 22);
+            this.MMItemFileImportMaster.Size = new System.Drawing.Size(149, 22);
             this.MMItemFileImportMaster.Text = "Import Master";
             this.MMItemFileImportMaster.Click += new System.EventHandler(this.MMItemFileImportMaster_Click);
             // 
             // MMItemFileExportMaster
             // 
             this.MMItemFileExportMaster.Name = "MMItemFileExportMaster";
-            this.MMItemFileExportMaster.Size = new System.Drawing.Size(152, 22);
+            this.MMItemFileExportMaster.Size = new System.Drawing.Size(149, 22);
             this.MMItemFileExportMaster.Text = "Export Master";
             this.MMItemFileExportMaster.Click += new System.EventHandler(this.MMItemFileExportMaster_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(146, 6);
             // 
             // MMItemFileExperimental
             // 
             this.MMItemFileExperimental.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.getMasterToolStripMenuItem});
             this.MMItemFileExperimental.Name = "MMItemFileExperimental";
-            this.MMItemFileExperimental.Size = new System.Drawing.Size(152, 22);
+            this.MMItemFileExperimental.Size = new System.Drawing.Size(149, 22);
             this.MMItemFileExperimental.Text = "Experimental";
             // 
             // getMasterToolStripMenuItem
@@ -270,25 +271,25 @@
             this.MMItemModeChara.Checked = true;
             this.MMItemModeChara.CheckState = System.Windows.Forms.CheckState.Checked;
             this.MMItemModeChara.Name = "MMItemModeChara";
-            this.MMItemModeChara.Size = new System.Drawing.Size(132, 22);
+            this.MMItemModeChara.Size = new System.Drawing.Size(137, 22);
             this.MMItemModeChara.Text = "Characters";
             // 
             // MMItemModeEquip
             // 
             this.MMItemModeEquip.Name = "MMItemModeEquip";
-            this.MMItemModeEquip.Size = new System.Drawing.Size(132, 22);
-            this.MMItemModeEquip.Text = "Equipment";
+            this.MMItemModeEquip.Size = new System.Drawing.Size(137, 22);
+            this.MMItemModeEquip.Text = "Equipments";
             // 
             // MMItemModeFurniture
             // 
             this.MMItemModeFurniture.Name = "MMItemModeFurniture";
-            this.MMItemModeFurniture.Size = new System.Drawing.Size(132, 22);
+            this.MMItemModeFurniture.Size = new System.Drawing.Size(137, 22);
             this.MMItemModeFurniture.Text = "Furnitures";
             // 
             // MMItemModeEnemy
             // 
             this.MMItemModeEnemy.Name = "MMItemModeEnemy";
-            this.MMItemModeEnemy.Size = new System.Drawing.Size(132, 22);
+            this.MMItemModeEnemy.Size = new System.Drawing.Size(137, 22);
             this.MMItemModeEnemy.Text = "Enemies";
             // 
             // MMItemOptions
@@ -366,6 +367,17 @@
             this.PicBoxBig.TabStop = false;
             this.PicBoxBig.Visible = false;
             // 
+            // _lbWait
+            // 
+            this._lbWait.AutoSize = true;
+            this._lbWait.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._lbWait.Location = new System.Drawing.Point(340, 300);
+            this._lbWait.Name = "_lbBack";
+            this._lbWait.Size = new System.Drawing.Size(125, 25);
+            this._lbWait.TabIndex = 25;
+            this._lbWait.Text = "Loading . . .";
+            this._lbWait.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -380,6 +392,7 @@
             this.Controls.Add(this.PicBoxIconBase);
             this.Controls.Add(this.PicBoxBig);
             this.Controls.Add(this.MainMenu);
+            this.Controls.Add(this._lbWait);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MainMenu;
@@ -432,6 +445,7 @@
         private System.Windows.Forms.ToolStripMenuItem MMItemFileExportMaster;
         private System.Windows.Forms.Label _lbLoading;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.Label _lbWait;
     }
 }
 

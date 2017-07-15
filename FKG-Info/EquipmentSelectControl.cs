@@ -33,16 +33,16 @@ namespace FKG_Info
         /// <param name="main"></param>
         public EquipmentSelectControl(MainForm main)
         {
+            Visible = false;
+            main.LoadingControlsMessage(true);
+            SuspendLayout();
             InitializeComponent();
 
             Parent = main;
-
             Reloading = true;
-
+            Location = new Point(0, 26);
             TTip = new ToolTip();
-
             Equipments = Program.DB.Equipments;
-
             Icons = new List<AdvPictureBox>();
 
             AdvPictureBox picBox;
@@ -55,10 +55,13 @@ namespace FKG_Info
                 picBox.Height = 100;
                 picBox.Image = Properties.Resources.equip_default;
                 picBox.AsyncLoadEqImage(equip);
+                picBox.Visible = false;
                 Icons.Add(picBox);
 
                 string ttip = equip.KName;
                 TTip.SetToolTip(picBox, ttip);
+
+                PanelEquipments.Controls.Add(picBox);
             }
 
 
@@ -72,6 +75,9 @@ namespace FKG_Info
 
             Reloading = false;
             ApplyFilter();
+            ResumeLayout();
+            main.LoadingControlsMessage(false);
+            Visible = true;
         }
 
 
@@ -114,30 +120,31 @@ namespace FKG_Info
                 equip.Filter = true;
             }
 
-            Program.DB.Flowers.Sort(FlowerInfo.BySABaseRMS);
 
+            BaseInfo.SortBy sortType = BaseInfo.SortBy.Default;
             if (ChBoxSetMode.Checked)
             {
                 switch (CmBoxSort.Text)
                 {
-                    case SortBy.Attack: Icons.Sort(AdvPictureBox.ByEqSetAttack); break;
-                    case SortBy.Defense: Icons.Sort(AdvPictureBox.ByEqSetDefense); break;
-                    case SortBy.Total: Icons.Sort(AdvPictureBox.ByEqSetTotal); break;
-                    default: Icons.Sort(); break;
+                    case SortBy.Attack: sortType = BaseInfo.SortBy.SetAttack; break;
+                    case SortBy.Defense: sortType = BaseInfo.SortBy.SetDefense; break;
+                    case SortBy.Total: sortType = BaseInfo.SortBy.SetTotalStats; break;
+                    default: break;
                 }
             }
             else
             {
                 switch (CmBoxSort.Text)
                 {
-                    case SortBy.Name: Icons.Sort(AdvPictureBox.ByEqName); break;
-                    case SortBy.Attack: Icons.Sort(AdvPictureBox.ByEqAttack); break;
-                    case SortBy.Defense: Icons.Sort(AdvPictureBox.ByEqDefense); break;
-                    case SortBy.Total: Icons.Sort(AdvPictureBox.ByEqTotal); break;
-                    default: Icons.Sort(); break;
+                    case SortBy.Name: sortType = BaseInfo.SortBy.Name; break;
+                    case SortBy.Attack: sortType = BaseInfo.SortBy.Attack; break;
+                    case SortBy.Defense: sortType = BaseInfo.SortBy.Defense; break;
+                    case SortBy.Total: sortType = BaseInfo.SortBy.TotalStats; break;
+                    default: break;
                 }
             }
 
+            Icons.Sort((pb1, pb2) => pb1.Equipment.CompareTo(pb2.Equipment, sortType));
 
             RedrawPanel();
             Reloading = false;
@@ -150,15 +157,18 @@ namespace FKG_Info
             int x = 2, y = 2;
 
             PanelEquipments.SuspendLayout();
-            PanelEquipments.Controls.Clear();
             PanelEquipments.VerticalScroll.Value = 0;
 
             foreach (AdvPictureBox pic in Icons)
             {
-                if (!pic.Equipment.Filter) continue;
+                if (!pic.Equipment.Filter)
+                {
+                    pic.Visible = false;
+                    continue;
+                }
 
                 pic.Location = new Point(x, y);
-                PanelEquipments.Controls.Add(pic);
+                pic.Visible = true;
                 
                 x += 104;
                 if (x >= 728) { x = 2; y += 104; }

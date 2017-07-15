@@ -13,12 +13,15 @@ namespace FKG_Info
         private void MasterFilesInfo_Load(object sender, EventArgs e)
         {
             string info = "";
-            info += "masterCharaLines = " + Program.DB._masterCharaLines + "\r\n";
-            info += "masterCharaFields = " + Program.DB._masterCharaFields + "\r\n";
-            info += "masterSkillLines = " + Program.DB._masterSkillLines + "\r\n";
-            info += "masterSkillFields = " + Program.DB._masterSkillFields + "\r\n";
-            info += "masterAbilityLines = " + Program.DB._masterAbilityLines + "\r\n";
-            info += "masterAbililyFields = " + Program.DB._masterAbililyFields + "\r\n";
+            info += "masterCharaLines = " + Program.DB.Summary.MrCharaLines + "\r\n";
+            info += "masterCharaFields = " + Program.DB.Summary.MrCharaFields + "\r\n";
+            info += "masterSkillLines = " + Program.DB.Summary.MrSkillLines + "\r\n";
+            info += "masterSkillFields = " + Program.DB.Summary.MrSkillFields + "\r\n";
+            info += "masterAbilityLines = " + Program.DB.Summary.MrAbilityLines + "\r\n";
+            info += "masterAbililyFields = " + Program.DB.Summary.MrAbililyFields + "\r\n";
+            info += "Total characters = " + Program.DB.Summary.TotalCharacters + "\r\n";
+            info += "Total materials = " + Program.DB.Summary.TotalMaterials + "\r\n";
+            info += "Total equipments = " + Program.DB.Summary.TotalEquipments + "\r\n";
             TxBoxInfo.Text = info;
             TxBoxInfo.Select(TxBoxInfo.Text.Length - 1, TxBoxInfo.Text.Length - 1);
         }

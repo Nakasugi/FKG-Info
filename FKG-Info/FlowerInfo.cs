@@ -7,7 +7,9 @@ namespace FKG_Info
     public class FlowerInfo : BaseInfo
     {
         public ComplexName Name;
- 
+
+        public string ShortName { get; private set; }
+
         public int Rarity{ get; private set; }
         public int Nation { get; private set; }
         public int AttackType { get; private set; }
@@ -22,15 +24,27 @@ namespace FKG_Info
         private int[] ImageID;
 
 
-        public bool Game01, Game02, Game03;
+        //public bool Game01, Game02, Game03;
 
         private int Evol;
+        private int EvolMax;
+        private bool NoBloomCG;
+
+        public int SortCategory { get; private set; }
+        public bool NoKnight { get; private set; }
+      
 
         private FlowerStats[] Stats;
 
         private const int EVOL_NUM = 3;
 
-        private int EvolMax;
+
+
+        private object Locker;
+        private bool Waiting;
+
+        public int SelectedEvolution { get; private set; }
+        public ImageTypes SelectedImage { get; private set; }
 
 
 
@@ -40,7 +54,8 @@ namespace FKG_Info
             "Slash",
             "Blunt",
             "Pierce",
-            "Magic"
+            "Magic",
+            "Universal"
         };
 
         public string GetAttackType() { return AttackTypes[AttackType]; }
@@ -63,7 +78,7 @@ namespace FKG_Info
 
 
 
-        public static string[] Gifts =
+        public static readonly string[] Gifts =
         {
             "None",
             "Gem",
@@ -74,6 +89,13 @@ namespace FKG_Info
 
  
         public enum ImageTypes { IconSmall, IconMedium, IconLarge, Cutin, Bustup, Stand, StandSmall, Home };
+        public enum SpecFilter
+        {
+            All_Knights, Has_Bloom_Form, Has_Bloom_CG, No_Bloom_CG,
+            All_Units, All_Materials,
+            Bloom_Materials, Skill_Materials, Equip_Materials,
+            Other
+        }
 
         public struct Evolution
         {
@@ -86,6 +108,9 @@ namespace FKG_Info
 
         public FlowerInfo()
         {
+            Locker = new object();
+            Waiting = false;
+
             BaseType = ObjectType.Flower;
 
             ID = 0;
@@ -97,6 +122,9 @@ namespace FKG_Info
             Ability2 = new int[EVOL_NUM];
             ImageID = new int[EVOL_NUM];
 
+            NoBloomCG = false;
+            NoKnight = false;
+
             Stats = new FlowerStats[EVOL_NUM];
         }
 
@@ -107,21 +135,20 @@ namespace FKG_Info
             if (masterData.Length < 54) return;
 
             int parsedValue;
-            if (!int.TryParse(masterData[4], out parsedValue)) return;
-            if (parsedValue < 1) return;
-            if (parsedValue > 999) return;
+            if (!int.TryParse(masterData[34], out parsedValue)) return;
 
             ID = parsedValue;
             Name.Kanji = masterData[45].Replace("\"", "");
             Name.AutoRomaji();
 
+            ShortName = masterData[5].Replace("\"", "");
 
             int.TryParse(masterData[35], out Evol); Evol--;
             if ((Evol < 0) || (Evol > 2)) { ID = 0; return; }
 
             EvolMax = Evol;
 
-            
+            if (masterData[46] == "1") NoBloomCG = true;
 
             int.TryParse(masterData[0], out ImageID[Evol]);
             int.TryParse(masterData[10], out Ability1[Evol]);
@@ -133,12 +160,18 @@ namespace FKG_Info
             int.TryParse(masterData[8], out parsedValue); AttackType = parsedValue;
             int.TryParse(masterData[9], out parsedValue); FavoriteGift = parsedValue;
 
-
             int.TryParse(masterData[12], out Skill);
+
+            if (Evol == 0)
+            {
+                int.TryParse(masterData[27], out parsedValue); SortCategory = parsedValue;
+                if (masterData[29] != "0") NoKnight = true;
+            }
 
             Stats[Evol] = new FlowerStats(masterData);
 
-            if ((Nation < 1) || (Nation > 7)) ID = 0;
+            if (ImageID[Evol] >= 700000) ID = 0;
+            //if ((Nation < 1) || (Nation > 7)) ID = 0;
         }
 
 
@@ -146,11 +179,18 @@ namespace FKG_Info
         //======================================================
         public void FillGrid(System.Windows.Forms.DataGridView view, int evol, bool translation = true)
         {
-            if ((evol < 0) || (evol > EvolMax)) evol = EvolMax;
+            evol = evol > EvolMax ? EvolMax : evol;
 
             int id;
 
             view.Rows.Clear();
+
+            System.Windows.Forms.DataGridViewCellStyle statsStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            statsStyle.Font = new System.Drawing.Font("Consolas", 9);
+            statsStyle.ForeColor = System.Drawing.Color.DarkBlue;
+            id = view.Rows.Add("Ev:ID:ImID", evol + ":" + ID + ":" + ImageID[evol]);
+            view.Rows[id].DefaultCellStyle = statsStyle;
+
             view.Rows.Add("Kanji", Name.Kanji);
             view.Rows.Add("Romaji", Name.Romaji);
             view.Rows.Add("Eng DMM", Name.EngDMM);
@@ -159,12 +199,8 @@ namespace FKG_Info
             view.Rows.Add("Type", GetAttackType());
             view.Rows.Add("Nation", GetNation());
             view.Rows.Add("Favorite Gift", Gifts[FavoriteGift]);
-            view.Rows.Add("Unique ID", ID);
 
-            System.Windows.Forms.DataGridViewCellStyle statsStyle = new System.Windows.Forms.DataGridViewCellStyle();
-            statsStyle.Font = new System.Drawing.Font("Consolas", 9);
-            statsStyle.ForeColor = System.Drawing.Color.DarkRed;
-
+            //statsStyle.ForeColor = System.Drawing.Color.DarkRed;
             id = view.Rows.Add("HitPoints", Stats[evol].GetHitPointsInfo());
             view.Rows[id].DefaultCellStyle = statsStyle;
             id = view.Rows.Add("Attack", Stats[evol].GetAttackInfo());
@@ -276,17 +312,27 @@ namespace FKG_Info
 
 
 
-        
+        public bool CheckNames(string search)
+        {
+            bool res = false;
+
+            search = search.ToLower();
+            if (Name.Kanji != null) res |= Name.Kanji.ToLower().Contains(search);
+            if (Name.Romaji != null) res |= Name.Romaji.ToLower().Contains(search);
+            if (Name.EngDMM != null) res |= Name.EngDMM.ToLower().Contains(search);
+            if (Name.EngNutaku != null) res |= Name.EngNutaku.ToLower().Contains(search);
+            return res;
+        }
 
 
-
+        /*
         public int SelectEvolution(int evol)
         {
             if (evol < 0) return 0;
             if (evol > EvolMax) return EvolMax;
             return evol;
         }
-
+        */
 
 
         string GetStars()
@@ -305,11 +351,11 @@ namespace FKG_Info
 
 
         
-        public string GetImageName(int evol, ImageTypes type)
+        public string GetImageName()
         {
-            if (GetImageEvolID(evol) == 0) return null;
+            if (GetImageEvolID(SelectedEvolution) == 0) return null;
 
-            return GetImageTypeName(type) + GetImageEvolID(evol).ToString();
+            return GetImageTypeName(SelectedImage) + GetImageEvolID(SelectedEvolution).ToString();
         }
         
 
@@ -333,16 +379,99 @@ namespace FKG_Info
 
 
 
+        /// <summary>
+        /// Select image and lock selection by default
+        /// </summary>
+        /// <param name="evol"></param>
+        /// <param name="type"></param>
+        /// <param name="Sync"></param>
+        public void SelectImageType(int evol, ImageTypes type, bool Sync = true)
+        {
+            if (Sync)
+            {
+                int t = 0;
+                while (Waiting)
+                {
+                    System.Threading.Thread.Sleep(10);
+                    t++;
+                    if (t > 100)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Threads synchronization error.", "Error");
+                        break;
+                    }
+                }
+
+                lock (Locker) Waiting = true;
+            }
+
+            SelectedEvolution = evol;
+            SelectedImage = type;
+        }
+
+        public void UnlockSelection() { lock (Locker) Waiting = false; }
+
+
+
         public int GetImageEvolID(int evol)
         {
-            return ImageID[evol];
+            return evol > EvolMax ? 0 : ImageID[evol];
         }
 
 
- 
-        //======================================================
-        // IComparable:
-        //======================================================
+        public int CheckEvolutionValue(int evol) { return evol > EvolMax ? EvolMax : evol; }
+
+
+        /// <summary>
+        /// Check is flower has bloom form
+        /// </summary>
+        /// <param name="cgCheck">Check CG, return true if: 1=Has, 2=No</param>
+        /// <returns></returns>
+        public bool HasBloomForm(int cgCheck = 0)
+        {
+            if (NoKnight) return false;
+
+            switch (cgCheck)
+            {
+                case 0: if (EvolMax > 1) return true; break;
+                case 1: if (!NoBloomCG) goto case 0; break;
+                case 2: if (NoBloomCG) goto case 0; break;
+                default: break;
+            }
+            return false;
+        }
+
+
+        public bool CheckCategory(SpecFilter spec)
+        {
+            switch (spec)
+            {
+                case SpecFilter.All_Units: return true;
+                case SpecFilter.All_Materials: return NoKnight;
+                case SpecFilter.Skill_Materials:
+                    if ((SortCategory == 101) && (ImageID[0] >= 200000)) return true;
+                    break;
+                case SpecFilter.Equip_Materials:
+                    if ((SortCategory == 102) && (ImageID[0] >= 200000)) return true;
+                    break;
+                case SpecFilter.Bloom_Materials:
+                    if ((SortCategory == 400) || (SortCategory == 500)) return true;
+                    break;
+                case SpecFilter.Other:
+                    if ((SortCategory == 300) || (SortCategory == 201)) return true;
+                    if ((SortCategory > 100) && (SortCategory < 104) && (ImageID[0] < 200000)) return true;
+                    break;
+                default: break;
+            }
+            return false;
+        }
+
+        
+
+        /// <summary>
+        /// Sort: (-1: this, obj) (1: obj, this)
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override int CompareTo(object obj)
         {
             FlowerInfo cmpFlower = obj as FlowerInfo;
@@ -358,260 +487,34 @@ namespace FKG_Info
 
             //string S0 = Name.Romaji.Substring(0, 2);
             //string S1 = Flower.Name.Romaji.Substring(0, 2);
-            int Res = String.Compare(Name.Romaji, cmpFlower.Name.Romaji);
+            //int Res = String.Compare(Name.Romaji, cmpFlower.Name.Romaji);
 
-            if (Res == 0) return base.CompareTo(obj);
-                 
-            return Res;
+            return base.CompareTo(obj);
         }
 
 
-        // Sort by Skill Base RMS
-        public static int BySkillBaseRMS(FlowerInfo fw1, FlowerInfo fw2)
+
+
+        public override int CompareTo(object obj, SortBy sortType)
         {
-            if (fw1 == null || fw2 == null) return 0;
+            FlowerInfo fw = obj as FlowerInfo;
 
-            //if (fw1.Skill.GetBaseRMS() == fw2.Skill.GetBaseRMS()) return fw1.CompareTo(fw2);
+            if (fw == null) return 1;
 
-            //if (fw1.Skill.GetBaseRMS() < fw2.Skill.GetBaseRMS()) return 1; else return -1;
+            switch (sortType)
+            {
+                case SortBy.Category:
+                    if (SortCategory < fw.SortCategory) return 1;
+                    if (SortCategory > fw.SortCategory) return -1;
+                    break;
+                default: break;
+            }
 
-            return 0;
+            return CompareTo(obj);
         }
 
 
-        // Sort by Skill Raid RMS
-        public static int BySkillRaidRMS(FlowerInfo fw1, FlowerInfo fw2)
-        {
-            if (fw1 == null || fw2 == null) return 0;
 
-            //if (fw1.Skill.GetRaidRMS() == fw2.Skill.GetRaidRMS()) return fw1.CompareTo(fw2);
-
-            //if (fw1.Skill.GetRaidRMS() < fw2.Skill.GetRaidRMS()) return 1; else return -1;
-            return 0;
-        }
-
-
-        //public float GetSABaseRMS() { return Skill.GetBaseRMS() + Ability1.GetBaseRMS() + Ability2.GetBaseRMS(); }
-        //public float GetSARaidRMS() { return Skill.GetRaidRMS() + Ability1.GetRaidRMS() + Ability2.GetRaidRMS(); }
-
-
-        // Sort by Skill+Ability Base RMS
-        public static int BySABaseRMS(FlowerInfo fw1, FlowerInfo fw2)
-        {
-            if (fw1 == null || fw2 == null) return 0;
-
-            //float RMS1 = fw1.GetSABaseRMS();
-            //float RMS2 = fw2.GetSABaseRMS();
-
-            //if (RMS1 == RMS2) return fw1.CompareTo(fw2);
-
-            //if (RMS1 < RMS2) return 1; else return -1;
-
-            return 0;
-        }
-
-
-        // Sort by Skill+Ability Raid RMS
-        public static int BySARaidRMS(FlowerInfo fw1, FlowerInfo fw2)
-        {
-            if (fw1 == null || fw2 == null) return 0;
-
-            //float RMS1 = fw1.GetSARaidRMS();
-            //float RMS2 = fw2.GetSARaidRMS();
-
-            //if (RMS1 == RMS2) return fw1.CompareTo(fw2);
-
-            //if (RMS1 < RMS2) return 1; else return -1;
-
-            return 0;
-        }
-
-
-        /*
-        public FlowerInfo(XmlNode node) : this()
-        {
-            if (node == null) return;
-
-
-            Name.Kanji = XmlHelper.GetText(node, NodeName.KanjiName);
-            Name.Romaji = XmlHelper.GetText(node, NodeName.RomajiName);
-            Name.EngDMM = XmlHelper.GetText(node, NodeName.EngDMMName);
-            Name.EngNutaku = XmlHelper.GetText(node, NodeName.EngNutakuName);
-
-
-            AttackType = XmlHelper.GetInt32(node, NodeName.AttackType);
-            Nation = XmlHelper.GetInt32(node, NodeName.Nation);
-            Rarity = XmlHelper.GetInt32(node, NodeName.Rarity);
-
-            //HitPoints = XmlHelper.GetInt32(node, NodeName.HitPoints);
-            //Attack = XmlHelper.GetInt32(node, NodeName.Attack);
-            //Defence = XmlHelper.GetInt32(node, NodeName.Defence);
-            //Speed = XmlHelper.GetInt32(node, NodeName.Speed);
-
-
-            //Skill = new SkillInfo(node["Skill"]);
-
-            XmlNodeList xnl = node.SelectNodes("Ability");
-
-            //Ability1 = new AbilityInfo(xnl[0]);
-            //Ability2 = new AbilityInfo(xnl[1]);
-
-
-            ImageBase = XmlHelper.GetInt32(node, NodeName.ImageBase);
-            ImageAwakened = XmlHelper.GetInt32(node, NodeName.ImageAwakened);
-            ImageBloomed = XmlHelper.GetInt32(node, NodeName.ImageBloomed);
-
-
-            if (XmlHelper.GetText(node, NodeName.Game01) == "True") Game01 = true;
-            if (XmlHelper.GetText(node, NodeName.Game02) == "True") Game02 = true;
-            if (XmlHelper.GetText(node, NodeName.Game03) == "True") Game03 = true;
-
-            
-            GetID(Node);
-
-            Name.Kanji = GetInnerText(Node[XmlTags.KanjiName]);
-            Name.Romaji = GetInnerText(Node[XmlTags.RomajiName]);
-            Name.EngNutaku = GetInnerText(Node[XmlTags.EngNutakuName]);
-            Name.EngDMM = GetInnerText(Node[XmlTags.EngDMMName]);
-            AttackType = GetInnerText(Node[XmlTags.AttackType]);
-            Nationality = GetInnerText(Node[XmlTags.Nation]);
-
-            InStockDMM = GetInnerText(Node[XmlTags.InStockDMM]) == "True";
-            InStockNutaku = GetInnerText(Node[XmlTags.InStockNutaku]) == "True";
-
-            Rarity = GetInnerInt32(Node[XmlTags.Rarity], 2);
-
-            HitPoints = GetInnerInt32(Node[XmlTags.StatHP]);
-            Attack = GetInnerInt32(Node[XmlTags.StatAtc]);
-            Defence = GetInnerInt32(Node[XmlTags.StatDef]);
-            Speed = GetInnerInt32(Node[XmlTags.StatSpd]);
-
-            Skill.SetName(GetInnerText(Node[XmlTags.SkillName]));
-            Skill.SetHitCount(GetInnerInt32(Node[XmlTags.SkillHits]));
-            Skill.SetTargets(GetInnerInt32(Node[XmlTags.SkillTargets]));
-            Skill.SetDamage(GetInnerInt32(Node[XmlTags.SkillDamage]));
-            Skill.SetChance(GetInnerInt32(Node[XmlTags.SkillChance]));
-            Skill.SetAbsorbHP(GetInnerText(Node[XmlTags.SkillHPAbsorb]) == "True");
-
-            Ability1.SetInfo(GetInnerText(Node[XmlTags.Ability1Info]));
-            Ability1.SetBasePower(GetInnerInt32(Node[XmlTags.Ability1BPower]));
-            Ability1.SetRaidPower(GetInnerInt32(Node[XmlTags.Ability1RPower]));
-            Ability1.AddSpecials(GetInnerText(Node[XmlTags.Ability1Spec]), ';');
-            
-            Ability2.SetInfo(GetInnerText(Node[XmlTags.Ability2Info]));
-            Ability2.SetBasePower(GetInnerInt32(Node[XmlTags.Ability2BPower]));
-            Ability2.SetRaidPower(GetInnerInt32(Node[XmlTags.Ability2RPower]));
-            Ability2.AddSpecials(GetInnerText(Node[XmlTags.Ability2Spec]), ';');
-            
-        }
-        */
-        /*
-        public string CreateXMLNode()
-        {
-            string node = "\t<Flower ID=\"" + ID + "\">" + Environment.NewLine;
-
-            node += GetXmlFullString(XmlTags.KanjiName, Name.Kanji, 2);
-            node += GetXmlFullString(XmlTags.RomajiName, Name.Romaji, 2);
-            node += GetXmlFullString(XmlTags.EngNutakuName, Name.EngNutaku, 2);
-            node += GetXmlFullString(XmlTags.EngDMMName, Name.EngDMM, 2);
-            node += GetXmlFullString(XmlTags.AttackType, AttackType, 2);
-            node += GetXmlFullString(XmlTags.Nation, Nationality, 2);
-            node += GetXmlFullString(XmlTags.Rarity, Rarity.ToString(), 2);
-
-            node += GetXmlFullString(XmlTags.InStockDMM, InStockDMM.ToString(), 2);
-            node += GetXmlFullString(XmlTags.InStockNutaku, InStockNutaku.ToString(), 2);
-
-            node += GetXmlFullString(XmlTags.StatHP, HitPoints.ToString(), 2);
-            node += GetXmlFullString(XmlTags.StatAtc, Attack.ToString(), 2);
-            node += GetXmlFullString(XmlTags.StatDef, Defence.ToString(), 2);
-            node += GetXmlFullString(XmlTags.StatSpd, Speed.ToString(), 2);
-
-            node += GetXmlFullString(XmlTags.SkillName, Skill.GetName(), 2);
-            node += GetXmlFullString(XmlTags.SkillTargets, Skill.GetTargets().ToString(), 2);
-            node += GetXmlFullString(XmlTags.SkillHits, Skill.GetHitCount().ToString(), 2);
-            node += GetXmlFullString(XmlTags.SkillDamage, Skill.GetDamage().ToString(), 2);
-            node += GetXmlFullString(XmlTags.SkillChance, Skill.GetChance().ToString(), 2);
-            node += GetXmlFullString(XmlTags.SkillHPAbsorb, Skill.IsHPAbsorb().ToString(), 2);
-
-            node += GetXmlFullString(XmlTags.Ability1Info, Ability1.GetInfo(), 2);
-            node += GetXmlFullString(XmlTags.Ability1BPower, Ability1.GetBasePower().ToString(), 2);
-            node += GetXmlFullString(XmlTags.Ability1RPower, Ability1.GetRaidPower().ToString(), 2);
-            node += GetXmlFullString(XmlTags.Ability1Spec, Ability1.GetSpecial(";"), 2);
-
-            node += GetXmlFullString(XmlTags.Ability2Info, Ability2.GetInfo(), 2);
-            node += GetXmlFullString(XmlTags.Ability2BPower, Ability2.GetBasePower().ToString(), 2);
-            node += GetXmlFullString(XmlTags.Ability2RPower, Ability2.GetRaidPower().ToString(), 2);
-            node += GetXmlFullString(XmlTags.Ability2Spec, Ability2.GetSpecial(";"), 2);
-
-            node += "\t</Flower>" + Environment.NewLine;
-            return node;
-        }
-        */
-
-        /*
-        public void WriteXmlNode(XmlTextWriter wr)
-        {
-            wr.WriteStartElement("Flower");
-            //wr.WriteAttributeString("ID", ID.ToString());
-
-            wr.WriteElementString(NodeName.KanjiName, Name.Kanji);
-            wr.WriteElementString(NodeName.RomajiName, Name.Romaji);
-            wr.WriteElementString(NodeName.EngDMMName, Name.EngDMM);
-            wr.WriteElementString(NodeName.EngNutakuName, Name.EngNutaku);
-            wr.WriteElementString(NodeName.AttackType, AttackType.ToString());
-            wr.WriteElementString(NodeName.Nation, Nation.ToString());
-            wr.WriteElementString(NodeName.Rarity, Rarity.ToString());
-
-            //wr.WriteElementString(NodeName.HitPoints, HitPoints.ToString());
-            //wr.WriteElementString(NodeName.Attack, Attack.ToString());
-            //wr.WriteElementString(NodeName.Defence, Defence.ToString());
-            //wr.WriteElementString(NodeName.Speed, Speed.ToString());
-
-            //Skill.WriteXmlNode(wr);
-            //Ability1.WriteXmlNode(wr);
-            //Ability2.WriteXmlNode(wr);
-
-            wr.WriteElementString(NodeName.ImageBase, ImageBase.ToString());
-            wr.WriteElementString(NodeName.ImageAwakened, ImageAwakened.ToString());
-            wr.WriteElementString(NodeName.ImageBloomed, ImageBloomed.ToString());
-
-            wr.WriteElementString(NodeName.Game01, Game01.ToString());
-            wr.WriteElementString(NodeName.Game02, Game02.ToString());
-            wr.WriteElementString(NodeName.Game03, Game03.ToString());
-
-            wr.WriteEndElement();
-        }
-        */
-
-        /*
-        public FlowerInfo CopyTo(FlowerInfo dupe)
-        {
-            dupe.Name = Name;
-            //dupe.Skill = Skill;
-            //dupe.Ability1 = Ability1;
-            //dupe.Ability2 = Ability2;
-
-
-            dupe.Rarity = Rarity;
-            dupe.Nation = Nation;
-            dupe.AttackType = AttackType;
-
-            //dupe.HitPoints = HitPoints;
-            //dupe.Attack = Attack;
-            //dupe.Defence = Defence;
-            //dupe.Speed = Speed;
-
-            dupe.Game01 = Game01;
-            dupe.Game02 = Game02;
-            dupe.Game03 = Game03;
-
-            dupe.ImageBase = ImageBase;
-            dupe.ImageAwakened = ImageAwakened;
-            dupe.ImageBloomed = ImageBloomed;
-
-            return dupe;
-        }
-        */
 
         public void Update(FlowerInfo flower)
         {

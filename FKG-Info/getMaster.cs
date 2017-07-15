@@ -45,8 +45,8 @@ namespace FKG_Info
                     break;
                 }
 
-
-                FileStream fs = new FileStream("F:\\getMasterResponse.bin", FileMode.Create);
+                string path = Program.DB.DataFolder + "\\getMaster" + System.DateTime.Now.ToString("yyMMddHHmmss") + ".bin";
+                FileStream fs = new FileStream(path, FileMode.Create);
                 client.GetStream().CopyTo(fs); // This is totally wrong!!! Infinite process, need abort from sender!
                 fs.Close();
                 client.Close();

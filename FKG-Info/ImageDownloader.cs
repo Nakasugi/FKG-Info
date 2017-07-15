@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Threading;
+using SWMI = System.Windows.Media.Imaging;
 
 namespace FKG_Info
 {
@@ -14,6 +15,7 @@ namespace FKG_Info
 
         public class DownloadedFile
         {
+            public FlowerInfo.ImageTypes Type;
             public string Name;
             public Image Image;
         }
@@ -29,7 +31,12 @@ namespace FKG_Info
         public int Queue { get; private set; }
 
 
-        public delegate void DownloadCompletedCallback(DownloadedFile ifile);
+        public delegate void DwCompletedCallback(DownloadedFile ifile);
+
+
+
+        //Image[] IconBG, IconRarity, IconType, IconEvol;
+        private enum IconElement { Background, Frame, Type, Evolution }
 
 
 
@@ -43,68 +50,77 @@ namespace FKG_Info
 
 
 
-        public void GetChImage(string fname, DownloadCompletedCallback cbDelegate)
+        public void GetImage(FlowerInfo flower, DwCompletedCallback cbDelegate)
         {
-            if (GetImage(fname, ChFiles, cbDelegate)) return;
+            string fname = flower.GetImageName();
 
-            Thread th = new Thread(() => ChDownload(fname, cbDelegate));
+            if(fname == null)
+            {
+                flower.UnlockSelection();
+                cbDelegate?.Invoke(null);
+                return;
+            }
+
+            DownloadedFile file;
+            lock (Locker) file = ChFiles.Find(f => f.Name == fname);
+
+            if (file != null)
+            {
+                flower.UnlockSelection();
+                cbDelegate?.Invoke(file);
+                return;
+            }
+
+            Thread th = new Thread(() => Download(flower, cbDelegate));
             th.Name = "FKG Chara Downloder";
             th.Start();
         }
 
 
 
-        public void GetEqImage(string fname, DownloadCompletedCallback cbDelegate)
+        public void GetImage(EquipmentInfo equip, DwCompletedCallback cbDelegate)
         {
-            if (GetImage(fname, EqFiles, cbDelegate)) return;
+            string fname = equip.GetImageName();
 
-            Thread th = new Thread(() => EqDownload(fname, cbDelegate));
+            if (fname == null) { cbDelegate?.Invoke(null); return; }
+
+            DownloadedFile file;
+            lock (Locker) file = EqFiles.Find(f => f.Name == fname);
+
+            if (file != null) { cbDelegate?.Invoke(file); return; }
+
+            Thread th = new Thread(() => Download(equip, cbDelegate));
             th.Name = "FKG Equip Downloder";
             th.Start();
         }
 
 
 
-        private bool GetImage(string fname, List<DownloadedFile> files, DownloadCompletedCallback cbDelegate)
-        {
-            if (fname == null) { cbDelegate?.Invoke(null); return true; }
-
-            DownloadedFile file;
-
-            lock (Locker) file = files.Find(f => f.Name == fname);
-
-            if (file != null)
-            {
-                cbDelegate?.Invoke(file);
-                return true;
-            }
-
-            return false;
-        }
-
-
-
-
         /// <summary>
         /// Downloading character images and icons
         /// </summary>
-        /// <param name="fname"></param>
+        /// <param name="flower"></param>
         /// <param name="cbDelegate"></param>
-        void ChDownload(string fname, DownloadCompletedCallback cbDelegate)
+        void Download(FlowerInfo flower, DwCompletedCallback cbDelegate)
         {
             DownloadedFile file = new DownloadedFile();
 
-            file.Name = fname;
+            file.Name = flower.GetImageName();
+            file.Type = flower.SelectedImage;
+            file.Image = null;
 
-            string path = Program.DB.ImagesFolder, suffix = "s/";
+            lock (Locker) ChFiles.Add(file);
 
-            string checkIcon = fname.Substring(0, 4);
+            flower.UnlockSelection();
+
+            string path = Program.DB.ImagesFolder, tname = "s/";
+            string checkIcon = file.Name.Substring(0, 4);
             if (checkIcon == "icon")
             {
-                suffix = "i/";
+                tname = "i/";
                 path = Program.DB.IconsFolder;
             }
-            path += "\\" + fname + ".png";
+            path += "\\" + file.Name + ".png";
 
             try
             {
@@ -116,7 +132,7 @@ namespace FKG_Info
             }
 
 
-            if (file.Image == null)
+            if ((file.Image == null) && (Program.DB.ImageSource != FlowerDataBase.ImageSources.Local))
             {
                 lock (Locker) Queue++;
                 while (Count >= MAX_LOADERS_CH)
@@ -129,24 +145,10 @@ namespace FKG_Info
 
                 WebClient wc = new WebClient();
 
-                string hashname = suffix + StringHelper.GetMD5Hash(fname) + ".bin";
 
-                string url1 = null, url2 = null;
-
-                switch (Program.DB.ImageSource)
-                {
-                    case FlowerDataBase.ImageSources.Nutaku: url1 = Program.DB.NutakuURL + hashname; break;
-                    case FlowerDataBase.ImageSources.NutakuDMM: url2 = Program.DB.DMMURL + hashname; goto case FlowerDataBase.ImageSources.Nutaku;
-
-                    case FlowerDataBase.ImageSources.DMM: url1 = Program.DB.DMMURL + hashname; break;
-                    case FlowerDataBase.ImageSources.DMMNutaku: url2 = Program.DB.NutakuURL + hashname; goto case FlowerDataBase.ImageSources.DMM;
-
-                    default:
-                        lock (Locker) { Count--; Queue--; }
-                        cbDelegate?.Invoke(null);
-                        return;
-                }
-
+                tname = "character/" + tname + StringHelper.GetMD5Hash(file.Name) + ".bin";
+                string url1 = Program.DB.GetUrl(1) + tname;
+                string url2 = Program.DB.GetUrl(2) + tname;
 
                 MemoryStream stream;
                 byte[] buffer;
@@ -155,7 +157,7 @@ namespace FKG_Info
                 {
                     buffer = wc.DownloadData(url1);
                     stream = new MemoryStream(buffer);
-                    stream = DeflateSream(stream);
+                    stream = DecompressStream(stream);
                 }
                 catch
                 {
@@ -163,7 +165,7 @@ namespace FKG_Info
                     {
                         buffer = wc.DownloadData(url2);
                         stream = new MemoryStream(buffer);
-                        stream = DeflateSream(stream);
+                        stream = DecompressStream(stream);
                     }
                     catch { stream = null; }
                 }
@@ -175,7 +177,14 @@ namespace FKG_Info
                 }
                 catch
                 {
-                    file.Image = null;
+                    try
+                    {
+                        file.Image = Image.FromStream(ReadJpegXR(stream));
+                    }
+                    catch
+                    {
+                        file.Image = null;
+                    }
                 }
 
                 lock (Locker) { Count--; Queue--; }
@@ -184,11 +193,14 @@ namespace FKG_Info
 
             if (file.Image != null)
             {
-                lock (Locker) ChFiles.Add(file);
                 SaveFile(file.Image, path);
+                if (file.Type == FlowerInfo.ImageTypes.IconLarge) PlaceIconElements(flower, ref file.Image);
+                cbDelegate?.Invoke(file);
             }
-
-            cbDelegate?.Invoke(file);
+            else
+            {
+                cbDelegate?.Invoke(null);
+            }
         }
 
 
@@ -196,14 +208,16 @@ namespace FKG_Info
         /// <summary>
         /// Downloading quipment images
         /// </summary>
-        /// <param name="eq"></param>
+        /// <param name="equip"></param>
         /// <param name="cbDelegate"></param>
-        void EqDownload(string fname, DownloadCompletedCallback cbDelegate)
+        void Download(EquipmentInfo equip, DwCompletedCallback cbDelegate)
         {
             DownloadedFile file = new DownloadedFile();
 
-            file.Name = fname;
-            string path = Program.DB.EquipFolder + "\\" + fname + ".png";
+            file.Name = equip.GetImageName();
+            lock (Locker) EqFiles.Add(file);
+
+            string path = Program.DB.EquipFolder + "\\" + file.Name + ".png";
 
             try
             {
@@ -215,9 +229,8 @@ namespace FKG_Info
             }
 
 
-            if (file.Image == null)
+            if ((file.Image == null) && (Program.DB.ImageSource != FlowerDataBase.ImageSources.Local))
             {
-
                 lock (Locker) Queue++;
                 while (Count >= MAX_LOADERS_EQ)
                 {
@@ -229,26 +242,9 @@ namespace FKG_Info
 
                 WebClient wc = new WebClient();
 
-
-                string url1 = null, url2 = null;
-
-                switch (Program.DB.ImageSource)
-                {
-                    case FlowerDataBase.ImageSources.Nutaku: url1 = Program.DB.NutakuURL; break;
-                    case FlowerDataBase.ImageSources.NutakuDMM: url2 = Program.DB.DMMURL; goto case FlowerDataBase.ImageSources.Nutaku;
-
-                    case FlowerDataBase.ImageSources.DMM: url1 = Program.DB.DMMURL; break;
-                    case FlowerDataBase.ImageSources.DMMNutaku: url2 = Program.DB.NutakuURL; goto case FlowerDataBase.ImageSources.DMM;
-
-                    default:
-                        lock (Locker) { Count--; Queue--; }
-                        cbDelegate?.Invoke(null);
-                        return;
-                }
-
-                url1 = url1.Replace("character/", "") + "item/100x100/" + fname + ".png";
-                url2 = url2.Replace("character/", "") + "item/100x100/" + fname + ".png";
-
+                string tname = "item/100x100/" + file.Name + ".png";
+                string url1 = Program.DB.GetUrl(1) + tname;
+                string url2 = Program.DB.GetUrl(2) + tname;
 
                 MemoryStream stream;
                 byte[] buffer;
@@ -286,11 +282,13 @@ namespace FKG_Info
 
             if (file.Image != null)
             {
-                lock (Locker) EqFiles.Add(file);
                 SaveFile(file.Image, path);
+                cbDelegate?.Invoke(file);
             }
-
-            cbDelegate?.Invoke(file);
+            else
+            {
+                cbDelegate?.Invoke(null);
+            }
         }
 
 
@@ -322,7 +320,7 @@ namespace FKG_Info
         /// </summary>
         /// <param name="srcStream"></param>
         /// <returns></returns>
-        static MemoryStream DeflateSream(MemoryStream srcStream)
+        static MemoryStream DecompressStream(MemoryStream srcStream)
         {
             MemoryStream dstStream = new MemoryStream();
 
@@ -336,6 +334,105 @@ namespace FKG_Info
             srcStream.Close();
 
             return dstStream;
+        }
+
+
+
+        static MemoryStream ReadJpegXR(MemoryStream srcStream)
+        {
+            MemoryStream dstStream = new MemoryStream();
+
+            SWMI.WmpBitmapDecoder decoder =
+                new SWMI.WmpBitmapDecoder(srcStream, SWMI.BitmapCreateOptions.PreservePixelFormat, SWMI.BitmapCacheOption.Default);
+            SWMI.BitmapSource bitmapSource = decoder.Frames[0];
+            
+            //if (bitmapSource.Format != System.Windows.Media.PixelFormats.Bgra32) bitmapSource = new SWMI.FormatConvertedBitmap(bitmapSource, System.Windows.Media.PixelFormats.Bgra32, null, 0);
+
+            var encoder = new SWMI.BmpBitmapEncoder();
+            encoder.Frames.Add(SWMI.BitmapFrame.Create(bitmapSource));
+            encoder.Save(dstStream);
+
+            srcStream.Close();
+
+            return dstStream;
+        }
+
+
+
+        public static void PlaceIconElements(FlowerInfo flower, ref Image icon)
+        {
+            Bitmap outImage = new Bitmap(100, 100);
+
+            Graphics gr = Graphics.FromImage(outImage);
+            Rectangle rc = new Rectangle(0, 0, 100, 100);
+
+            gr.Clear(Color.FromArgb(0, 0, 0, 0));
+            gr.DrawImage(GetIconElement(IconElement.Background, flower.Rarity), 0, 0);
+            gr.DrawImage(icon, rc, rc, GraphicsUnit.Pixel);
+            gr.DrawImage(GetIconElement(IconElement.Frame, flower.Rarity), 0, 0);
+            if (!flower.NoKnight) gr.DrawImage(GetIconElement(IconElement.Type, flower.AttackType), 0, 0);
+            
+            //if (evol != 0) gr.DrawImage(GetIconElement(IconElement.Evolution, evol), 0, 0);
+
+            gr.Dispose();
+
+            icon.Dispose();
+            icon = outImage;
+        }
+
+
+
+        private static Image GetIconElement(IconElement el, int num)
+        {
+            switch (el)
+            {
+                case IconElement.Background:
+                    switch (num)
+                    {
+                        case 1: return Properties.Resources.icon_bg1;
+                        case 2: return Properties.Resources.icon_bg2;
+                        case 3: return Properties.Resources.icon_bg3;
+                        case 4: return Properties.Resources.icon_bg4;
+                        case 5: return Properties.Resources.icon_bg5;
+                        case 6: return Properties.Resources.icon_bg6;
+                        default: break;
+                    }
+                    break;
+                case IconElement.Frame:
+                    switch (num)
+                    {
+                        case 1: return Properties.Resources.icon_frame1;
+                        case 2: return Properties.Resources.icon_frame2;
+                        case 3: return Properties.Resources.icon_frame3;
+                        case 4: return Properties.Resources.icon_frame4;
+                        case 5: return Properties.Resources.icon_frame5;
+                        case 6: return Properties.Resources.icon_frame6;
+                        default: break;
+                    }
+                    break;
+                case IconElement.Type:
+                    switch (num)
+                    {
+                        case 1: return Properties.Resources.icon_type1;
+                        case 2: return Properties.Resources.icon_type2;
+                        case 3: return Properties.Resources.icon_type3;
+                        case 4: return Properties.Resources.icon_type4;
+                        default: break;
+                    }
+                    break;
+                case IconElement.Evolution:
+                    switch (num)
+                    {
+                        case 1: return Properties.Resources.icon_evol1;
+                        case 2: return Properties.Resources.icon_evol2;
+                        case 3: return Properties.Resources.icon_evol3;
+                        default: break;
+                    }
+                    break;
+                default: break;
+            }
+
+            return Properties.Resources.icon_default;
         }
     }
 }
