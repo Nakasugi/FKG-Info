@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -42,6 +43,7 @@
             this.MMItemFile = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileImportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportMaster = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemFileExportIDs = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MMItemFileExperimental = new System.Windows.Forms.ToolStripMenuItem();
             this.getMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,11 +59,12 @@
             this.MMItemSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemAbout = new System.Windows.Forms.ToolStripMenuItem();
             this._lbLoading = new System.Windows.Forms.Label();
-            this.PicBoxIconBloom = new FKG_Info.AdvPictureBox(true);
-            this.PicBoxIconAwak = new FKG_Info.AdvPictureBox(true);
-            this.PicBoxIconBase = new FKG_Info.AdvPictureBox(true);
-            this.PicBoxBig = new FKG_Info.AdvPictureBox();
             this._lbWait = new System.Windows.Forms.Label();
+            this.ChBoxExSkin = new System.Windows.Forms.CheckBox();
+            this.PicBoxIconBloom = new FKG_Info.AdvPictureBox(this.components);
+            this.PicBoxIconAwak = new FKG_Info.AdvPictureBox(this.components);
+            this.PicBoxIconBase = new FKG_Info.AdvPictureBox(this.components);
+            this.PicBoxBig = new FKG_Info.AdvPictureBox(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBloom)).BeginInit();
@@ -193,6 +196,7 @@
             this.MMItemFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MMItemFileImportMaster,
             this.MMItemFileExportMaster,
+            this.MMItemFileExportIDs,
             this.toolStripSeparator1,
             this.MMItemFileExperimental});
             this.MMItemFile.Name = "MMItemFile";
@@ -212,6 +216,13 @@
             this.MMItemFileExportMaster.Size = new System.Drawing.Size(149, 22);
             this.MMItemFileExportMaster.Text = "Export Master";
             this.MMItemFileExportMaster.Click += new System.EventHandler(this.MMItemFileExportMaster_Click);
+            // 
+            // MMItemFileExportIDs
+            // 
+            this.MMItemFileExportIDs.Name = "MMItemFileExportIDs";
+            this.MMItemFileExportIDs.Size = new System.Drawing.Size(149, 22);
+            this.MMItemFileExportIDs.Text = "Export IDs";
+            this.MMItemFileExportIDs.Click += new System.EventHandler(this.MMItemFileExportIDs_Click);
             // 
             // toolStripSeparator1
             // 
@@ -324,6 +335,30 @@
             this._lbLoading.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this._lbLoading.Visible = false;
             // 
+            // _lbWait
+            // 
+            this._lbWait.AutoSize = true;
+            this._lbWait.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._lbWait.Location = new System.Drawing.Point(340, 300);
+            this._lbWait.Name = "_lbWait";
+            this._lbWait.Size = new System.Drawing.Size(125, 25);
+            this._lbWait.TabIndex = 25;
+            this._lbWait.Text = "Loading . . .";
+            this._lbWait.Visible = false;
+            // 
+            // ChBoxExSkin
+            // 
+            this.ChBoxExSkin.AutoSize = true;
+            this.ChBoxExSkin.Enabled = false;
+            this.ChBoxExSkin.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.ChBoxExSkin.Location = new System.Drawing.Point(953, 636);
+            this.ChBoxExSkin.Name = "ChBoxExSkin";
+            this.ChBoxExSkin.Size = new System.Drawing.Size(62, 17);
+            this.ChBoxExSkin.TabIndex = 26;
+            this.ChBoxExSkin.Text = "Ex Skin";
+            this.ChBoxExSkin.UseVisualStyleBackColor = true;
+            this.ChBoxExSkin.CheckedChanged += new System.EventHandler(this.ChBoxExSkin_CheckedChanged);
+            // 
             // PicBoxIconBloom
             // 
             this.PicBoxIconBloom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -366,23 +401,14 @@
             this.PicBoxBig.TabIndex = 0;
             this.PicBoxBig.TabStop = false;
             this.PicBoxBig.Visible = false;
-            // 
-            // _lbWait
-            // 
-            this._lbWait.AutoSize = true;
-            this._lbWait.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this._lbWait.Location = new System.Drawing.Point(340, 300);
-            this._lbWait.Name = "_lbBack";
-            this._lbWait.Size = new System.Drawing.Size(125, 25);
-            this._lbWait.TabIndex = 25;
-            this._lbWait.Text = "Loading . . .";
-            this._lbWait.Visible = false;
+            this.PicBoxBig.Click += new System.EventHandler(this.PicBoxBig_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1132, 666);
+            this.Controls.Add(this.ChBoxExSkin);
             this.Controls.Add(this._lbLoading);
             this.Controls.Add(this.ChBoxTranslation);
             this.Controls.Add(this.BtSelect);
@@ -403,6 +429,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FKG-Info";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_Closing);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).EndInit();
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
@@ -446,6 +473,8 @@
         private System.Windows.Forms.Label _lbLoading;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Label _lbWait;
+        private System.Windows.Forms.ToolStripMenuItem MMItemFileExportIDs;
+        private System.Windows.Forms.CheckBox ChBoxExSkin;
     }
 }
 

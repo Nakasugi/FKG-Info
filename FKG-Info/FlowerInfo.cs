@@ -1,8 +1,4 @@
-﻿using System;
-
-
-
-namespace FKG_Info
+﻿namespace FKG_Info
 {
     public class FlowerInfo : BaseInfo
     {
@@ -23,6 +19,8 @@ namespace FKG_Info
 
         private int[] ImageID;
 
+        private int ExclusiveSkinID;
+
 
         //public bool Game01, Game02, Game03;
 
@@ -39,12 +37,9 @@ namespace FKG_Info
         private const int EVOL_NUM = 3;
 
 
-
-        private object Locker;
-        private bool Waiting;
-
         public int SelectedEvolution { get; private set; }
-        public ImageTypes SelectedImage { get; private set; }
+        public Animator.Type SelectedImage { get; private set; }
+        public Animator.EmoType SelectedEmotion { get; private set; }
 
 
 
@@ -88,10 +83,11 @@ namespace FKG_Info
         };
 
  
-        public enum ImageTypes { IconSmall, IconMedium, IconLarge, Cutin, Bustup, Stand, StandSmall, Home };
+        //public enum ImageTypes { IconSmall, IconMedium, IconLarge, Cutin, Bustup, Stand, StandSmall, Home };
+
         public enum SpecFilter
         {
-            All_Knights, Has_Bloom_Form, Has_Bloom_CG, No_Bloom_CG,
+            All_Knights, Has_Bloom_Form, Has_Bloom_CG, No_Bloom_CG, Has_Exclusive_Skin,
             All_Units, All_Materials,
             Bloom_Materials, Skill_Materials, Equip_Materials,
             Other
@@ -108,9 +104,6 @@ namespace FKG_Info
 
         public FlowerInfo()
         {
-            Locker = new object();
-            Waiting = false;
-
             BaseType = ObjectType.Flower;
 
             ID = 0;
@@ -171,12 +164,16 @@ namespace FKG_Info
             Stats[Evol] = new FlowerStats(masterData);
 
             if (ImageID[Evol] >= 700000) ID = 0;
-            //if ((Nation < 1) || (Nation > 7)) ID = 0;
         }
 
 
 
-        //======================================================
+        /// <summary>
+        /// Fil DataGridView witn flower information
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="evol"></param>
+        /// <param name="translation"></param>
         public void FillGrid(System.Windows.Forms.DataGridView view, int evol, bool translation = true)
         {
             evol = evol > EvolMax ? EvolMax : evol;
@@ -200,7 +197,6 @@ namespace FKG_Info
             view.Rows.Add("Nation", GetNation());
             view.Rows.Add("Favorite Gift", Gifts[FavoriteGift]);
 
-            //statsStyle.ForeColor = System.Drawing.Color.DarkRed;
             id = view.Rows.Add("HitPoints", Stats[evol].GetHitPointsInfo());
             view.Rows[id].DefaultCellStyle = statsStyle;
             id = view.Rows.Add("Attack", Stats[evol].GetAttackInfo());
@@ -223,6 +219,7 @@ namespace FKG_Info
             if (eq != null) view.Rows.Add("Equipment", eq.KName);
             
         }
+
 
 
         /// <summary>
@@ -251,6 +248,7 @@ namespace FKG_Info
 
             return null;
         }
+
 
 
         /// <summary>
@@ -325,15 +323,6 @@ namespace FKG_Info
         }
 
 
-        /*
-        public int SelectEvolution(int evol)
-        {
-            if (evol < 0) return 0;
-            if (evol > EvolMax) return EvolMax;
-            return evol;
-        }
-        */
-
 
         string GetStars()
         {
@@ -350,70 +339,11 @@ namespace FKG_Info
         }
 
 
-        
-        public string GetImageName()
+
+        public int GetImageEvolID(int evol, bool ex = false)
         {
-            if (GetImageEvolID(SelectedEvolution) == 0) return null;
+            if ((ex) && (ExclusiveSkinID != 0)) return ExclusiveSkinID;
 
-            return GetImageTypeName(SelectedImage) + GetImageEvolID(SelectedEvolution).ToString();
-        }
-        
-
-
-        public string GetImageTypeName(ImageTypes type)
-        {
-            switch (type)
-            {
-                case ImageTypes.IconSmall: return "icon_s_";
-                case ImageTypes.IconMedium: return "icon_m_";
-                case ImageTypes.IconLarge: return "icon_l_";
-                case ImageTypes.Cutin: return "cutin_";
-                case ImageTypes.Bustup: return "bustup_";
-                case ImageTypes.Stand: return "stand_";
-                case ImageTypes.StandSmall: return "stand_s_";
-                case ImageTypes.Home: return "home_";
-
-                default: return "";
-            }
-        }
-
-
-
-        /// <summary>
-        /// Select image and lock selection by default
-        /// </summary>
-        /// <param name="evol"></param>
-        /// <param name="type"></param>
-        /// <param name="Sync"></param>
-        public void SelectImageType(int evol, ImageTypes type, bool Sync = true)
-        {
-            if (Sync)
-            {
-                int t = 0;
-                while (Waiting)
-                {
-                    System.Threading.Thread.Sleep(10);
-                    t++;
-                    if (t > 100)
-                    {
-                        System.Windows.Forms.MessageBox.Show("Threads synchronization error.", "Error");
-                        break;
-                    }
-                }
-
-                lock (Locker) Waiting = true;
-            }
-
-            SelectedEvolution = evol;
-            SelectedImage = type;
-        }
-
-        public void UnlockSelection() { lock (Locker) Waiting = false; }
-
-
-
-        public int GetImageEvolID(int evol)
-        {
             return evol > EvolMax ? 0 : ImageID[evol];
         }
 
@@ -507,12 +437,32 @@ namespace FKG_Info
                     if (SortCategory < fw.SortCategory) return 1;
                     if (SortCategory > fw.SortCategory) return -1;
                     break;
+                case SortBy.TotalStats:
+                    if (Stats[EvolMax].GetTotalMax() < fw.Stats[fw.EvolMax].GetTotalMax()) return 1;
+                    if (Stats[EvolMax].GetTotalMax() > fw.Stats[fw.EvolMax].GetTotalMax()) return -1;
+                    break;
                 default: break;
             }
 
             return CompareTo(obj);
         }
 
+
+
+        public void FindExclusiveSkin(System.Collections.Generic.List<SkinInfo> skins)
+        {
+            SkinInfo skin;
+            
+            skin = skins.Find(sk => sk.ID == ImageID[0]);
+            if (skin == null) return;
+
+            skin = skins.Find(sk => sk.CheckExclusive(skin));
+            if (skin == null) return;
+
+            ExclusiveSkinID = skin.ID;
+        }
+
+        public bool HasExclusiveSkin() { return ExclusiveSkinID != 0; }
 
 
 

@@ -89,6 +89,11 @@
             return DefenseLvMax + DefenseAmpules + GetDefenseAffectionBonus(200);
         }
 
+        public int GetTotalMax()
+        {
+            return GetHitPointsMax() + GetAttackMax() + GetDefenseMax() + SpeedLvMax;
+        }
+
 
 
         public string GetHitPointsInfo()

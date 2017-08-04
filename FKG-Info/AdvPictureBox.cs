@@ -31,6 +31,8 @@ namespace FKG_Info
             PictureType = Type.Base;
         }
 
+
+
         public AdvPictureBox(IContainer container) : this()
         {
             container.Add(this);
@@ -42,7 +44,6 @@ namespace FKG_Info
         {
             PartialIcon = partialIcon;
         }
-
 
 
 
@@ -72,18 +73,19 @@ namespace FKG_Info
 
 
 
-        public void AsyncLoadChImage(FlowerInfo flower)
+        public void AsyncLoadImage(Animator ani)
         {
-            string name = flower.GetImageName();
-            
+            string name = ani.GetImageName();
+
             lock (Locker) LastName = name;
 
-            Program.ImageLoader.GetImage(flower, CallBackSetImage);
+            Program.ImageLoader.GetImage(ani, CallBackSetImage);
         }
 
 
 
-        public void AsyncLoadEqImage(EquipmentInfo equip)
+
+        public void AsyncLoadImage(EquipmentInfo equip)
         {
             string name = equip.GetImageName();
 
@@ -94,36 +96,34 @@ namespace FKG_Info
 
 
 
-        public void Clear() { LastName = null; Image = null; }
+        public void Clear() { lock (Locker) { LastName = null; Image = null; } }
 
 
 
-        private void CallBackSetImage(ImageDownloader.DownloadedFile ifile)
+        private void CallBackSetImage(ImageDownloader.DownloadedFile df)
         {
-            if (ifile == null) { Image = null; return; }
-
-            lock (Locker) if (LastName != ifile.Name) return;
-
-            int i = 0;
-
-            while (i < 3)
+            lock (Locker)
             {
-                try
-                {
-                    Image = ifile.Image;
-                    return;
-                }
-                catch
-                {
-                    i++;
-                    System.Threading.Thread.Sleep(50);
-                }
+                if (df == null) { Image = null; return; }
+
+                if (LastName != df.Name) return;
+
+                // Lock! Lock!! Lock!!! Image protection need more Locks!
+                // No more "Object is currently in use elsewhere"!
+                lock (df.Locker) Image = df.Image;
             }
         }
 
 
 
+        /// <summary>
+        /// For scrolling panel with mouse wheel.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="ev"></param>
         private void OnMouseHover(object sender, EventArgs ev) { Parent.Focus(); }
+
+
 
         private void OnClick(object sender, EventArgs ev)
         {
@@ -134,6 +134,8 @@ namespace FKG_Info
                 default: return;
             }
         }
+
+
 
         private void OnDoubleClick(object sender, EventArgs ev)
         {

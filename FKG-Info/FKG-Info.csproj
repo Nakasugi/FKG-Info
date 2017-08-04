@@ -91,6 +91,7 @@
     <Compile Include="ExportMasterForm.Designer.cs">
       <DependentUpon>ExportMasterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Animator.cs" />
     <Compile Include="FlowerSelectControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -125,6 +126,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkillInfo.cs" />
+    <Compile Include="SkinInfo.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="XMLHelper.cs" />
     <EmbeddedResource Include="AboutForm.resx">
@@ -184,6 +186,7 @@
     <None Include="Images\Magic.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Images\NoImage.png" />
     <None Include="Images\icon_l_default.png" />
     <None Include="Images\equip_default.png" />
     <None Include="Images\ice_bracelet.png" />
@@ -212,6 +215,7 @@
     <None Include="Images\IconElements\icon_type2.png" />
     <None Include="Images\IconElements\icon_type3.png" />
     <None Include="Images\IconElements\icon_type4.png" />
+    <None Include="Images\Loading.png" />
     <Content Include="Images\Nerine.ico" />
     <None Include="Images\NerineAbout\nerine_ab_02_03.png" />
     <None Include="Images\NerineAbout\nerine_ab_02_02.png" />

@@ -6,9 +6,7 @@ namespace FKG_Info
 {
     public partial class MainForm : Form
     {
-        FlowerInfo.ImageTypes SelectedImageType;
-
-        private int SelectedEvolution;
+        Animator Animation;
 
         private ContextMenu CMenu;
 
@@ -21,6 +19,10 @@ namespace FKG_Info
 
         private enum Mode { Characters, Equipments, Furnitures, Enemies }
         private Mode CurrentMode;
+
+        Graphics GR;
+        Brush BrPink;
+        Brush BrBase;
 
 
 
@@ -49,30 +51,19 @@ namespace FKG_Info
             GridInfo.DefaultCellStyle.SelectionBackColor = Color.White;
             GridInfo.DefaultCellStyle.SelectionForeColor = Color.Purple;
 
-            SelectedImageType = FlowerInfo.ImageTypes.Stand;
-            SelectedEvolution = FlowerInfo.Evolution.Base;
-
-            ToolStripMenuItem mi;
+            Animation = new Animator();
             CMenu = new ContextMenu();
 
-            // Create image type selection menu
-            foreach (FlowerInfo.ImageTypes itp in Enum.GetValues(typeof(FlowerInfo.ImageTypes)))
-            {
-                if (itp == FlowerInfo.ImageTypes.IconSmall) continue;
-                if (itp == FlowerInfo.ImageTypes.IconMedium) continue;
-                if (itp == FlowerInfo.ImageTypes.IconLarge) continue;
+            Animation.InitializeAnimation(PicBoxBig);
 
-                CMenu.MenuItems.Add(itp.ToString(), (s, e) => MenuClick_ImageType(itp.ToString()));
-                mi = new ToolStripMenuItem(itp.ToString(), null, (s, e) => MenuClick_ImageType(itp.ToString()));
-                mi.BackColor = SystemColors.Menu;
-                MMItemImageType.DropDownItems.Add(mi);
-            }
+            Animator.FillMenu(CMenu.MenuItems, MenuImageType_Click);
+            Animator.FillMenu(MMItemImageType.DropDownItems, MenuImageType_Click);
 
-            MenuClick_ImageType(FlowerInfo.ImageTypes.Stand.ToString());
+            MenuImageType_Click(Animator.Type.Stand);
             PicBoxBig.ContextMenu = CMenu;
 
             foreach (ToolStripMenuItem item in MMItemMode.DropDownItems)
-                item.Click += (s, e) => MenuClick_Mode(item.Name);
+                item.Click += (s, e) => MenuMode_Click(item.Name);
 
             MainMenu.Renderer= new ToolStripProfessionalRenderer(new MenuColorTable());
 
@@ -80,40 +71,78 @@ namespace FKG_Info
             UpdateStatus.Interval = 333;
             UpdateStatus.Tick += (s, e) => OnStatusUpdate();
             UpdateStatus.Start();
-            
-            FSC = null;
+
+            GR = CreateGraphics();
+            BrBase = new SolidBrush(SystemColors.Control);
+            BrPink = new SolidBrush(Color.Pink);
+
+            FSC = null; ESC = null;
 
             CurrentMode = Mode.Characters;
             FlowerSelect_Click(this, null);
         }
 
-        
+
 
         /// <summary>
         /// Select image type
         /// </summary>
-        /// <param name="itype"></param>
-        private void MenuClick_ImageType(string itype)
+        /// <param name="type"></param>
+        private void MenuImageType_Click(Animator.Type type, Animator.EmoType emo = Animator.EmoType.Normal)
         {
-            SelectedImageType = (FlowerInfo.ImageTypes)Enum.Parse(typeof(FlowerInfo.ImageTypes), itype);
+            Animation.ImageType = type;
+            Animation.Emotion = emo;
 
-            foreach(MenuItem mi in CMenu.MenuItems)
+            MenuItem ctmi = null;
+            ToolStripMenuItem tsmi = null;
+
+            string stype = Animator.GetMenuName(type);
+            string semo = Animator.GetMenuName(emo);
+
+            string sbup = Animator.GetMenuName(Animator.Type.Bustup);
+
+
+            foreach (MenuItem mi in CMenu.MenuItems)
             {
-                mi.Checked = false;
-                if (mi.Text == itype) mi.Checked = true;
+                if (mi.Text == sbup) ctmi = mi;
+                if (mi.Text == stype)
+                { 
+                    if (mi.Text != sbup) mi.Checked = true;
+                }
+                else mi.Checked = false;
             }
 
             foreach (ToolStripMenuItem mi in MMItemImageType.DropDownItems)
             {
-                mi.Checked = false;
-                if (mi.Text == itype) mi.Checked = true;
+                if (mi.Text == sbup) tsmi = mi;
+                if (mi.Text == stype)
+                {
+                    if (mi.Text != sbup) mi.Checked = true;
+                }
+                else mi.Checked = false;
             }
+
+
+            if (ctmi != null)
+                foreach (MenuItem mi in ctmi.MenuItems)
+                {
+                    mi.Checked = false;
+                    if ((type == Animator.Type.Bustup) && (mi.Text == semo)) mi.Checked = true;
+                }
+
+            if (tsmi != null)
+                foreach (ToolStripMenuItem mi in tsmi.DropDownItems)
+                {
+                    mi.Checked = false;
+                    if ((type == Animator.Type.Bustup) && (mi.Text == semo)) mi.Checked = true;
+                }
+
+
 
             if (!Program.DB.IsSelected()) return;
 
-            FlowerInfo flower = Program.DB.GetSelected();
-            flower.SelectImageType(SelectedEvolution, SelectedImageType);
-            PicBoxBig.AsyncLoadChImage(flower);
+            Animation.Flower = Program.DB.GetSelected();
+            PicBoxBig.AsyncLoadImage(Animation);
         }
 
 
@@ -122,7 +151,7 @@ namespace FKG_Info
         /// Select current mode
         /// </summary>
         /// <param name="mode"></param>
-        private void MenuClick_Mode(string mode)
+        private void MenuMode_Click(string mode)
         {
             bool changed = false;
 
@@ -144,8 +173,8 @@ namespace FKG_Info
 
             if (!changed) return;
 
-            CloseChSelector();
-            CloseEqSelector();
+            CloseFlowerSelector();
+            CloseEquipmentSelector();
 
             PicBoxIconBase.Clear();
             PicBoxIconAwak.Clear();
@@ -195,6 +224,9 @@ namespace FKG_Info
 
 
 
+        /// <summary>
+        /// Information about downloading process
+        /// </summary>
         private void OnStatusUpdate()
         {
             if (_lbLoading.InvokeRequired)
@@ -237,41 +269,49 @@ namespace FKG_Info
 
         public void SelectFromSelector(EquipmentInfo equip)
         {
-            PicBoxIconBase.AsyncLoadEqImage(equip);
+            PicBoxIconBase.AsyncLoadImage(equip);
             equip.FillGrid(GridInfo, ChBoxTranslation.Checked);
         }
 
 
 
+        /// <summary>
+        /// Update all information and images for selected flower
+        /// </summary>
         private void ReloadFlower()
         {
             if (!Program.DB.IsSelected()) return;
-            FlowerInfo flower = Program.DB.GetSelected();
+            Animation.Flower = Program.DB.GetSelected();
+            Animation.Exclusive = ChBoxExSkin.Checked;
+            PicBoxBig.AsyncLoadImage(Animation);
 
-            flower.SelectImageType(flower.CheckEvolutionValue(SelectedEvolution), SelectedImageType);
-            PicBoxBig.AsyncLoadChImage(flower);
+            Animator icon = new Animator(Animation);
+            icon.ImageType = Animator.Type.IconLarge;
+            icon.Exclusive = false;
 
-            flower.SelectImageType(FlowerInfo.Evolution.Base, FlowerInfo.ImageTypes.IconLarge);
-            PicBoxIconBase.AsyncLoadChImage(flower);
-
-            flower.SelectImageType(FlowerInfo.Evolution.Awakened, FlowerInfo.ImageTypes.IconLarge);
-            PicBoxIconAwak.AsyncLoadChImage(flower);
-
-            flower.SelectImageType(FlowerInfo.Evolution.Bloomed, FlowerInfo.ImageTypes.IconLarge);
-            PicBoxIconBloom.AsyncLoadChImage(flower);
+            icon.Evolution = FlowerInfo.Evolution.Base;
+            PicBoxIconBase.AsyncLoadImage(icon);
+            icon.Evolution = FlowerInfo.Evolution.Awakened;
+            PicBoxIconAwak.AsyncLoadImage(icon);
+            icon.Evolution = FlowerInfo.Evolution.Bloomed;
+            PicBoxIconBloom.AsyncLoadImage(icon);
 
             UpdateFlowerInfo();
         }
 
 
 
+        /// <summary>
+        /// Just fill DataGridView if flower selected
+        /// </summary>
         private void UpdateFlowerInfo()
         {
             if (!Program.DB.IsSelected()) return;
 
             FlowerInfo flower = Program.DB.GetSelected();
 
-            flower.FillGrid(GridInfo, SelectedEvolution, ChBoxTranslation.Checked);
+            flower.FillGrid(GridInfo, Animation.Evolution, ChBoxTranslation.Checked);
+            ChBoxExSkin.Enabled = flower.HasExclusiveSkin();
         }
 
 
@@ -292,7 +332,7 @@ namespace FKG_Info
 
 
 
-        private void CloseChSelector()
+        private void CloseFlowerSelector()
         {
             if (FSC == null) return;
 
@@ -301,7 +341,7 @@ namespace FKG_Info
             FSC = null;
         }
 
-        private void CloseEqSelector()
+        private void CloseEquipmentSelector()
         {
             if (ESC == null) return;
 
@@ -322,31 +362,34 @@ namespace FKG_Info
 
         private void PicBoxIconBase_Click(object sender, EventArgs ev)
         {
+            DrawIconSelectionBorder(FlowerInfo.Evolution.Base);
+
             if (!Program.DB.IsSelected()) return;
-            FlowerInfo flower = Program.DB.GetSelected();
-            SelectedEvolution = FlowerInfo.Evolution.Base;
-            flower.SelectImageType(SelectedEvolution, SelectedImageType);
-            PicBoxBig.AsyncLoadChImage(flower);
+            Animation.Evolution = FlowerInfo.Evolution.Base;
+            Animation.Exclusive = ChBoxExSkin.Checked;
+            PicBoxBig.AsyncLoadImage(Animation);
             UpdateFlowerInfo();
         }
 
         private void PicBoxIconAwak_Click(object sender, EventArgs ev)
         {
+            DrawIconSelectionBorder(FlowerInfo.Evolution.Awakened);
+
             if (!Program.DB.IsSelected()) return;
-            FlowerInfo flower = Program.DB.GetSelected();
-            SelectedEvolution = flower.CheckEvolutionValue(FlowerInfo.Evolution.Awakened);
-            flower.SelectImageType(SelectedEvolution, SelectedImageType);
-            PicBoxBig.AsyncLoadChImage(flower);
+            Animation.Evolution = FlowerInfo.Evolution.Awakened;
+            Animation.Exclusive = ChBoxExSkin.Checked;
+            PicBoxBig.AsyncLoadImage(Animation);
             UpdateFlowerInfo();
         }
 
         private void PicBoxIconBloom_Click(object sender, EventArgs ev)
         {
+            DrawIconSelectionBorder(FlowerInfo.Evolution.Bloomed);
+
             if (!Program.DB.IsSelected()) return;
-            FlowerInfo flower = Program.DB.GetSelected();
-            SelectedEvolution = flower.CheckEvolutionValue(FlowerInfo.Evolution.Bloomed);
-            flower.SelectImageType(SelectedEvolution, SelectedImageType);
-            PicBoxBig.AsyncLoadChImage(flower);
+            Animation.Evolution = FlowerInfo.Evolution.Bloomed;
+            Animation.Exclusive = ChBoxExSkin.Checked;
+            PicBoxBig.AsyncLoadImage(Animation);
             UpdateFlowerInfo();
         }
         
@@ -398,36 +441,49 @@ namespace FKG_Info
             new ExportMasterForm().ShowDialog(this);
         }
 
-        /*
-        private void MMItemFileExportMaster_Click1(string name)
+        
+        private void MMItemFileExportIDs_Click(object sender, EventArgs ev)
         {
-            SaveFileDialog fileSave = new SaveFileDialog();
-
-            fileSave.InitialDirectory = Program.DB.DataFolder;
-            fileSave.Filter = "Text file|*.txt";
-            fileSave.FilterIndex = 0;
-            fileSave.FileName = name;
-
-            if (fileSave.ShowDialog() != DialogResult.OK) return;
-
-            Program.DB.Master.Export(name, fileSave.FileName);
-        }
-        */
-
-        private void MMItemAbout_Click(object sender, EventArgs ev)
-        {
-            new AboutForm().ShowDialog(this);
+            Program.DB.Master.ExportIDs();
+            MessageBox.Show("Done");
         }
 
-
-
-        private void MainForm_Closing(object sender, FormClosingEventArgs ev)
-        {
-            Program.DB.Running = false;
-        }
 
 
 
         public void LoadingControlsMessage(bool visible) { _lbWait.Visible = visible; _lbWait.Refresh(); }
+
+        private void MainForm_Closing(object sender, FormClosingEventArgs ev) { Program.DB.Running = false; }
+
+        private void MMItemAbout_Click(object sender, EventArgs ev) { new AboutForm().ShowDialog(this); }
+
+        private void PicBoxBig_Click(object sender, EventArgs ev) { Animation.AnimationClick(); }
+
+        private void ChBoxExSkin_CheckedChanged(object sender, EventArgs ev) { ReloadFlower(); }
+
+
+
+        private void DrawIconSelectionBorder(int evol)
+        {
+            Brush[] brs = new Brush[3];
+
+            for (int i = 0; i < 3; i++) if (i == evol) brs[i] = BrPink; else brs[i] = BrBase;
+
+            GR.FillRectangle(brs[0], GetExtRectangle(PicBoxIconBase));
+            GR.FillRectangle(brs[1], GetExtRectangle(PicBoxIconAwak));
+            GR.FillRectangle(brs[2], GetExtRectangle(PicBoxIconBloom));
+        }
+
+        private Rectangle GetExtRectangle(PictureBox pic)
+        {
+            return new Rectangle(pic.Left - 2, pic.Top - 2, pic.Width + 4, pic.Height + 4);
+        }
+
+
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            DrawIconSelectionBorder(0);
+        }
     }
 }

@@ -39,11 +39,12 @@
             this.ChBoxS4 = new System.Windows.Forms.CheckBox();
             this.ChBoxS3 = new System.Windows.Forms.CheckBox();
             this.ChBoxS2 = new System.Windows.Forms.CheckBox();
-            this.CmBoxAbility = new System.Windows.Forms.ComboBox();
+            this.CmBoxAbility01 = new System.Windows.Forms.ComboBox();
             this.CmBoxSort = new System.Windows.Forms.ComboBox();
             this.CmBoxNation = new System.Windows.Forms.ComboBox();
             this.TxBoxSearch = new System.Windows.Forms.TextBox();
             this.CmBoxSpecFilter = new System.Windows.Forms.ComboBox();
+            this.CmBoxAbility02 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // PanelFlowers
@@ -197,16 +198,16 @@
             this.ChBoxS2.UseVisualStyleBackColor = true;
             this.ChBoxS2.CheckedChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
-            // CmBoxAbility
+            // CmBoxAbility01
             // 
-            this.CmBoxAbility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CmBoxAbility.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CmBoxAbility.FormattingEnabled = true;
-            this.CmBoxAbility.Location = new System.Drawing.Point(616, 51);
-            this.CmBoxAbility.Name = "CmBoxAbility";
-            this.CmBoxAbility.Size = new System.Drawing.Size(160, 21);
-            this.CmBoxAbility.TabIndex = 21;
-            this.CmBoxAbility.SelectedIndexChanged += new System.EventHandler(this.ChBox_CheckedChanged);
+            this.CmBoxAbility01.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CmBoxAbility01.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CmBoxAbility01.FormattingEnabled = true;
+            this.CmBoxAbility01.Location = new System.Drawing.Point(616, 51);
+            this.CmBoxAbility01.Name = "CmBoxAbility01";
+            this.CmBoxAbility01.Size = new System.Drawing.Size(160, 21);
+            this.CmBoxAbility01.TabIndex = 21;
+            this.CmBoxAbility01.SelectedIndexChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
             // CmBoxSort
             // 
@@ -246,19 +247,31 @@
             this.CmBoxSpecFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CmBoxSpecFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CmBoxSpecFilter.FormattingEnabled = true;
-            this.CmBoxSpecFilter.Location = new System.Drawing.Point(616, 78);
+            this.CmBoxSpecFilter.Location = new System.Drawing.Point(451, 51);
             this.CmBoxSpecFilter.Name = "CmBoxSpecFilter";
             this.CmBoxSpecFilter.Size = new System.Drawing.Size(160, 21);
             this.CmBoxSpecFilter.TabIndex = 23;
             this.CmBoxSpecFilter.SelectedIndexChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
+            // CmBoxAbility02
+            // 
+            this.CmBoxAbility02.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CmBoxAbility02.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CmBoxAbility02.FormattingEnabled = true;
+            this.CmBoxAbility02.Location = new System.Drawing.Point(616, 78);
+            this.CmBoxAbility02.Name = "CmBoxAbility02";
+            this.CmBoxAbility02.Size = new System.Drawing.Size(160, 21);
+            this.CmBoxAbility02.TabIndex = 24;
+            this.CmBoxAbility02.SelectedIndexChanged += new System.EventHandler(this.ChBox_CheckedChanged);
+            // 
             // FlowerSelectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.CmBoxAbility02);
             this.Controls.Add(this.CmBoxSpecFilter);
             this.Controls.Add(this.TxBoxSearch);
-            this.Controls.Add(this.CmBoxAbility);
+            this.Controls.Add(this.CmBoxAbility01);
             this.Controls.Add(this.CmBoxSort);
             this.Controls.Add(this.CmBoxNation);
             this.Controls.Add(this.ChBoxS6);
@@ -292,10 +305,11 @@
         private System.Windows.Forms.CheckBox ChBoxS4;
         private System.Windows.Forms.CheckBox ChBoxS3;
         private System.Windows.Forms.CheckBox ChBoxS2;
-        private System.Windows.Forms.ComboBox CmBoxAbility;
+        private System.Windows.Forms.ComboBox CmBoxAbility01;
         private System.Windows.Forms.ComboBox CmBoxSort;
         private System.Windows.Forms.ComboBox CmBoxNation;
         private System.Windows.Forms.TextBox TxBoxSearch;
         private System.Windows.Forms.ComboBox CmBoxSpecFilter;
+        private System.Windows.Forms.ComboBox CmBoxAbility02;
     }
 }

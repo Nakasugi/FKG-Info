@@ -4,11 +4,12 @@ namespace FKG_Info
 {
     public class BaseInfo : IComparable
     {
-        public enum ObjectType { Flower, Skill, Ability, Equipment }
+        public enum ObjectType { None, Flower, Skill, Ability, Equipment, Skin }
         public enum SortBy
         {
             Default, Name,
-            TotalStats, Attack, Defense, SetTotalStats, SetAttack, SetDefense,
+            TotalStats, Attack, Defense,
+            SetTotalStats, SetAttack, SetDefense,
             Category
         }
 
@@ -20,11 +21,16 @@ namespace FKG_Info
         public bool Filter;
 
 
+
         protected BaseInfo()
         {
+            BaseType = ObjectType.None;
+
             ID = 0;
             Filter = true;
         }
+
+
 
         /// <summary>
         /// Sort: (-1: this, obj) (1: obj, this)

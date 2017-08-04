@@ -11,6 +11,7 @@ namespace FKG_Info
         public List<SkillInfo> Skills;
         public List<AbilityInfo> Abilities;
         public List<EquipmentInfo> Equipments;
+        public List<SkinInfo> Skins;
 
         public MasterData Master;
 
@@ -94,6 +95,7 @@ namespace FKG_Info
             Skills = new List<SkillInfo>();
             Abilities = new List<AbilityInfo>();
             Equipments = new List<EquipmentInfo>();
+            Skins = new List<SkinInfo>();
 
             TranslationAbilities = new List<TranslationInfo>();
 
@@ -144,6 +146,9 @@ namespace FKG_Info
                 case BaseInfo.ObjectType.Equipment:
                     EquipmentInfo exist = Equipments.Find(eq => eq.ID == newInfo.ID);
                     if (exist == null) Equipments.Add((EquipmentInfo)newInfo);
+                    break;
+                case BaseInfo.ObjectType.Skin:
+                    Skins.Add((SkinInfo)newInfo);
                     break;
                 default: break;
             }
@@ -338,6 +343,7 @@ namespace FKG_Info
                 db.LoadMasterData(db.Master.GetData("masterCharacterSkill"), BaseInfo.ObjectType.Skill);
                 db.LoadMasterData(db.Master.GetData("masterCharacterLeaderSkill"), BaseInfo.ObjectType.Ability);
                 db.LoadMasterData(db.Master.GetData("masterCharacterEquipment"), BaseInfo.ObjectType.Equipment);
+                db.LoadMasterData(db.Master.GetData("masterCharacterSkin"), BaseInfo.ObjectType.Skin);
 
                 db.LoadNutakuNames();
             }
@@ -350,6 +356,8 @@ namespace FKG_Info
 
 
             EquipmentInfo.SearchSets(db.Equipments);
+
+            foreach (FlowerInfo fw in db.Flowers) fw.FindExclusiveSkin(db.Skins);
 
             db.Summary.TotalCharacters = db.Flowers.FindAll(f => !f.NoKnight).Count;
             db.Summary.TotalMaterials = db.Flowers.FindAll(f => f.NoKnight).Count;
@@ -579,6 +587,9 @@ namespace FKG_Info
                         break;
                     case BaseInfo.ObjectType.Equipment:
                         Add(new EquipmentInfo(masterFields));
+                        break;
+                    case BaseInfo.ObjectType.Skin:
+                        Add(new SkinInfo(masterFields));
                         break;
                     default: break;
                 }

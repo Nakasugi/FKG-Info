@@ -20,6 +20,8 @@ namespace FKG_Info
 
         private List<JsonStruct> Data;
 
+
+
         public MasterData(string fname)
         {
             Stream stInput;
@@ -104,6 +106,7 @@ namespace FKG_Info
         }
 
 
+
         public string[] GetNames()
         {
             string[] names = new string[Data.Count];
@@ -114,9 +117,35 @@ namespace FKG_Info
         }
 
 
+
         public void Export(string masterName, string fileName)
         {
             File.WriteAllText(fileName, GetData(masterName));
+        }
+
+
+
+        public void ExportIDs()
+        {
+            string folder = Program.DB.DataFolder + "\\Export";
+            if (!Directory.Exists(folder)) try { Directory.CreateDirectory(folder); } catch { return; }
+
+            string path = folder + "\\FlowerIDs.txt";
+            FileStream fs = new FileStream(path, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+
+            string data = GetData("masterCharacter");
+            StringReader sr = new StringReader(data);
+
+            while (true)
+            {
+                string line = sr.ReadLine();
+                if (line == null) break;
+                sw.WriteLine(line.Split(',')[0]);
+            }
+
+            sr.Close();
+            sw.Close();
         }
     }
 }

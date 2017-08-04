@@ -33,6 +33,8 @@ namespace FKG_Info
         /// <param name="main"></param>
         public EquipmentSelectControl(MainForm main)
         {
+            components = new System.ComponentModel.Container();
+
             Visible = false;
             main.LoadingControlsMessage(true);
             SuspendLayout();
@@ -54,9 +56,11 @@ namespace FKG_Info
                 picBox.Width = 100;
                 picBox.Height = 100;
                 picBox.Image = Properties.Resources.equip_default;
-                picBox.AsyncLoadEqImage(equip);
+                picBox.AsyncLoadImage(equip);
                 picBox.Visible = false;
                 Icons.Add(picBox);
+
+                components.Add(picBox); // for auto disposing
 
                 string ttip = equip.KName;
                 TTip.SetToolTip(picBox, ttip);

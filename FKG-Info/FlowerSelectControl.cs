@@ -24,6 +24,7 @@ namespace FKG_Info
         {
             public const string Default = "Default";
             public const string Category = "By Category";
+            public const string TotalMaxStats = "By Total Maxed Stats";
         }
 
 
@@ -34,6 +35,8 @@ namespace FKG_Info
         /// <param name="main"></param>
         public FlowerSelectControl(MainForm main)
         {
+            components = new System.ComponentModel.Container();
+
             Visible = false;
             main.LoadingControlsMessage(true);
             SuspendLayout();
@@ -47,9 +50,12 @@ namespace FKG_Info
             CmBoxNation.Items[0] = "All Nations";
             CmBoxNation.SelectedIndex = 0;
 
-            CmBoxAbility.Items.Add("All Abilities");
-            CmBoxAbility.Items.AddRange(Program.DB.GetAbilitiesShortNames());
-            CmBoxAbility.SelectedIndex = 0;
+            CmBoxAbility01.Items.Add("All Abilities");
+            CmBoxAbility01.Items.AddRange(Program.DB.GetAbilitiesShortNames());
+            CmBoxAbility01.SelectedIndex = 0;
+            CmBoxAbility02.Items.Add("All Abilities");
+            CmBoxAbility02.Items.AddRange(Program.DB.GetAbilitiesShortNames());
+            CmBoxAbility02.SelectedIndex = 0;
 
             foreach (FlowerInfo.SpecFilter spec in Enum.GetValues(typeof(FlowerInfo.SpecFilter)))
                 CmBoxSpecFilter.Items.Add(spec.ToString().Replace("_", " "));
@@ -74,17 +80,22 @@ namespace FKG_Info
 
             AdvPictureBox picBox;
 
+            Animator icon = new Animator();
+            icon.ImageType = Animator.Type.IconLarge;
+
             foreach (FlowerInfo flower in Flowers)
             {
-                flower.SelectImageType(FlowerInfo.Evolution.Base, FlowerInfo.ImageTypes.IconLarge);
+                icon.Flower = flower;
                 picBox = new AdvPictureBox((MainForm)Parent, flower);
                 picBox.Name = flower.ID.ToString();
                 picBox.Width = 100;
                 picBox.Height = 100;
                 picBox.Image = Properties.Resources.icon_l_default;
-                picBox.AsyncLoadChImage(flower);
+                picBox.AsyncLoadImage(icon);
                 picBox.Visible = false;
                 Icons.Add(picBox);
+
+                components.Add(picBox); // for auto disposing
 
                 string ttip = flower.Name.Kanji + "\r\n" + flower.Name.Romaji;
                 if (flower.Name.EngDMM != null) ttip += "\r\nDMM: " + flower.Name.EngDMM;
@@ -142,6 +153,7 @@ namespace FKG_Info
                     case FlowerInfo.SpecFilter.Has_Bloom_Form: if (flower.HasBloomForm()) break; continue;
                     case FlowerInfo.SpecFilter.Has_Bloom_CG: if(flower.HasBloomForm(1)) break; continue;
                     case FlowerInfo.SpecFilter.No_Bloom_CG: if (flower.HasBloomForm(2)) break; continue;
+                    case FlowerInfo.SpecFilter.Has_Exclusive_Skin: if (flower.HasExclusiveSkin()) break; continue;
                     default: if(flower.CheckCategory(spec)) break; continue;
                 }
                 
@@ -151,9 +163,14 @@ namespace FKG_Info
                     if (flower.GetNation() != CmBoxNation.Text) continue;
                 }
 
-                if (CmBoxAbility.Text != "All Abilities")
+                if (CmBoxAbility01.Text != "All Abilities")
                 {
-                    if (!flower.CheckAbilityShortName(CmBoxAbility.Text)) continue;
+                    if (!flower.CheckAbilityShortName(CmBoxAbility01.Text)) continue;
+                }
+
+                if (CmBoxAbility02.Text != "All Abilities")
+                {
+                    if (!flower.CheckAbilityShortName(CmBoxAbility02.Text)) continue;
                 }
 
 
@@ -167,6 +184,7 @@ namespace FKG_Info
             switch (CmBoxSort.Text)
             {
                 case SortBy.Category: sortType = BaseInfo.SortBy.Category; break;
+                case SortBy.TotalMaxStats: sortType = BaseInfo.SortBy.TotalStats; break;
                 default: break;
             }
 
