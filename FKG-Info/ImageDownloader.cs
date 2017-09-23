@@ -26,8 +26,8 @@ namespace FKG_Info
 
 
 
-        List<DownloadedFile> ChFiles;
-        List<DownloadedFile> EqFiles;
+        private List<DownloadedFile> ChFiles;
+        private List<DownloadedFile> EqFiles;
 
         private object Locker = new object();
 
@@ -38,8 +38,6 @@ namespace FKG_Info
         public delegate void DwCompletedCallback(DownloadedFile ifile);
 
 
-
-        //Image[] IconBG, IconRarity, IconType, IconEvol;
         private enum IconElement { Background, Frame, Type, Evolution }
 
 
@@ -50,6 +48,7 @@ namespace FKG_Info
             EqFiles = new List<DownloadedFile>();
 
             Count = 0;
+            Queue = 0;
         }
 
 
@@ -108,17 +107,17 @@ namespace FKG_Info
             df.Name = ani.GetImageName();
             lock (Locker) ChFiles.Add(df);
 
-            string path, tname;
+            string path, relurl;
 
             if (ani.IsIcon())
             {
                 path = Program.DB.IconsFolder;
-                tname = "i/";
+                relurl = "i/";
             }
             else
             {
                 path = Program.DB.ImagesFolder;
-                tname = "s/";
+                relurl = "s/";
             }
             path += "\\" + df.Name + ".png";
 
@@ -139,9 +138,9 @@ namespace FKG_Info
                 WebClient wc = new WebClient();
 
 
-                tname = "character/" + tname + StringHelper.GetMD5Hash(df.Name) + ".bin";
-                string url1 = Program.DB.GetUrl(1) + tname;
-                string url2 = Program.DB.GetUrl(2) + tname;
+                relurl = "images/character/" + relurl + Helper.GetMD5Hash(df.Name) + ".bin";
+                string url1 = Program.DB.GetUrl(1, relurl);
+                string url2 = Program.DB.GetUrl(2, relurl);
 
                 MemoryStream stream;
                 byte[] buffer;
@@ -150,7 +149,7 @@ namespace FKG_Info
                 {
                     buffer = wc.DownloadData(url1);
                     stream = new MemoryStream(buffer);
-                    stream = DecompressStream(stream);
+                    stream = Helper.DecompressStream(stream);
                 }
                 catch
                 {
@@ -158,7 +157,7 @@ namespace FKG_Info
                     {
                         buffer = wc.DownloadData(url2);
                         stream = new MemoryStream(buffer);
-                        stream = DecompressStream(stream);
+                        stream = Helper.DecompressStream(stream);
                     }
                     catch { stream = null; }
                 }
@@ -299,30 +298,7 @@ namespace FKG_Info
 
 
 
-        /// <summary>
-        /// Extract Zip
-        /// </summary>
-        /// <param name="srcStream"></param>
-        /// <returns></returns>
-        static MemoryStream DecompressStream(MemoryStream srcStream)
-        {
-            MemoryStream dstStream = new MemoryStream();
-
-            srcStream.Position = 2;
-
-            using (DeflateStream outStream = new DeflateStream(srcStream, CompressionMode.Decompress))
-            {
-                outStream.CopyTo(dstStream);
-            }
-
-            srcStream.Close();
-
-            return dstStream;
-        }
-
-
-
-        static MemoryStream ReadJpegXR(MemoryStream srcStream)
+        public static MemoryStream ReadJpegXR(MemoryStream srcStream)
         {
             MemoryStream dstStream = new MemoryStream();
 
@@ -461,5 +437,32 @@ namespace FKG_Info
         }
 
         void FakeDelegate(DownloadedFile noUsed) { }
+
+
+
+        public void DeleteImages(int flowerImageID)
+        {
+            string pt = flowerImageID.ToString();
+
+            DownloadedFile fl;
+
+            while (true)
+            {
+                fl = ChFiles.Find(cf => cf.Name.Contains(pt));
+                if (fl == null) break;
+                fl.Image.Dispose();
+                ChFiles.Remove(fl);
+            }
+
+            pt = "*" + pt + "*";
+
+            string[] files;
+
+            files = Directory.GetFiles(Program.DB.ImagesFolder, pt);
+            foreach (string file in files) { try { File.Delete(file); } catch { } }
+
+            files = Directory.GetFiles(Program.DB.IconsFolder, pt);
+            foreach (string file in files) { try { File.Delete(file); } catch { } }
+        }
     }
 }

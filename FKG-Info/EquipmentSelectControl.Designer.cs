@@ -259,7 +259,7 @@
             this.Controls.Add(this.ChBoxBracelet);
             this.Controls.Add(this.PanelEquipments);
             this.Name = "EquipmentSelectControl";
-            this.Size = new System.Drawing.Size(803, 640);
+            this.Size = new System.Drawing.Size(802, 640);
             this.ResumeLayout(false);
             this.PerformLayout();
 

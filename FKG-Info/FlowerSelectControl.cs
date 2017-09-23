@@ -22,9 +22,13 @@ namespace FKG_Info
 
         struct SortBy
         {
-            public const string Default = "Default";
+            public const string Default = "Sort by Default";
             public const string Category = "By Category";
             public const string TotalMaxStats = "By Total Maxed Stats";
+            public const string Attack = "By Attack";
+            public const string Defense = "By Defense";
+            public const string HitPoints = "By Hit Points";
+            public const string Speed = "By Speed";
         }
 
 
@@ -51,10 +55,10 @@ namespace FKG_Info
             CmBoxNation.SelectedIndex = 0;
 
             CmBoxAbility01.Items.Add("All Abilities");
-            CmBoxAbility01.Items.AddRange(Program.DB.GetAbilitiesShortNames());
+            CmBoxAbility01.Items.AddRange(Program.DB.GetAbilitiesTags());
             CmBoxAbility01.SelectedIndex = 0;
             CmBoxAbility02.Items.Add("All Abilities");
-            CmBoxAbility02.Items.AddRange(Program.DB.GetAbilitiesShortNames());
+            CmBoxAbility02.Items.AddRange(Program.DB.GetAbilitiesTags());
             CmBoxAbility02.SelectedIndex = 0;
 
             foreach (FlowerInfo.SpecFilter spec in Enum.GetValues(typeof(FlowerInfo.SpecFilter)))
@@ -185,6 +189,10 @@ namespace FKG_Info
             {
                 case SortBy.Category: sortType = BaseInfo.SortBy.Category; break;
                 case SortBy.TotalMaxStats: sortType = BaseInfo.SortBy.TotalStats; break;
+                case SortBy.Attack: sortType = BaseInfo.SortBy.Attack; break;
+                case SortBy.Defense: sortType = BaseInfo.SortBy.Defense; break;
+                case SortBy.HitPoints: sortType = BaseInfo.SortBy.HitPoints; break;
+                case SortBy.Speed: sortType = BaseInfo.SortBy.Speed; break;
                 default: break;
             }
 

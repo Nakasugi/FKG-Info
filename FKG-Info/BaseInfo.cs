@@ -8,7 +8,7 @@ namespace FKG_Info
         public enum SortBy
         {
             Default, Name,
-            TotalStats, Attack, Defense,
+            TotalStats, Attack, Defense, HitPoints, Speed,
             SetTotalStats, SetAttack, SetDefense,
             Category
         }

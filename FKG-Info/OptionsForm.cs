@@ -14,11 +14,13 @@ namespace FKG_Info
 
         private void Options_Load(object sender, EventArgs ev)
         {
-            TxBoxImgFolder.Text = Program.DB.ImagesFolder;
             TxBoxDataFolder.Text = Program.DB.DataFolder;
+            TxBoxImagesFolder.Text = Program.DB.ImagesFolder;
+            TxBoxSoundsFolder.Text = Program.DB.SoundFolder;
             TxBoxURLDMM.Text = Program.DB.DMMURL;
             TxBoxURLNutaku.Text = Program.DB.NutakuURL;
             ChBoxSaveDw.Checked = Program.DB.StoreDownloaded;
+            NumSoundVolume.Value = Program.DB.SoundVolume;
 
             switch (Program.DB.ImageSource)
             {
@@ -35,11 +37,13 @@ namespace FKG_Info
 
         private void BtOk_Click(object sender, EventArgs ev)
         {
-            Program.DB.ImagesFolder = TxBoxImgFolder.Text;
             Program.DB.DataFolder = TxBoxDataFolder.Text;
+            Program.DB.ImagesFolder = TxBoxImagesFolder.Text;
+            Program.DB.SoundFolder = TxBoxSoundsFolder.Text;
             Program.DB.DMMURL = TxBoxURLDMM.Text;
             Program.DB.NutakuURL = TxBoxURLNutaku.Text;
             Program.DB.StoreDownloaded = ChBoxSaveDw.Checked;
+            Program.DB.SoundVolume = (int)NumSoundVolume.Value;
 
             if (!System.IO.Directory.Exists(Program.DB.ImagesFolder))
             {

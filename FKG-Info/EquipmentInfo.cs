@@ -19,7 +19,7 @@
         public int ESetDefMax { get; private set; }
 
 
-        private int FlowerID;
+        private int[] FlowerIDs;
         private int ImageID;
 
         //private static string URL;
@@ -32,6 +32,8 @@
             BaseType = ObjectType.Equipment;
 
             ESetID = 0;
+
+            //FlowerIDs = new List<int>();
             //IsPersonalWeapon = false;
         }
 
@@ -50,7 +52,6 @@
             if (KInfo == "") KInfo = null;
 
             int.TryParse(masterData[2], out ImageID);
-            int.TryParse(masterData[21], out FlowerID);
 
             int.TryParse(masterData[19], out parsedValue); Type = parsedValue;
             int.TryParse(masterData[22], out parsedValue); Rarity = parsedValue;
@@ -60,6 +61,12 @@
             int.TryParse(masterData[7], out parsedValue); AttackMax = parsedValue;
             int.TryParse(masterData[8], out parsedValue); DefenseMax = parsedValue;
 
+            string[] sIDs = masterData[21].Split('|');
+            FlowerIDs = new int[sIDs.Length];
+            for (int i = 0; i < sIDs.Length; i++)
+                try { FlowerIDs[i] = int.Parse(sIDs[i]); }
+                catch { FlowerIDs[i] = 0; }
+            //int.TryParse(masterData[21], out FlowerID);
             //if (masterData[23] == "1") IsPersonalWeapon = true;
         }
 
@@ -67,8 +74,7 @@
 
         public bool ChekFlowerID(int flowerID)
         {
-            if (ID < 20000) return false;
-            if (FlowerID != flowerID) return false;
+            if (System.Array.IndexOf(FlowerIDs, flowerID) == -1) return false;
             return true;
         }
 

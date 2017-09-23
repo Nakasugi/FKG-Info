@@ -63,9 +63,29 @@ namespace FKG_Info.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ability_icons {
+            get {
+                object obj = ResourceManager.GetObject("ability_icons", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Blunt {
             get {
                 object obj = ResourceManager.GetObject("Blunt", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap chbox_ico_sound {
+            get {
+                object obj = ResourceManager.GetObject("chbox_ico_sound", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

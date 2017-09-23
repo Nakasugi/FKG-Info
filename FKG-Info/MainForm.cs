@@ -10,8 +10,9 @@ namespace FKG_Info
 
         private ContextMenu CMenu;
 
-        private FlowerSelectControl FSC;
-        private EquipmentSelectControl ESC;
+        private FlowerSelectControl FSCtrl;
+        private EquipmentSelectControl ESCtrl;
+        private VoiceControl VCCtrl;
 
 
         private Timer UpdateStatus;
@@ -59,6 +60,9 @@ namespace FKG_Info
             Animator.FillMenu(CMenu.MenuItems, MenuImageType_Click);
             Animator.FillMenu(MMItemImageType.DropDownItems, MenuImageType_Click);
 
+            CMenu.MenuItems.Add("-");
+            MenuItem mi = CMenu.MenuItems.Add("Delete Images", (s, e) => CMenuDelBloom_Click());
+
             MenuImageType_Click(Animator.Type.Stand);
             PicBoxBig.ContextMenu = CMenu;
 
@@ -76,7 +80,9 @@ namespace FKG_Info
             BrBase = new SolidBrush(SystemColors.Control);
             BrPink = new SolidBrush(Color.Pink);
 
-            FSC = null; ESC = null;
+            FSCtrl = null;
+            ESCtrl = null;
+            VCCtrl = new VoiceControl(this);
 
             CurrentMode = Mode.Characters;
             FlowerSelect_Click(this, null);
@@ -173,6 +179,8 @@ namespace FKG_Info
 
             if (!changed) return;
 
+            VCCtrl.Hide();
+
             CloseFlowerSelector();
             CloseEquipmentSelector();
 
@@ -187,9 +195,11 @@ namespace FKG_Info
             {
                 CurrentMode = Mode.Characters;
                 PicBoxBig.Visible = false;
-                FSC = new FlowerSelectControl(this);
+                FSCtrl = new FlowerSelectControl(this);
 
                 BtSelect.Enabled = true;
+                BtEquip.Enabled = true;
+                BtVoices.Enabled = true;
                 MMItemSelect.Enabled = true;
             }
 
@@ -197,9 +207,11 @@ namespace FKG_Info
             {
                 CurrentMode = Mode.Equipments;
                 PicBoxBig.Visible = false;
-                ESC = new EquipmentSelectControl(this);
+                ESCtrl = new EquipmentSelectControl(this);
 
                 BtSelect.Enabled = false;
+                BtEquip.Enabled = false;
+                BtVoices.Enabled = false;
                 MMItemSelect.Enabled = false;
             }
 
@@ -209,6 +221,8 @@ namespace FKG_Info
                 PicBoxBig.Visible = false;
 
                 BtSelect.Enabled = false;
+                BtEquip.Enabled = false;
+                BtVoices.Enabled = false;
                 MMItemSelect.Enabled = false;
             }
 
@@ -218,8 +232,26 @@ namespace FKG_Info
                 PicBoxBig.Visible = false;
 
                 BtSelect.Enabled = false;
+                BtEquip.Enabled = false;
+                BtVoices.Enabled = false;
                 MMItemSelect.Enabled = false;
             }
+        }
+
+
+
+        private void CMenuDelBloom_Click()
+        {
+            if (!Program.DB.IsSelected()) return;
+            int id = Program.DB.GetSelected().GetImageEvolID(Animation.Evolution);
+            if (id == 0) return;
+            Program.ImageLoader.DeleteImages(id);
+            Program.DB.Unselect();
+            ReloadFlower();
+
+            CloseFlowerSelector();
+            PicBoxBig.Visible = false;
+            FSCtrl = new FlowerSelectControl(this);
         }
 
 
@@ -258,7 +290,7 @@ namespace FKG_Info
 
             if (selectorHide)
             {
-                FSC.Visible = false;
+                FSCtrl.Visible = false;
                 PicBoxBig.Visible = true;
             }
 
@@ -270,7 +302,7 @@ namespace FKG_Info
         public void SelectFromSelector(EquipmentInfo equip)
         {
             PicBoxIconBase.AsyncLoadImage(equip);
-            equip.FillGrid(GridInfo, ChBoxTranslation.Checked);
+            equip.FillGrid(GridInfo);
         }
 
 
@@ -280,7 +312,16 @@ namespace FKG_Info
         /// </summary>
         private void ReloadFlower()
         {
-            if (!Program.DB.IsSelected()) return;
+            if (!Program.DB.IsSelected())
+            {
+                PicBoxBig.Image = null;
+                PicBoxIconBase.Image = null;
+                PicBoxIconAwak.Image = null;
+                PicBoxIconBloom.Image = null;
+                GridInfo.Rows.Clear();
+                return;
+            }
+
             Animation.Flower = Program.DB.GetSelected();
             Animation.Exclusive = ChBoxExSkin.Checked;
             PicBoxBig.AsyncLoadImage(Animation);
@@ -310,7 +351,7 @@ namespace FKG_Info
 
             FlowerInfo flower = Program.DB.GetSelected();
 
-            flower.FillGrid(GridInfo, Animation.Evolution, ChBoxTranslation.Checked);
+            flower.FillGrid(GridInfo, Animation.Evolution);
             ChBoxExSkin.Enabled = flower.HasExclusiveSkin();
         }
 
@@ -320,34 +361,52 @@ namespace FKG_Info
         {
             if (CurrentMode != Mode.Characters) return;
 
-            if (FSC != null)
+            if (FSCtrl != null)
             {
-                FSC.Visible ^= true;
-                PicBoxBig.Visible ^= true;
+                if(FSCtrl.Visible)
+                {
+                    FSCtrl.Hide();
+                    VCCtrl.Hide();
+                    PicBoxBig.Show();
+                }
+                else if(VCCtrl.Visible)
+                {
+                    VCCtrl.Hide();
+                    FSCtrl.Show();
+                    PicBoxBig.Hide();
+                }
+                else
+                {
+                    FSCtrl.Show();
+                    VCCtrl.Hide();
+                    PicBoxBig.Hide();
+                }
                 return;
             }
 
-            FSC = new FlowerSelectControl(this);
+            PicBoxBig.Hide();
+            VCCtrl.Hide();
+            FSCtrl = new FlowerSelectControl(this);
         }
 
 
 
         private void CloseFlowerSelector()
         {
-            if (FSC == null) return;
+            if (FSCtrl == null) return;
 
-            FSC.Dispose();
+            FSCtrl.Dispose();
             PicBoxBig.Visible = true;
-            FSC = null;
+            FSCtrl = null;
         }
 
         private void CloseEquipmentSelector()
         {
-            if (ESC == null) return;
+            if (ESCtrl == null) return;
 
-            ESC.Dispose();
+            ESCtrl.Dispose();
             PicBoxBig.Visible = true;
-            ESC = null;
+            ESCtrl = null;
         }
 
 
@@ -356,16 +415,16 @@ namespace FKG_Info
         {
             if (!Program.DB.IsSelected()) return;
 
-            FSC.Visible = false;
+            FSCtrl.Visible = false;
             PicBoxBig.Visible = true;
         }
 
         private void PicBoxIconBase_Click(object sender, EventArgs ev)
         {
             DrawIconSelectionBorder(FlowerInfo.Evolution.Base);
+            Animation.Evolution = FlowerInfo.Evolution.Base;
 
             if (!Program.DB.IsSelected()) return;
-            Animation.Evolution = FlowerInfo.Evolution.Base;
             Animation.Exclusive = ChBoxExSkin.Checked;
             PicBoxBig.AsyncLoadImage(Animation);
             UpdateFlowerInfo();
@@ -374,9 +433,9 @@ namespace FKG_Info
         private void PicBoxIconAwak_Click(object sender, EventArgs ev)
         {
             DrawIconSelectionBorder(FlowerInfo.Evolution.Awakened);
+            Animation.Evolution = FlowerInfo.Evolution.Awakened;
 
             if (!Program.DB.IsSelected()) return;
-            Animation.Evolution = FlowerInfo.Evolution.Awakened;
             Animation.Exclusive = ChBoxExSkin.Checked;
             PicBoxBig.AsyncLoadImage(Animation);
             UpdateFlowerInfo();
@@ -385,9 +444,9 @@ namespace FKG_Info
         private void PicBoxIconBloom_Click(object sender, EventArgs ev)
         {
             DrawIconSelectionBorder(FlowerInfo.Evolution.Bloomed);
+            Animation.Evolution = FlowerInfo.Evolution.Bloomed;
 
             if (!Program.DB.IsSelected()) return;
-            Animation.Evolution = FlowerInfo.Evolution.Bloomed;
             Animation.Exclusive = ChBoxExSkin.Checked;
             PicBoxBig.AsyncLoadImage(Animation);
             UpdateFlowerInfo();
@@ -406,12 +465,6 @@ namespace FKG_Info
         {
             OptionsForm opt = new OptionsForm();
             opt.ShowDialog(this);
-        }
-
-        private void MMItemViewMasterSummary_Click(object sender, EventArgs ev)
-        {
-            MasterSummaryForm mi = new MasterSummaryForm();
-            mi.ShowDialog(this);
         }
 
         private void MMItemFileGetMaster_Click(object sender, EventArgs ev)
@@ -462,6 +515,9 @@ namespace FKG_Info
         private void ChBoxExSkin_CheckedChanged(object sender, EventArgs ev) { ReloadFlower(); }
 
 
+        private void GridInfo_MouseMove(object sender, MouseEventArgs ev) { GridInfo.Focus(); }
+
+
 
         private void DrawIconSelectionBorder(int evol)
         {
@@ -481,9 +537,41 @@ namespace FKG_Info
 
 
 
-        private void MainForm_Shown(object sender, EventArgs e)
+        private void MainForm_Shown(object sender, EventArgs ev)
         {
             DrawIconSelectionBorder(0);
+        }
+
+
+
+        private void BtEquip_Click(object sender, EventArgs ev)
+        {
+            if (!Program.DB.IsSelected()) return;
+
+            var eqs = Program.DB.GetFlowerEquipment(Program.DB.GetSelected().ID);
+
+            new EquipFastViewForm(eqs).ShowDialog(this);
+        }
+
+
+
+        private void BtVoices_Click(object sender, EventArgs e)
+        {
+            if (CurrentMode != Mode.Characters) return;
+            if (!Program.DB.IsSelected()) return;
+
+            if (!VCCtrl.Visible)
+            {
+                VCCtrl.Show();
+                FSCtrl.Hide();
+                PicBoxBig.Hide();
+            }
+            else
+            {
+                VCCtrl.Hide();
+                FSCtrl.Hide();
+                PicBoxBig.Show();
+            }
         }
     }
 }

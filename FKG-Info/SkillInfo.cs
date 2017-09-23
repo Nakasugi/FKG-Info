@@ -18,7 +18,7 @@
         {
             BaseType = ObjectType.Skill;
 
-            Params = new int[3];
+            Params = new int[4];
         }
 
 
@@ -36,7 +36,7 @@
 
             int.TryParse(masterData[2], out SkillType);
 
-            for (int i = 0; i < Params.Length; i++) int.TryParse(masterData[i + 3], out Params[i]);
+            for (int i = 0; i < Params.Length; i++) int.TryParse(masterData[i + 2], out Params[i]);
 
             int.TryParse(masterData[7], out parseValue);
             ChanceMin = parseValue;
@@ -50,35 +50,17 @@
         /// <summary>
         /// Return (string) skill description.
         /// </summary>
-        /// <param name="translation"></param>
-        /// <param name="mode">0=Full, 1=Name, 2=Chance, 3=Full Desc. By default Full.</param>
+        /// <param name="mode">0=Full, 1=Name, 2=Chance, 3=Desc. By default Full.</param>
         /// <returns></returns>
-        public string GetInfo(int mode = 0, bool translation = true)
+        public string GetInfo(int mode = 0)
         {
-            string info = "";
-
             switch (mode)
             {
                 case 1: return KName;
-                case 2: return ChanceMin + " .. " + ChanceMax + "%";
-                case 3:
-                    info = KInfo;
-                    if (translation)
-                    {
-                        string tr = Program.DB.GetSkillTranslation(SkillType);
-                        float v0 = 0.01f * Params[0];
-                        float v1 = 0.01f * Params[1];
-                        float v2 = 0.01f * Params[2];
-                        float v3 = v0 + v1;
-                        if (tr != null) info = string.Format(tr, v0, v1, v2, v3, Params[1]);
-                    }
-                    return info;
-                default:
-                    info = "Name: " + GetInfo(1) + "\r\nChance: " + GetInfo(2) + "\r\n" + GetInfo(3, translation);
-                    break;
+                case 2: return ChanceMin + ".." + ChanceMax + "%";
+                case 3: return Program.DB.TranslatorSkills.GetTranslation(Params);
+                default: return "Name: " + GetInfo(1) + "\r\nChance: " + GetInfo(2) + "\r\n" + GetInfo(3);
             }
-
-            return info;
         }
     }
 }

@@ -22,8 +22,6 @@
         private int ExclusiveSkinID;
 
 
-        //public bool Game01, Game02, Game03;
-
         private int Evol;
         private int EvolMax;
         private bool NoBloomCG;
@@ -83,8 +81,6 @@
         };
 
  
-        //public enum ImageTypes { IconSmall, IconMedium, IconLarge, Cutin, Bustup, Stand, StandSmall, Home };
-
         public enum SpecFilter
         {
             All_Knights, Has_Bloom_Form, Has_Bloom_CG, No_Bloom_CG, Has_Exclusive_Skin,
@@ -92,6 +88,7 @@
             Bloom_Materials, Skill_Materials, Equip_Materials,
             Other
         }
+
 
         public struct Evolution
         {
@@ -174,94 +171,113 @@
         /// <param name="view"></param>
         /// <param name="evol"></param>
         /// <param name="translation"></param>
-        public void FillGrid(System.Windows.Forms.DataGridView view, int evol, bool translation = true)
+        public void FillGrid(System.Windows.Forms.DataGridView view, int evol)
         {
             evol = evol > EvolMax ? EvolMax : evol;
 
-            int id;
-
             view.Rows.Clear();
 
-            System.Windows.Forms.DataGridViewCellStyle statsStyle = new System.Windows.Forms.DataGridViewCellStyle();
-            statsStyle.Font = new System.Drawing.Font("Consolas", 9);
-            statsStyle.ForeColor = System.Drawing.Color.DarkBlue;
-            id = view.Rows.Add("Ev:ID:ImID", evol + ":" + ID + ":" + ImageID[evol]);
-            view.Rows[id].DefaultCellStyle = statsStyle;
-
+            view.Rows.Add("Ev:ID:ImID", evol + ":" + ID + ":" + ImageID[evol]);
             view.Rows.Add("Kanji", Name.Kanji);
             view.Rows.Add("Romaji", Name.Romaji);
             view.Rows.Add("Eng DMM", Name.EngDMM);
             view.Rows.Add("Eng Nutaku", Name.EngNutaku);
-            view.Rows.Add("Rarity", GetStars());
             view.Rows.Add("Type", GetAttackType());
             view.Rows.Add("Nation", GetNation());
-            view.Rows.Add("Favorite Gift", Gifts[FavoriteGift]);
-
-            id = view.Rows.Add("HitPoints", Stats[evol].GetHitPointsInfo());
-            view.Rows[id].DefaultCellStyle = statsStyle;
-            id = view.Rows.Add("Attack", Stats[evol].GetAttackInfo());
-            view.Rows[id].DefaultCellStyle = statsStyle;
-            id = view.Rows.Add("Defense", Stats[evol].GetDefenseInfo());
-            view.Rows[id].DefaultCellStyle = statsStyle;
-
+            view.Rows.Add("Gift", Gifts[FavoriteGift]);
+            view.Rows.Add("HitPoints", Stats[evol].GetHitPointsInfo());
+            view.Rows.Add("Attack", Stats[evol].GetAttackInfo());
+            view.Rows.Add("Defense", Stats[evol].GetDefenseInfo());
+            view.Rows.Add("Speed", Stats[evol].SpeedLvMax);
             view.Rows.Add("Skill Name", GetSkillInfo(1));
             view.Rows.Add("Skill Chance", GetSkillInfo(2));
-            id = view.Rows.Add("Skill Desc\r\nID " + Skill, GetSkillInfo(3, translation));
-            view.Rows[id].Height = (view.Rows[id].Height - 2) * 3 + 1;
+            view.Rows.Add("Skill Desc\r\nID:" + Skill, GetSkillInfo(3));
 
-            id = view.Rows.Add("Ability 1\r\n\r\nID " + Ability1[evol], GetAbilitiesInfo(1, evol, translation));
-            view.Rows[id].Height = (view.Rows[id].Height - 2) * 5;
+            for (int i = 0; i < 2 * AbilityInfo.SUB_NUM; i++)
+            {
+                var adata = GetAbilityData(i, evol);
+                if (adata == null) continue;
+                if (adata[0] == 0) continue;
 
-            id = view.Rows.Add("Ability 2\r\n\r\nID " + Ability2[evol], GetAbilitiesInfo(2, evol, translation));
-            view.Rows[id].Height = (view.Rows[id].Height - 2) * 5;
+                var info = GetAbilitiesInfo(i, evol);
+                if (info == null) continue;
 
-            EquipmentInfo eq = Program.DB.GetFlowerEquipment(ID);
-            if (eq != null) view.Rows.Add("Equipment", eq.KName);
-            
+                var image = Program.DB.AbilityIcons[AbilityInfo.GetAbilityIconID(adata)];
+                var ids = GetAbilitiesInfo(i, evol, true);
+                view.Rows.Add(Helper.CreateDGVRow(image, info, ids));
+            }
         }
 
 
 
-        /// <summary>
-        /// Return (string) ablilties description
-        /// </summary>
-        /// <param name="mode">0=Both, 1=1st, 2=2nd</param>
-        /// <param name="evol"></param>
-        /// <param name="translation"></param>
-        /// <returns></returns>
-        public string GetAbilitiesInfo(int mode, int evol, bool translation = true)
+        public int[] GetAbilityData(int n, int evol)
         {
-            if ((evol < 0) || (evol > EvolMax)) evol = EvolMax;
+            evol = CheckEvolutionValue(evol);
 
-            if ((mode < 0) || (mode > 2))
-                return GetAbilitiesInfo(0, evol, translation);
+            AbilityInfo ab = Program.DB.GetAbility(Ability1[evol]);
 
-            if (mode == 0)
-                return GetAbilitiesInfo(1, evol, translation) + "\r\n\r\n" + GetAbilitiesInfo(2, evol, translation);
-
-            int id = 0;
-            if (mode == 1) id = Ability1[evol];
-            if (mode == 2) id = Ability2[evol];
-
-            AbilityInfo ability = Program.DB.GetAbility(id);
-            if (ability != null) return ability.GetInfo(translation);
+            if (ab != null)
+            {
+                if (n < ab.Count)
+                {
+                    return ab.GetParams(n);
+                }
+                else
+                {
+                    n -= ab.Count;
+                    ab = Program.DB.GetAbility(Ability2[evol]);
+                    if (ab != null) return ab.GetParams(n);
+                }
+            }
 
             return null;
         }
 
 
 
-        /// <summary>
-        /// Return (string) skill description.
-        /// </summary>
-        /// <param name="mode">0=Full, 1=Name, 2=Chance, 3=Full Desc. By default Full.</param>
-        /// <param name="translation"></param>
-        /// <returns></returns>
-        public string GetSkillInfo(int mode = 0, bool translation = true)
+        public int GetAbilityTypeID(int n, int evol)
+        {
+            return GetAbilityData(n, evol)[0];
+        }
+
+
+
+        public string GetAbilitiesInfo(int n, int evol, bool getIDs = false)
+        {
+
+
+            int id = GetAbilityTypeID(n, evol);
+
+            if (id == 0) return null;
+
+            evol = CheckEvolutionValue(evol);
+
+            AbilityInfo ab = Program.DB.GetAbility(Ability1[evol]);
+
+            if (ab != null)
+            {
+                if (n < ab.Count)
+                {
+                    return ab.GetInfo(n, getIDs);
+                }
+                else
+                {
+                    n -= ab.Count;
+                    ab = Program.DB.GetAbility(Ability2[evol]);
+                    if (ab != null) return ab.GetInfo(n, getIDs);
+                }
+            }
+
+            return null;
+        }
+
+
+
+        public string GetSkillInfo(int mode = 0)
         {
             SkillInfo skill = Program.DB.GetSkill(Skill);
 
-            if (skill != null) return skill.GetInfo(mode, translation);
+            if (skill != null) return skill.GetInfo(mode);
 
             return null;
         }
@@ -296,13 +312,13 @@
             foreach (int ab1 in Ability1)
             {
                 ability = Program.DB.GetAbility(ab1);
-                if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
+                if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
             }
 
             foreach (int ab2 in Ability2)
             {
                 ability = Program.DB.GetAbility(ab2);
-                if (ability != null) if (ability.CheckAbilityShortName(shortName)) return true;
+                if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
             }
 
             return false;
@@ -340,6 +356,12 @@
 
 
 
+        /// <summary>
+        /// Image ID
+        /// </summary>
+        /// <param name="evol">Evolution tear: 0 = base, 1 = evol, 2 = bloom.</param>
+        /// <param name="ex">If true, return exclusive skin ID.</param>
+        /// <returns></returns>
         public int GetImageEvolID(int evol, bool ex = false)
         {
             if ((ex) && (ExclusiveSkinID != 0)) return ExclusiveSkinID;
@@ -440,6 +462,22 @@
                 case SortBy.TotalStats:
                     if (Stats[EvolMax].GetTotalMax() < fw.Stats[fw.EvolMax].GetTotalMax()) return 1;
                     if (Stats[EvolMax].GetTotalMax() > fw.Stats[fw.EvolMax].GetTotalMax()) return -1;
+                    break;
+                case SortBy.Attack:
+                    if (Stats[EvolMax].GetAttackMax() < fw.Stats[fw.EvolMax].GetAttackMax()) return 1;
+                    if (Stats[EvolMax].GetAttackMax() > fw.Stats[fw.EvolMax].GetAttackMax()) return -1;
+                    break;
+                case SortBy.Defense:
+                    if (Stats[EvolMax].GetDefenseMax() < fw.Stats[fw.EvolMax].GetDefenseMax()) return 1;
+                    if (Stats[EvolMax].GetDefenseMax() > fw.Stats[fw.EvolMax].GetDefenseMax()) return -1;
+                    break;
+                case SortBy.HitPoints:
+                    if (Stats[EvolMax].GetHitPointsMax() < fw.Stats[fw.EvolMax].GetHitPointsMax()) return 1;
+                    if (Stats[EvolMax].GetHitPointsMax() > fw.Stats[fw.EvolMax].GetHitPointsMax()) return -1;
+                    break;
+                case SortBy.Speed:
+                    if (Stats[EvolMax].SpeedLvMax < fw.Stats[fw.EvolMax].SpeedLvMax) return 1;
+                    if (Stats[EvolMax].SpeedLvMax > fw.Stats[fw.EvolMax].SpeedLvMax) return -1;
                     break;
                 default: break;
             }

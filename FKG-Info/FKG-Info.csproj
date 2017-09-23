@@ -11,6 +11,7 @@
     <AssemblyName>FKG-Info</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -50,6 +50,12 @@
     <ApplicationIcon>Images\Nerine.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.DirectX.AudioVideoPlayback, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.AudioVideoPlayback.dll</HintPath>
+      <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,6 +84,12 @@
       <DependentUpon>AdvPictureBox.cs</DependentUpon>
     </Compile>
     <Compile Include="ComplexName.cs" />
+    <Compile Include="EquipFastViewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EquipFastViewForm.Designer.cs">
+      <DependentUpon>EquipFastViewForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EquipmentInfo.cs" />
     <Compile Include="EquipmentSelectControl.cs">
       <SubType>UserControl</SubType>
@@ -111,12 +123,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MasterData.cs" />
-    <Compile Include="MasterSummaryForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MasterSummaryForm.Designer.cs">
-      <DependentUpon>MasterSummaryForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,10 +133,20 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkillInfo.cs" />
     <Compile Include="SkinInfo.cs" />
-    <Compile Include="StringHelper.cs" />
-    <Compile Include="XMLHelper.cs" />
+    <Compile Include="SoundPlayer.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Translator.cs" />
+    <Compile Include="VoiceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VoiceControl.Designer.cs">
+      <DependentUpon>VoiceControl.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EquipFastViewForm.resx">
+      <DependentUpon>EquipFastViewForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EquipmentSelectControl.resx">
       <DependentUpon>EquipmentSelectControl.cs</DependentUpon>
@@ -143,9 +159,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MasterSummaryForm.resx">
-      <DependentUpon>MasterSummaryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
@@ -160,6 +173,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="VoiceControl.resx">
+      <DependentUpon>VoiceControl.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -174,16 +190,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\Slash.png" />
+    <None Include="Images\chbox_ico_slash.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\Blunt.png" />
+    <None Include="Images\chbox_ico_blunt.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\Pierce.png" />
+    <None Include="Images\chbox_ico_pierce.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\Magic.png" />
+    <None Include="Images\chbox_ico_magic.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\NoImage.png" />
@@ -215,7 +231,8 @@
     <None Include="Images\IconElements\icon_type2.png" />
     <None Include="Images\IconElements\icon_type3.png" />
     <None Include="Images\IconElements\icon_type4.png" />
-    <None Include="Images\Loading.png" />
+    <None Include="Images\chbox_ico_sound.png" />
+    <None Include="Images\ability_icons.png" />
     <Content Include="Images\Nerine.ico" />
     <None Include="Images\NerineAbout\nerine_ab_02_03.png" />
     <None Include="Images\NerineAbout\nerine_ab_02_02.png" />
@@ -248,6 +265,17 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

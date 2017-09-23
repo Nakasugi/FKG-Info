@@ -286,7 +286,7 @@
             this.Controls.Add(this.ChBoxPierce);
             this.Controls.Add(this.ChBoxBlunt);
             this.Name = "FlowerSelectControl";
-            this.Size = new System.Drawing.Size(803, 640);
+            this.Size = new System.Drawing.Size(802, 640);
             this.ResumeLayout(false);
             this.PerformLayout();
 

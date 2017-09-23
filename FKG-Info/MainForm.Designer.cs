@@ -30,15 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.GridInfo = new System.Windows.Forms.DataGridView();
             this.GIC1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GIC2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BtSelect = new System.Windows.Forms.Button();
-            this.ChBoxTranslation = new System.Windows.Forms.CheckBox();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.MMItemFile = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileImportMaster = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,8 +46,6 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MMItemFileExperimental = new System.Windows.Forms.ToolStripMenuItem();
             this.getMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MMItemView = new System.Windows.Forms.ToolStripMenuItem();
-            this.MMItemViewMasterSummary = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemImageType = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemMode = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemModeChara = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,10 +58,12 @@
             this._lbLoading = new System.Windows.Forms.Label();
             this._lbWait = new System.Windows.Forms.Label();
             this.ChBoxExSkin = new System.Windows.Forms.CheckBox();
+            this.BtEquip = new System.Windows.Forms.Button();
             this.PicBoxIconBloom = new FKG_Info.AdvPictureBox(this.components);
             this.PicBoxIconAwak = new FKG_Info.AdvPictureBox(this.components);
             this.PicBoxIconBase = new FKG_Info.AdvPictureBox(this.components);
             this.PicBoxBig = new FKG_Info.AdvPictureBox(this.components);
+            this.BtVoices = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBloom)).BeginInit();
@@ -79,6 +78,7 @@
             this.GridInfo.AllowUserToDeleteRows = false;
             this.GridInfo.AllowUserToResizeColumns = false;
             this.GridInfo.AllowUserToResizeRows = false;
+            this.GridInfo.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.GridInfo.BackgroundColor = System.Drawing.SystemColors.Control;
             this.GridInfo.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -93,48 +93,48 @@
             this.GridInfo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.GIC1,
             this.GIC2});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.GridInfo.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GridInfo.DefaultCellStyle = dataGridViewCellStyle3;
             this.GridInfo.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.GridInfo.GridColor = System.Drawing.SystemColors.Control;
             this.GridInfo.Location = new System.Drawing.Point(809, 118);
             this.GridInfo.MultiSelect = false;
             this.GridInfo.Name = "GridInfo";
             this.GridInfo.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridInfo.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.GridInfo.RowHeadersVisible = false;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GridInfo.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            this.GridInfo.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.GridInfo.RowHeadersVisible = false;
             this.GridInfo.RowTemplate.Height = 18;
             this.GridInfo.RowTemplate.ReadOnly = true;
             this.GridInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.GridInfo.Size = new System.Drawing.Size(312, 502);
+            this.GridInfo.Size = new System.Drawing.Size(312, 522);
             this.GridInfo.TabIndex = 5;
             this.GridInfo.TabStop = false;
+            this.GridInfo.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GridInfo_MouseMove);
             // 
             // GIC1
             // 
             this.GIC1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.GIC1.DefaultCellStyle = dataGridViewCellStyle2;
             this.GIC1.HeaderText = "Type";
             this.GIC1.Name = "GIC1";
             this.GIC1.ReadOnly = true;
             this.GIC1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.GIC1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.GIC1.Width = 84;
+            this.GIC1.Width = 80;
             // 
             // GIC2
             // 
@@ -149,7 +149,7 @@
             // 
             this.BtSelect.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.BtSelect.ForeColor = System.Drawing.Color.Blue;
-            this.BtSelect.Location = new System.Drawing.Point(809, 627);
+            this.BtSelect.Location = new System.Drawing.Point(809, 647);
             this.BtSelect.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
             this.BtSelect.Name = "BtSelect";
             this.BtSelect.Size = new System.Drawing.Size(92, 32);
@@ -158,26 +158,11 @@
             this.BtSelect.UseVisualStyleBackColor = true;
             this.BtSelect.Click += new System.EventHandler(this.FlowerSelect_Click);
             // 
-            // ChBoxTranslation
-            // 
-            this.ChBoxTranslation.AutoSize = true;
-            this.ChBoxTranslation.Checked = true;
-            this.ChBoxTranslation.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxTranslation.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.ChBoxTranslation.Location = new System.Drawing.Point(1043, 636);
-            this.ChBoxTranslation.Name = "ChBoxTranslation";
-            this.ChBoxTranslation.Size = new System.Drawing.Size(78, 17);
-            this.ChBoxTranslation.TabIndex = 19;
-            this.ChBoxTranslation.Text = "Translation";
-            this.ChBoxTranslation.UseVisualStyleBackColor = true;
-            this.ChBoxTranslation.CheckedChanged += new System.EventHandler(this.ChBoxAbilityTranslation_CheckedChanged);
-            // 
             // MainMenu
             // 
             this.MainMenu.Dock = System.Windows.Forms.DockStyle.None;
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MMItemFile,
-            this.MMItemView,
             this.MMItemImageType,
             this.MMItemMode,
             this.MMItemOptions,
@@ -187,7 +172,7 @@
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.MainMenu.Size = new System.Drawing.Size(383, 24);
+            this.MainMenu.Size = new System.Drawing.Size(339, 24);
             this.MainMenu.TabIndex = 23;
             this.MainMenu.Text = "MainMenu";
             // 
@@ -243,21 +228,6 @@
             this.getMasterToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.getMasterToolStripMenuItem.Text = "getMaster";
             this.getMasterToolStripMenuItem.Click += new System.EventHandler(this.MMItemFileGetMaster_Click);
-            // 
-            // MMItemView
-            // 
-            this.MMItemView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MMItemViewMasterSummary});
-            this.MMItemView.Name = "MMItemView";
-            this.MMItemView.Size = new System.Drawing.Size(44, 20);
-            this.MMItemView.Text = "&View";
-            // 
-            // MMItemViewMasterSummary
-            // 
-            this.MMItemViewMasterSummary.Name = "MMItemViewMasterSummary";
-            this.MMItemViewMasterSummary.Size = new System.Drawing.Size(164, 22);
-            this.MMItemViewMasterSummary.Text = "Master Summary";
-            this.MMItemViewMasterSummary.Click += new System.EventHandler(this.MMItemViewMasterSummary_Click);
             // 
             // MMItemImageType
             // 
@@ -351,13 +321,26 @@
             this.ChBoxExSkin.AutoSize = true;
             this.ChBoxExSkin.Enabled = false;
             this.ChBoxExSkin.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.ChBoxExSkin.Location = new System.Drawing.Point(953, 636);
+            this.ChBoxExSkin.Location = new System.Drawing.Point(1058, 656);
             this.ChBoxExSkin.Name = "ChBoxExSkin";
             this.ChBoxExSkin.Size = new System.Drawing.Size(62, 17);
             this.ChBoxExSkin.TabIndex = 26;
             this.ChBoxExSkin.Text = "Ex Skin";
             this.ChBoxExSkin.UseVisualStyleBackColor = true;
             this.ChBoxExSkin.CheckedChanged += new System.EventHandler(this.ChBoxExSkin_CheckedChanged);
+            // 
+            // BtEquip
+            // 
+            this.BtEquip.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BtEquip.ForeColor = System.Drawing.Color.Maroon;
+            this.BtEquip.Location = new System.Drawing.Point(907, 647);
+            this.BtEquip.Margin = new System.Windows.Forms.Padding(0, 3, 6, 0);
+            this.BtEquip.Name = "BtEquip";
+            this.BtEquip.Size = new System.Drawing.Size(92, 32);
+            this.BtEquip.TabIndex = 27;
+            this.BtEquip.Text = "Equipment";
+            this.BtEquip.UseVisualStyleBackColor = true;
+            this.BtEquip.Click += new System.EventHandler(this.BtEquip_Click);
             // 
             // PicBoxIconBloom
             // 
@@ -394,7 +377,7 @@
             // 
             // PicBoxBig
             // 
-            this.PicBoxBig.Location = new System.Drawing.Point(0, 26);
+            this.PicBoxBig.Location = new System.Drawing.Point(0, 46);
             this.PicBoxBig.Name = "PicBoxBig";
             this.PicBoxBig.Size = new System.Drawing.Size(803, 640);
             this.PicBoxBig.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -403,14 +386,27 @@
             this.PicBoxBig.Visible = false;
             this.PicBoxBig.Click += new System.EventHandler(this.PicBoxBig_Click);
             // 
+            // BtVoices
+            // 
+            this.BtVoices.BackgroundImage = global::FKG_Info.Properties.Resources.chbox_ico_sound;
+            this.BtVoices.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.BtVoices.Location = new System.Drawing.Point(1005, 647);
+            this.BtVoices.Name = "BtVoices";
+            this.BtVoices.Size = new System.Drawing.Size(32, 32);
+            this.BtVoices.TabIndex = 29;
+            this.BtVoices.UseVisualStyleBackColor = true;
+            this.BtVoices.Click += new System.EventHandler(this.BtVoices_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1132, 666);
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.ClientSize = new System.Drawing.Size(1132, 686);
+            this.Controls.Add(this.BtVoices);
+            this.Controls.Add(this.BtEquip);
             this.Controls.Add(this.ChBoxExSkin);
             this.Controls.Add(this._lbLoading);
-            this.Controls.Add(this.ChBoxTranslation);
             this.Controls.Add(this.BtSelect);
             this.Controls.Add(this.GridInfo);
             this.Controls.Add(this.PicBoxIconBloom);
@@ -423,8 +419,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MainMenu;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1148, 704);
-            this.MinimumSize = new System.Drawing.Size(1148, 704);
+            this.MaximumSize = new System.Drawing.Size(1148, 724);
+            this.MinimumSize = new System.Drawing.Size(1148, 724);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FKG-Info";
@@ -450,16 +446,11 @@
         private AdvPictureBox PicBoxIconBloom;
         private System.Windows.Forms.DataGridView GridInfo;
         private System.Windows.Forms.Button BtSelect;
-        private System.Windows.Forms.CheckBox ChBoxTranslation;
         private System.Windows.Forms.MenuStrip MainMenu;
         private System.Windows.Forms.ToolStripMenuItem MMItemOptions;
         private System.Windows.Forms.ToolStripMenuItem MMItemAbout;
         private System.Windows.Forms.ToolStripMenuItem MMItemFile;
-        private System.Windows.Forms.ToolStripMenuItem MMItemView;
         private System.Windows.Forms.ToolStripMenuItem MMItemImageType;
-        private System.Windows.Forms.ToolStripMenuItem MMItemViewMasterSummary;
-        private System.Windows.Forms.DataGridViewTextBoxColumn GIC1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn GIC2;
         private System.Windows.Forms.ToolStripMenuItem MMItemMode;
         private System.Windows.Forms.ToolStripMenuItem MMItemModeChara;
         private System.Windows.Forms.ToolStripMenuItem MMItemModeEquip;
@@ -475,6 +466,10 @@
         private System.Windows.Forms.Label _lbWait;
         private System.Windows.Forms.ToolStripMenuItem MMItemFileExportIDs;
         private System.Windows.Forms.CheckBox ChBoxExSkin;
+        private System.Windows.Forms.Button BtEquip;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GIC1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GIC2;
+        private System.Windows.Forms.Button BtVoices;
     }
 }
 
