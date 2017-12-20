@@ -191,7 +191,7 @@ namespace FKG_Info
             }
             else
             {
-                dwImage = Properties.Resources.NoImage;
+                dwImage = Properties.Resources.no_image;
             }
 
             lock (df.Locker) df.Image = dwImage;
@@ -231,7 +231,7 @@ namespace FKG_Info
 
                 WebClient wc = new WebClient();
 
-                string tname = "item/100x100/" + df.Name + ".png";
+                string tname = "images/item/100x100/" + df.Name + ".png";
                 string url1 = Program.DB.GetUrl(1) + tname;
                 string url2 = Program.DB.GetUrl(2) + tname;
 
@@ -267,7 +267,7 @@ namespace FKG_Info
             }
             else
             {
-                dwImage = Properties.Resources.NoImage;
+                dwImage = Properties.Resources.no_image;
             }
 
             lock (df.Locker) df.Image = dwImage;

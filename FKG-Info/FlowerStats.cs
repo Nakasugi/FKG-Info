@@ -28,28 +28,50 @@
         const string Pattern = "{0,-5} +{1,-4}  max={2}";
 
 
+        private static class MrFields
+        {
+            public const int HPLvMin = 15;
+            public const int HPLvMax = 16;
+            public const int AtkLvMin = 17;
+            public const int AtkLvMax = 18;
+            public const int DefLvMin = 19;
+            public const int DefLvMax = 20;
+            public const int SpdLvMin = 21;
+            public const int SpdLvMax = 22;
+            public const int HpApm = 23;
+            public const int AtkAmp = 24;
+            public const int DefAmp = 25;
+            public const int HPAff1 = 31;
+            public const int AtkAff1 = 32;
+            public const int DefAff1 = 33;
+            public const int HPAff2 = 37;
+            public const int AtkAff2 = 38;
+            public const int DefAff2 = 39;
+        }
+
+
         public FlowerStats(string[] masterData)
         {
-            int.TryParse(masterData[15], out HitPointsLvMin);
-            int.TryParse(masterData[17], out AttackLvMin);
-            int.TryParse(masterData[19], out DefenseLvMin);
-            int.TryParse(masterData[21], out SpeedLvMin);
+            int.TryParse(masterData[MrFields.HPLvMin], out HitPointsLvMin);
+            int.TryParse(masterData[MrFields.AtkLvMin], out AttackLvMin);
+            int.TryParse(masterData[MrFields.DefLvMin], out DefenseLvMin);
+            int.TryParse(masterData[MrFields.SpdLvMin], out SpeedLvMin);
 
-            int.TryParse(masterData[16], out HitPointsLvMax);
-            int.TryParse(masterData[18], out AttackLvMax);
-            int.TryParse(masterData[20], out DefenseLvMax);
-            int.TryParse(masterData[22], out SpeedLvMax);
+            int.TryParse(masterData[MrFields.HPLvMax], out HitPointsLvMax);
+            int.TryParse(masterData[MrFields.AtkLvMax], out AttackLvMax);
+            int.TryParse(masterData[MrFields.DefLvMax], out DefenseLvMax);
+            int.TryParse(masterData[MrFields.SpdLvMax], out SpeedLvMax);
 
-            int.TryParse(masterData[23], out HitPointAmpules);
-            int.TryParse(masterData[24], out AttackAmpules);
-            int.TryParse(masterData[25], out DefenseAmpules);
+            int.TryParse(masterData[MrFields.HpApm], out HitPointAmpules);
+            int.TryParse(masterData[MrFields.AtkAmp], out AttackAmpules);
+            int.TryParse(masterData[MrFields.DefAmp], out DefenseAmpules);
 
-            int.TryParse(masterData[31], out HitPointAffectionScaling1);
-            int.TryParse(masterData[32], out AttackAffectionScaling1);
-            int.TryParse(masterData[33], out DefenseAffectionScaling1);
-            int.TryParse(masterData[38], out HitPointAffectionScaling2);
-            int.TryParse(masterData[39], out AttackAffectionScaling2);
-            int.TryParse(masterData[40], out DefenseAffectionScaling2);
+            int.TryParse(masterData[MrFields.HPAff1], out HitPointAffectionScaling1);
+            int.TryParse(masterData[MrFields.AtkAff1], out AttackAffectionScaling1);
+            int.TryParse(masterData[MrFields.DefAff1], out DefenseAffectionScaling1);
+            int.TryParse(masterData[MrFields.HPAff2], out HitPointAffectionScaling2);
+            int.TryParse(masterData[MrFields.AtkAff2], out AttackAffectionScaling2);
+            int.TryParse(masterData[MrFields.DefAff2], out DefenseAffectionScaling2);
         }
 
 
@@ -89,9 +111,9 @@
             return DefenseLvMax + DefenseAmpules + GetDefenseAffectionBonus(200);
         }
 
-        public int GetTotalMax()
+        public int GetOverallForce()
         {
-            return GetHitPointsMax() + GetAttackMax() + GetDefenseMax() + SpeedLvMax;
+            return GetHitPointsMax() + GetAttackMax() + GetDefenseMax();
         }
 
 

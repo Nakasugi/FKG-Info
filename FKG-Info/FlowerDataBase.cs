@@ -52,7 +52,7 @@ namespace FKG_Info
 
 
         public System.Drawing.Image[] AbilityIcons { get; private set; }
-        private const int AB_ICONS_COUNT = 40;
+        private const int AB_ICONS_COUNT = 64;
 
 
 

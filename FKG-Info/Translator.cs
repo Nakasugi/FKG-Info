@@ -36,6 +36,9 @@ namespace FKG_Info
 
             public string Translation;
             public string Tag;
+            public string Icon;
+
+            public TranslationUnit() { ID = 0; Translation = null; Tag = null; Icon = "0"; }
         }
 
 
@@ -106,14 +109,9 @@ namespace FKG_Info
                     catch { continue; }
 
                     tu.Translation = matches[1].Value;
-                    if (matches.Count > 2)
-                    {
-                        tu.Tag = matches[2].Value;
-                    }
-                    else
-                    {
-                        tu.Tag = null;
-                    }
+
+                    if (matches.Count > 2) tu.Tag = matches[2].Value;
+                    if (matches.Count > 3) tu.Icon = matches[3].Value.Replace("{", "").Replace("}", "");
 
                     currentSection.Add(tu);
                 }
@@ -134,8 +132,8 @@ namespace FKG_Info
         public string GetTranslation(int[] data)
         {
             if (data.Length < 4) return null;
-            
-            switch(data[0])
+
+            switch (data[0])
             {
                 case 0: return null;
                 case 1: if (data[1] == 0) return null; break;
@@ -143,38 +141,17 @@ namespace FKG_Info
             }
 
 
-            Section main = Sections.Find(s => s.Name == "Main");
-            if (main == null) return null;
-
-            TranslationUnit tu = main.Find(data[0]);
+            TranslationUnit tu = GetTranslationUnit("Main", data[0]);
             if (tu == null) return null;
 
-            //CurrentData = data;
 
             string tr = tu.Translation;
 
             var pattern = new Regex(@"(?<=\{)[:\d\w]+(?=\})");
             var matches = pattern.Matches(tr);
 
-            string mch, rep, res;
-            int value;
-
             foreach (Match m in matches)
-            {
-                mch = m.Value;
-                rep = "{" + mch + "}";
-
-                List<string> keys = new List<string>();
-                keys.AddRange(mch.Split(':'));
-
-                if (!GetParamValue(keys[0], out value, data)) continue;
-
-                keys.RemoveAt(0);
-                res = CalcParamValue(keys, value, data);
-
-
-                tr = tr.Replace(rep, res);
-            }
+                tr = tr.Replace("{" + m.Value + "}", GetParamValue(m.Value, data));
 
             return tr;
         }
@@ -189,6 +166,19 @@ namespace FKG_Info
             if ((tu == null) || ((tu.Tag == null))) return res;
 
             return tu.Tag;
+        }
+
+
+
+        public int GetIconId(int[] data)
+        {
+            TranslationUnit tu = GetTranslationUnit("Main", data[0]);
+            if (tu == null) return 0;
+
+            string sValue = GetParamValue(tu.Icon, data);
+            int.TryParse(sValue, out int iValue);
+
+            return iValue;
         }
 
 
@@ -224,10 +214,10 @@ namespace FKG_Info
         /// ...
         /// </summary>
         /// <param name="keys"></param>
-        /// <param name="value"></param>
         /// <param name="data"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        private string CalcParamValue(List<string> keys, double value, int[] data)
+        private string CalcParamValue(List<string> keys, int[] data, double value = 0)
         {
             if (keys.Count == 0) return value.ToString();
 
@@ -251,13 +241,13 @@ namespace FKG_Info
 
             keys.RemoveRange(0, 2);
 
-            return CalcParamValue(keys, value, data);
+            return CalcParamValue(keys, data, value);
         }
 
 
 
         /// <summary>
-        /// Store to value data[key] if key has prefix 'p', or key.ToStrint if no prefix.
+        /// Store to value data[key] if key has prefix 'p', or key.ToString if no prefix.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -280,6 +270,19 @@ namespace FKG_Info
             {
                 return int.TryParse(key, out value);
             }
+        }
+
+
+
+        private string GetParamValue(string sparam, int[] data)
+        {
+            List<string> keys = new List<string>();
+            keys.AddRange(sparam.Split(':'));
+
+            if (!GetParamValue(keys[0], out int value, data)) return sparam;
+
+            keys.RemoveAt(0);
+            return CalcParamValue(keys, data, value);
         }
     }
 }

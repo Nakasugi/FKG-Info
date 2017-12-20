@@ -143,7 +143,7 @@ namespace FKG_Info
                     case SortBy.Name: sortType = BaseInfo.SortBy.Name; break;
                     case SortBy.Attack: sortType = BaseInfo.SortBy.Attack; break;
                     case SortBy.Defense: sortType = BaseInfo.SortBy.Defense; break;
-                    case SortBy.Total: sortType = BaseInfo.SortBy.TotalStats; break;
+                    case SortBy.Total: sortType = BaseInfo.SortBy.OverallForce; break;
                     default: break;
                 }
             }

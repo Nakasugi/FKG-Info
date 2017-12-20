@@ -84,11 +84,12 @@
         //public string GetPath() { return Program.DB.EquipFolder + "\\" + ImageID + ".png"; }
         public string GetImageName() { return ImageID.ToString(); }
 
+        /*
         private string ReplaceCharaToItem(string st)
         {
             return st.Replace("character/", "") + "item/100x100/" + ImageID + ".png";
         }
-
+        */
 
 
         public void FillGrid(System.Windows.Forms.DataGridView view, bool translation = true)
@@ -96,6 +97,7 @@
             int id;
 
             view.Rows.Clear();
+            view.Rows.Add("ImID", ImageID);
             view.Rows.Add("Kanji", KName);
 
             if (AttackMax > 0) view.Rows.Add("Attack", AttackMin + " .. " + AttackMax);
@@ -140,14 +142,14 @@
                 case SortBy.Attack:
                     if (AttackMax < eq.AttackMax) return 1;
                     if (AttackMax > eq.AttackMax) return -1;
-                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.TotalStats; }
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.OverallForce; }
                     break;
                 case SortBy.Defense:
                     if (DefenseMax < eq.DefenseMax) return 1;
                     if (DefenseMax > eq.DefenseMax) return -1;
-                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.TotalStats; }
+                    if (cmp1stStep) { cmp1stStep = false; goto case SortBy.OverallForce; }
                     break;
-                case SortBy.TotalStats:
+                case SortBy.OverallForce:
                     cmp1 = AttackMax + DefenseMax;
                     cmp2 = eq.AttackMax + eq.DefenseMax;
                     if (cmp1 < cmp2) return 1;

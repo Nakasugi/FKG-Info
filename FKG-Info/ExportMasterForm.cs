@@ -51,19 +51,7 @@ namespace FKG_Info
             }
 
 
-            /*
-            SaveFileDialog fileSave = new SaveFileDialog();
-
-            fileSave.InitialDirectory = Program.DB.DataFolder;
-            fileSave.Filter = "Text file|*.txt";
-            fileSave.FilterIndex = 0;
-            fileSave.FileName = name;
-
-            if (fileSave.ShowDialog() != DialogResult.OK) return;
-
-            Program.DB.Master.Export(name, fileSave.FileName);
-            */
-
+            MessageBox.Show(this, "    Done!", "Export", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             Close();
         }
 

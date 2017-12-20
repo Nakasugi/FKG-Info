@@ -41,6 +41,28 @@
 
 
 
+        private static class MrFields
+        {
+            public const int ImageID = 0;
+            public const int Family = 2;
+            public const int Nation = 3;
+            public const int ShortName = 5;
+            public const int Rarity = 7;
+            public const int Type = 8;
+            public const int FavGift = 9;
+            public const int Ability1ID = 10;
+            public const int Ability2ID = 11;
+            public const int SkillID = 12;
+            public const int SortCat = 27;
+            public const int NoKnight = 29;
+            public const int ID = 34;
+            public const int Evol = 35;
+            public const int Name = 44;
+            public const int NoBloomCG = 45;
+        }
+
+
+
         public static readonly string[] AttackTypes =
         {
             "None",
@@ -125,37 +147,37 @@
             if (masterData.Length < 54) return;
 
             int parsedValue;
-            if (!int.TryParse(masterData[34], out parsedValue)) return;
+            if (!int.TryParse(masterData[MrFields.ID], out parsedValue)) return;
 
             ID = parsedValue;
-            Name.Kanji = masterData[45].Replace("\"", "");
+            Name.Kanji = masterData[MrFields.Name].Replace("\"", "");
             Name.AutoRomaji();
 
-            ShortName = masterData[5].Replace("\"", "");
+            ShortName = masterData[MrFields.ShortName].Replace("\"", "");
 
-            int.TryParse(masterData[35], out Evol); Evol--;
+            int.TryParse(masterData[MrFields.Evol], out Evol); Evol--;
             if ((Evol < 0) || (Evol > 2)) { ID = 0; return; }
 
             EvolMax = Evol;
 
-            if (masterData[46] == "1") NoBloomCG = true;
+            if (masterData[MrFields.NoBloomCG] == "1") NoBloomCG = true;
 
-            int.TryParse(masterData[0], out ImageID[Evol]);
-            int.TryParse(masterData[10], out Ability1[Evol]);
-            int.TryParse(masterData[11], out Ability2[Evol]);
+            int.TryParse(masterData[MrFields.ImageID], out ImageID[Evol]);
+            int.TryParse(masterData[MrFields.Ability1ID], out Ability1[Evol]);
+            int.TryParse(masterData[MrFields.Ability2ID], out Ability2[Evol]);
 
-            int.TryParse(masterData[2], out parsedValue); Family = parsedValue;
-            int.TryParse(masterData[7], out parsedValue); Rarity = parsedValue;
-            int.TryParse(masterData[3], out parsedValue); Nation = parsedValue;
-            int.TryParse(masterData[8], out parsedValue); AttackType = parsedValue;
-            int.TryParse(masterData[9], out parsedValue); FavoriteGift = parsedValue;
+            int.TryParse(masterData[MrFields.Family], out parsedValue); Family = parsedValue;
+            int.TryParse(masterData[MrFields.Rarity], out parsedValue); Rarity = parsedValue;
+            int.TryParse(masterData[MrFields.Nation], out parsedValue); Nation = parsedValue;
+            int.TryParse(masterData[MrFields.Type], out parsedValue); AttackType = parsedValue;
+            int.TryParse(masterData[MrFields.FavGift], out parsedValue); FavoriteGift = parsedValue;
 
-            int.TryParse(masterData[12], out Skill);
+            int.TryParse(masterData[MrFields.SkillID], out Skill);
 
             if (Evol == 0)
             {
-                int.TryParse(masterData[27], out parsedValue); SortCategory = parsedValue;
-                if (masterData[29] != "0") NoKnight = true;
+                int.TryParse(masterData[MrFields.SortCat], out parsedValue); SortCategory = parsedValue;
+                if (masterData[MrFields.NoKnight] != "0") NoKnight = true;
             }
 
             Stats[Evol] = new FlowerStats(masterData);
@@ -193,7 +215,7 @@
             view.Rows.Add("Skill Chance", GetSkillInfo(2));
             view.Rows.Add("Skill Desc\r\nID:" + Skill, GetSkillInfo(3));
 
-            for (int i = 0; i < 2 * AbilityInfo.SUB_NUM; i++)
+            for (int i = 0; i < 2 * AbilityInfo.SUBABL_NUM; i++)
             {
                 var adata = GetAbilityData(i, evol);
                 if (adata == null) continue;
@@ -202,10 +224,12 @@
                 var info = GetAbilitiesInfo(i, evol);
                 if (info == null) continue;
 
-                var image = Program.DB.AbilityIcons[AbilityInfo.GetAbilityIconID(adata)];
+                var image = Program.DB.AbilityIcons[Program.DB.TranslatorAbilities.GetIconId(adata)];
                 var ids = GetAbilitiesInfo(i, evol, true);
                 view.Rows.Add(Helper.CreateDGVRow(image, info, ids));
             }
+
+            view.Rows.Add("Overall Force", Stats[evol].GetOverallForce());
         }
 
 
@@ -335,6 +359,9 @@
             if (Name.Romaji != null) res |= Name.Romaji.ToLower().Contains(search);
             if (Name.EngDMM != null) res |= Name.EngDMM.ToLower().Contains(search);
             if (Name.EngNutaku != null) res |= Name.EngNutaku.ToLower().Contains(search);
+
+            for (int i = 0; i < EVOL_NUM; i++) if (ImageID[i] != 0) res |= ImageID[i].ToString().Contains(search);
+
             return res;
         }
 
@@ -459,9 +486,9 @@
                     if (SortCategory < fw.SortCategory) return 1;
                     if (SortCategory > fw.SortCategory) return -1;
                     break;
-                case SortBy.TotalStats:
-                    if (Stats[EvolMax].GetTotalMax() < fw.Stats[fw.EvolMax].GetTotalMax()) return 1;
-                    if (Stats[EvolMax].GetTotalMax() > fw.Stats[fw.EvolMax].GetTotalMax()) return -1;
+                case SortBy.OverallForce:
+                    if (Stats[EvolMax].GetOverallForce() < fw.Stats[fw.EvolMax].GetOverallForce()) return 1;
+                    if (Stats[EvolMax].GetOverallForce() > fw.Stats[fw.EvolMax].GetOverallForce()) return -1;
                     break;
                 case SortBy.Attack:
                     if (Stats[EvolMax].GetAttackMax() < fw.Stats[fw.EvolMax].GetAttackMax()) return 1;

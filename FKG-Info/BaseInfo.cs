@@ -4,11 +4,11 @@ namespace FKG_Info
 {
     public class BaseInfo : IComparable
     {
-        public enum ObjectType { None, Flower, Skill, Ability, Equipment, Skin }
+        public enum ObjectType { None, Flower, Skill, Ability, Equipment, Skin, GardenItem }
         public enum SortBy
         {
             Default, Name,
-            TotalStats, Attack, Defense, HitPoints, Speed,
+            OverallForce, Attack, Defense, HitPoints, Speed,
             SetTotalStats, SetAttack, SetDefense,
             Category
         }

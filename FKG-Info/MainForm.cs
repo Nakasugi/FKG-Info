@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,7 +6,7 @@ namespace FKG_Info
 {
     public partial class MainForm : Form
     {
-        Animator Animation;
+        private Animator Animation;
 
         private ContextMenu CMenu;
 
@@ -21,9 +21,9 @@ namespace FKG_Info
         private enum Mode { Characters, Equipments, Furnitures, Enemies }
         private Mode CurrentMode;
 
-        Graphics GR;
-        Brush BrPink;
-        Brush BrBase;
+        private Graphics GR;
+        private Brush BrPink;
+        private Brush BrBase;
 
 
 
@@ -539,7 +539,13 @@ namespace FKG_Info
 
         private void MainForm_Shown(object sender, EventArgs ev)
         {
+            //CurrentMode = Mode.Characters;
+            //FlowerSelect_Click(this, null);
+
             DrawIconSelectionBorder(0);
+            TopMost = true;
+            BringToFront();
+            TopMost = false;
         }
 
 

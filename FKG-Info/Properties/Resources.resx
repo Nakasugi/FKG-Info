@@ -118,38 +118,17 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Blunt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="chbox_ico_blunt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\chbox_ico_blunt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Slash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="chbox_ico_slash" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\chbox_ico_slash.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Pierce" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="chbox_ico_pierce" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\chbox_ico_pierce.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Magic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="chbox_ico_magic" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\chbox_ico_magic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars_3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars_4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars_5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stars_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Stars_6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="nerine_ab_00_00" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\NerineAbout\nerine_ab_00_00.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -271,13 +250,16 @@
   <data name="icon_type4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\IconElements\icon_type4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="NoImage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\NoImage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="chbox_ico_sound" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\chbox_ico_sound.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ability_icons" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\ability_icons.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="no_image" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\no_image.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="splash_img_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\splash_img_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

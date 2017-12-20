@@ -11,6 +11,8 @@ namespace FKG_Info
         private List<AdvPictureBox> Icons;
 
         private bool Reloading;
+        private bool Selecting;
+        private bool AllTypesSelected;
 
         private ToolTip TTip;
 
@@ -24,7 +26,7 @@ namespace FKG_Info
         {
             public const string Default = "Sort by Default";
             public const string Category = "By Category";
-            public const string TotalMaxStats = "By Total Maxed Stats";
+            public const string TotalMaxStats = "By Overall Force";
             public const string Attack = "By Attack";
             public const string Defense = "By Defense";
             public const string HitPoints = "By Hit Points";
@@ -113,6 +115,8 @@ namespace FKG_Info
             ReloadList();
             ResumeLayout();
             main.LoadingControlsMessage(false);
+            Selecting = false;
+            AllTypesSelected = true;
             Visible = true;
         }
 
@@ -188,7 +192,7 @@ namespace FKG_Info
             switch (CmBoxSort.Text)
             {
                 case SortBy.Category: sortType = BaseInfo.SortBy.Category; break;
-                case SortBy.TotalMaxStats: sortType = BaseInfo.SortBy.TotalStats; break;
+                case SortBy.TotalMaxStats: sortType = BaseInfo.SortBy.OverallForce; break;
                 case SortBy.Attack: sortType = BaseInfo.SortBy.Attack; break;
                 case SortBy.Defense: sortType = BaseInfo.SortBy.Defense; break;
                 case SortBy.HitPoints: sortType = BaseInfo.SortBy.HitPoints; break;
@@ -233,20 +237,47 @@ namespace FKG_Info
 
         private void ChBox_CheckedChanged(object sender, EventArgs ev)
         {
-            if (Reloading) return;
+            if (Reloading || Selecting) return;
+
+            Selecting = true;
+
+            int tcnt = 0;
+
+            if (ChBoxSlash.Checked) tcnt++;
+            if (ChBoxBlunt.Checked) tcnt++;
+            if (ChBoxPierce.Checked) tcnt++;
+            if (ChBoxMagic.Checked) tcnt++;
+
+            if ((tcnt == 3) && (AllTypesSelected))
+            {
+                AllTypesSelected = false;
+                ReversTypeSelection();
+            }
+
+            if (tcnt == 4) AllTypesSelected = true;
 
             ReloadList();
+            Selecting = false;
         }
 
 
 
         private void BtInv_Click(object sender, EventArgs ev)
         {
+            Selecting = true;
+            ReversTypeSelection();
+            Selecting = false;
+            ChBox_CheckedChanged(sender, ev);
+        }
+
+
+
+        private void ReversTypeSelection()
+        {
             ChBoxSlash.Checked = !ChBoxSlash.Checked;
             ChBoxBlunt.Checked = !ChBoxBlunt.Checked;
             ChBoxPierce.Checked = !ChBoxPierce.Checked;
             ChBoxMagic.Checked = !ChBoxMagic.Checked;
-            ReloadList();
         }
 
 
@@ -278,6 +309,12 @@ namespace FKG_Info
         {
             SearchTimer.Stop();
             SearchTimer.Start();
+        }
+
+        private void BtClrSearch_Click(object sender, EventArgs ev)
+        {
+            TxBoxSearch.Text = TEXT_SEARCH;
+            TxBoxSearch.ForeColor = SystemColors.GrayText;
         }
     }
 }

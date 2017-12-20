@@ -45,6 +45,7 @@
             this.TxBoxSearch = new System.Windows.Forms.TextBox();
             this.CmBoxSpecFilter = new System.Windows.Forms.ComboBox();
             this.CmBoxAbility02 = new System.Windows.Forms.ComboBox();
+            this.BtClrSearch = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // PanelFlowers
@@ -73,7 +74,7 @@
             this.ChBoxMagic.AutoSize = true;
             this.ChBoxMagic.Checked = true;
             this.ChBoxMagic.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxMagic.Image = global::FKG_Info.Properties.Resources.Magic;
+            this.ChBoxMagic.Image = global::FKG_Info.Properties.Resources.chbox_ico_magic;
             this.ChBoxMagic.Location = new System.Drawing.Point(158, 24);
             this.ChBoxMagic.Name = "ChBoxMagic";
             this.ChBoxMagic.Size = new System.Drawing.Size(38, 38);
@@ -87,7 +88,7 @@
             this.ChBoxPierce.AutoSize = true;
             this.ChBoxPierce.Checked = true;
             this.ChBoxPierce.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxPierce.Image = global::FKG_Info.Properties.Resources.Pierce;
+            this.ChBoxPierce.Image = global::FKG_Info.Properties.Resources.chbox_ico_pierce;
             this.ChBoxPierce.Location = new System.Drawing.Point(114, 24);
             this.ChBoxPierce.Name = "ChBoxPierce";
             this.ChBoxPierce.Size = new System.Drawing.Size(38, 38);
@@ -101,7 +102,7 @@
             this.ChBoxBlunt.AutoSize = true;
             this.ChBoxBlunt.Checked = true;
             this.ChBoxBlunt.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxBlunt.Image = global::FKG_Info.Properties.Resources.Blunt;
+            this.ChBoxBlunt.Image = global::FKG_Info.Properties.Resources.chbox_ico_blunt;
             this.ChBoxBlunt.Location = new System.Drawing.Point(70, 24);
             this.ChBoxBlunt.Name = "ChBoxBlunt";
             this.ChBoxBlunt.Size = new System.Drawing.Size(38, 38);
@@ -115,7 +116,7 @@
             this.ChBoxSlash.AutoSize = true;
             this.ChBoxSlash.Checked = true;
             this.ChBoxSlash.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxSlash.Image = global::FKG_Info.Properties.Resources.Slash;
+            this.ChBoxSlash.Image = global::FKG_Info.Properties.Resources.chbox_ico_slash;
             this.ChBoxSlash.Location = new System.Drawing.Point(28, 24);
             this.ChBoxSlash.Name = "ChBoxSlash";
             this.ChBoxSlash.Size = new System.Drawing.Size(38, 38);
@@ -236,7 +237,7 @@
             this.TxBoxSearch.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.TxBoxSearch.Location = new System.Drawing.Point(451, 78);
             this.TxBoxSearch.Name = "TxBoxSearch";
-            this.TxBoxSearch.Size = new System.Drawing.Size(159, 22);
+            this.TxBoxSearch.Size = new System.Drawing.Size(134, 22);
             this.TxBoxSearch.TabIndex = 22;
             this.TxBoxSearch.TextChanged += new System.EventHandler(this.TxBoxSearch_TextChanged);
             this.TxBoxSearch.Enter += new System.EventHandler(this.TxBoxSearch_FocusEnter);
@@ -264,10 +265,21 @@
             this.CmBoxAbility02.TabIndex = 24;
             this.CmBoxAbility02.SelectedIndexChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
+            // BtClrSearch
+            // 
+            this.BtClrSearch.Location = new System.Drawing.Point(589, 78);
+            this.BtClrSearch.Name = "BtClrSearch";
+            this.BtClrSearch.Size = new System.Drawing.Size(21, 22);
+            this.BtClrSearch.TabIndex = 25;
+            this.BtClrSearch.Text = "C";
+            this.BtClrSearch.UseVisualStyleBackColor = true;
+            this.BtClrSearch.Click += new System.EventHandler(this.BtClrSearch_Click);
+            // 
             // FlowerSelectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.BtClrSearch);
             this.Controls.Add(this.CmBoxAbility02);
             this.Controls.Add(this.CmBoxSpecFilter);
             this.Controls.Add(this.TxBoxSearch);
@@ -311,5 +323,6 @@
         private System.Windows.Forms.TextBox TxBoxSearch;
         private System.Windows.Forms.ComboBox CmBoxSpecFilter;
         private System.Windows.Forms.ComboBox CmBoxAbility02;
+        private System.Windows.Forms.Button BtClrSearch;
     }
 }

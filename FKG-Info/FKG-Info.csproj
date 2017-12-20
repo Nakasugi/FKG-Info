@@ -57,8 +57,10 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -112,6 +114,7 @@
     </Compile>
     <Compile Include="FlowerStats.cs" />
     <Compile Include="BaseInfo.cs" />
+    <Compile Include="GardenItemInfo.cs" />
     <Compile Include="getMaster.cs" />
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="FlowerDataBase.cs" />
@@ -135,6 +138,9 @@
     <Compile Include="SkinInfo.cs" />
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="SplashWindow.xaml.cs">
+      <DependentUpon>SplashWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Translator.cs" />
     <Compile Include="VoiceControl.cs">
       <SubType>UserControl</SubType>
@@ -202,7 +208,8 @@
     <None Include="Images\chbox_ico_magic.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Images\NoImage.png" />
+    <None Include="Images\splash_img_0.png" />
+    <None Include="Images\no_image.png" />
     <None Include="Images\icon_l_default.png" />
     <None Include="Images\equip_default.png" />
     <None Include="Images\ice_bracelet.png" />
@@ -246,13 +253,6 @@
     <None Include="Images\NerineAbout\nerine_ab_00_02.png" />
     <None Include="Images\NerineAbout\nerine_ab_00_01.png" />
     <None Include="Images\NerineAbout\nerine_ab_00_00.png" />
-    <None Include="Images\Stars_6.png" />
-    <None Include="Images\Stars_5.png" />
-    <None Include="Images\Stars_4.png" />
-    <None Include="Images\Stars_3.png" />
-    <None Include="Images\Stars_2.png" />
-    <None Include="Images\Stars_1.png" />
-    <None Include="Images\Stars_0.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -276,6 +276,12 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="SplashWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
