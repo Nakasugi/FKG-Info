@@ -50,7 +50,7 @@ namespace FKG_Info
             InitializeComponent();
 
             GridInfo.DefaultCellStyle.SelectionBackColor = Color.White;
-            GridInfo.DefaultCellStyle.SelectionForeColor = Color.Purple;
+            GridInfo.DefaultCellStyle.SelectionForeColor = Color.Blue;
 
             Animation = new Animator();
             CMenu = new ContextMenu();
@@ -288,6 +288,8 @@ namespace FKG_Info
         {
             Program.DB.Select(flower);
 
+            FSCtrl.SelectFlower(flower);
+
             if (selectorHide)
             {
                 FSCtrl.Visible = false;
@@ -498,6 +500,13 @@ namespace FKG_Info
         private void MMItemFileExportIDs_Click(object sender, EventArgs ev)
         {
             Program.DB.Master.ExportIDs();
+            MessageBox.Show("Done");
+        }
+
+
+        private void MMItemFileExportNames_Click(object sender, EventArgs ev)
+        {
+            Program.DB.ExportNames();
             MessageBox.Show("Done");
         }
 

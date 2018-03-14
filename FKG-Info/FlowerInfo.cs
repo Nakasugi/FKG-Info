@@ -25,11 +25,13 @@
         private int Evol;
         private int EvolMax;
         private bool NoBloomCG;
+        private bool IsEventKnight;
+
 
         public int SortCategory { get; private set; }
         public bool NoKnight { get; private set; }
-      
 
+        
         private FlowerStats[] Stats;
 
         private const int EVOL_NUM = 3;
@@ -38,6 +40,9 @@
         public int SelectedEvolution { get; private set; }
         public Animator.Type SelectedImage { get; private set; }
         public Animator.EmoType SelectedEmotion { get; private set; }
+
+
+        public bool Account1, Account2;
 
 
 
@@ -53,12 +58,14 @@
             public const int Ability1ID = 10;
             public const int Ability2ID = 11;
             public const int SkillID = 12;
-            public const int SortCat = 27;
-            public const int NoKnight = 29;
-            public const int ID = 34;
-            public const int Evol = 35;
-            public const int Name = 44;
-            public const int NoBloomCG = 45;
+            public const int SortCat = 30;
+            public const int NoKnight = 32;
+            public const int ID = 37;
+            public const int Evol = 38;
+            public const int Name = 47;
+            public const int NoBloomCG = 48;
+            public const int LibararyID = 51;
+            public const int IsEventKnight = 53;
         }
 
 
@@ -105,7 +112,7 @@
  
         public enum SpecFilter
         {
-            All_Knights, Has_Bloom_Form, Has_Bloom_CG, No_Bloom_CG, Has_Exclusive_Skin,
+            All_Knights, Has_Bloom_Form, No_Bloom_Form, Has_Exclusive_Skin,
             All_Units, All_Materials,
             Bloom_Materials, Skill_Materials, Equip_Materials,
             Other
@@ -137,6 +144,9 @@
             NoBloomCG = false;
             NoKnight = false;
 
+            Account1 = false;
+            Account2 = false;
+
             Stats = new FlowerStats[EVOL_NUM];
         }
 
@@ -161,6 +171,7 @@
             EvolMax = Evol;
 
             if (masterData[MrFields.NoBloomCG] == "1") NoBloomCG = true;
+            if (masterData[MrFields.IsEventKnight] == "1") IsEventKnight = true;
 
             int.TryParse(masterData[MrFields.ImageID], out ImageID[Evol]);
             int.TryParse(masterData[MrFields.Ability1ID], out Ability1[Evol]);
@@ -197,20 +208,37 @@
         {
             evol = evol > EvolMax ? EvolMax : evol;
 
+            int rowid;
+
+            var blueFonfStyle= new System.Windows.Forms.DataGridViewCellStyle() { ForeColor = System.Drawing.Color.DarkViolet };
+
             view.Rows.Clear();
 
             view.Rows.Add("Ev:ID:ImID", evol + ":" + ID + ":" + ImageID[evol]);
             view.Rows.Add("Kanji", Name.Kanji);
             view.Rows.Add("Romaji", Name.Romaji);
-            view.Rows.Add("Eng DMM", Name.EngDMM);
-            view.Rows.Add("Eng Nutaku", Name.EngNutaku);
+            view.Rows.Add("DMM Wiki", Name.EngDMM);
+            view.Rows.Add("Nutaku", Name.EngNutaku);
             view.Rows.Add("Type", GetAttackType());
             view.Rows.Add("Nation", GetNation());
             view.Rows.Add("Gift", Gifts[FavoriteGift]);
-            view.Rows.Add("HitPoints", Stats[evol].GetHitPointsInfo());
-            view.Rows.Add("Attack", Stats[evol].GetAttackInfo());
-            view.Rows.Add("Defense", Stats[evol].GetDefenseInfo());
-            view.Rows.Add("Speed", Stats[evol].SpeedLvMax);
+
+            FlowerStats fwst = Stats[evol];
+            if (fwst != null)
+            {
+                rowid = view.Rows.Add("HitPoints", fwst.GetHitPoints());
+                view.Rows[rowid].Cells[1].ToolTipText = fwst.GetHitPointsDetailedInfo();
+                view.Rows[rowid].Cells[1].Style = blueFonfStyle;
+                rowid = view.Rows.Add("Attack", fwst.GetAttack());
+                view.Rows[rowid].Cells[1].ToolTipText = fwst.GetAttackDetailedInfo();
+                view.Rows[rowid].Cells[1].Style = blueFonfStyle;
+                rowid = view.Rows.Add("Defense", fwst.GetDefense());
+                view.Rows[rowid].Cells[1].ToolTipText = fwst.GetDefenseDetailedInfo();
+                view.Rows[rowid].Cells[1].Style = blueFonfStyle;
+
+                view.Rows.Add("Speed", fwst.SpeedLvMax);
+            }
+
             view.Rows.Add("Skill Name", GetSkillInfo(1));
             view.Rows.Add("Skill Chance", GetSkillInfo(2));
             view.Rows.Add("Skill Desc\r\nID:" + Skill, GetSkillInfo(3));
@@ -229,7 +257,18 @@
                 view.Rows.Add(Helper.CreateDGVRow(image, info, ids));
             }
 
-            view.Rows.Add("Overall Force", Stats[evol].GetOverallForce());
+            if (fwst != null)
+            {
+                rowid = view.Rows.Add("Overall Force", fwst.GetOverallForce());
+                view.Rows[rowid].Cells[1].ToolTipText = fwst.GetDetailedOverallForceInfo();
+            }
+
+            if (view.Rows.Count > 11)
+            {
+                view.Rows[0].DividerHeight = 1;
+                view.Rows[4].DividerHeight = 1;
+                view.Rows[11].DividerHeight = 1;
+            }
         }
 
 
@@ -401,23 +440,39 @@
 
 
         /// <summary>
-        /// Check is flower has bloom form
+        /// Check is flower has bloom form or bloom CG.
         /// </summary>
-        /// <param name="cgCheck">Check CG, return true if: 1=Has, 2=No</param>
+        /// <param name="checkcg"></param>
+        /// <param name="invert"></param>
         /// <returns></returns>
-        public bool HasBloomForm(int cgCheck = 0)
+        public bool CheckBloomForm(bool checkcg = false, bool invert = false)
         {
             if (NoKnight) return false;
 
-            switch (cgCheck)
-            {
-                case 0: if (EvolMax > 1) return true; break;
-                case 1: if (!NoBloomCG) goto case 0; break;
-                case 2: if (NoBloomCG) goto case 0; break;
-                default: break;
-            }
-            return false;
+            bool res;
+
+            if(!checkcg)
+                res = (EvolMax > 1) ^ invert;
+            else
+                res = (!NoBloomCG) ^ invert;
+
+            return res;
         }
+
+
+        /// <summary>
+        /// Check is event knight, based on isEvent param.
+        /// If invert = true, return true only for no event.
+        /// </summary>
+        /// <param name="invert"></param>
+        /// <returns></returns>
+        public bool CheckIsEvent(bool invert = false)
+        {
+            if (NoKnight) return false;
+
+            return IsEventKnight ^ invert;
+        }
+
 
 
         public bool CheckCategory(SpecFilter spec)
@@ -491,16 +546,16 @@
                     if (Stats[EvolMax].GetOverallForce() > fw.Stats[fw.EvolMax].GetOverallForce()) return -1;
                     break;
                 case SortBy.Attack:
-                    if (Stats[EvolMax].GetAttackMax() < fw.Stats[fw.EvolMax].GetAttackMax()) return 1;
-                    if (Stats[EvolMax].GetAttackMax() > fw.Stats[fw.EvolMax].GetAttackMax()) return -1;
+                    if (Stats[EvolMax].GetAttack() < fw.Stats[fw.EvolMax].GetAttack()) return 1;
+                    if (Stats[EvolMax].GetAttack() > fw.Stats[fw.EvolMax].GetAttack()) return -1;
                     break;
                 case SortBy.Defense:
-                    if (Stats[EvolMax].GetDefenseMax() < fw.Stats[fw.EvolMax].GetDefenseMax()) return 1;
-                    if (Stats[EvolMax].GetDefenseMax() > fw.Stats[fw.EvolMax].GetDefenseMax()) return -1;
+                    if (Stats[EvolMax].GetDefense() < fw.Stats[fw.EvolMax].GetDefense()) return 1;
+                    if (Stats[EvolMax].GetDefense() > fw.Stats[fw.EvolMax].GetDefense()) return -1;
                     break;
                 case SortBy.HitPoints:
-                    if (Stats[EvolMax].GetHitPointsMax() < fw.Stats[fw.EvolMax].GetHitPointsMax()) return 1;
-                    if (Stats[EvolMax].GetHitPointsMax() > fw.Stats[fw.EvolMax].GetHitPointsMax()) return -1;
+                    if (Stats[EvolMax].GetHitPoints() < fw.Stats[fw.EvolMax].GetHitPoints()) return 1;
+                    if (Stats[EvolMax].GetHitPoints() > fw.Stats[fw.EvolMax].GetHitPoints()) return -1;
                     break;
                 case SortBy.Speed:
                     if (Stats[EvolMax].SpeedLvMax < fw.Stats[fw.EvolMax].SpeedLvMax) return 1;
@@ -543,6 +598,16 @@
             Ability2[evol] = flower.Ability2[evol];
 
             Stats[evol] = flower.Stats[evol];
+        }
+
+
+
+        public int GetAccStatus() { return ((Account1 ? 1 : 0) | ((Account2 ? 1 : 0) << 1)); }
+
+        public void SetAccStatus(int status)
+        {
+            if ((status & 0x01) != 0) Account1 = true;
+            if ((status & 0x02) != 0) Account2 = true;
         }
     }
 }

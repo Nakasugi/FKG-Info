@@ -397,7 +397,34 @@ namespace FKG_Info
 
         public void DrawBaseHomeImage(Animator ani, ref Image hEmo)
         {
-            if (ani.Emotion == Animator.EmoType.Normal) return;
+            const int HOME_WIDTH = 803;
+            const int HOME_HEIGHT = 640;
+
+
+            Bitmap outImage;
+            Graphics gr;
+
+            Rectangle srcRect = new Rectangle(hEmo.Width - HOME_WIDTH, 0, HOME_WIDTH, HOME_HEIGHT);
+            Rectangle dstRect = new Rectangle(0, 0, HOME_WIDTH, HOME_HEIGHT);
+            if (srcRect.X < 0) srcRect.X = 0;
+
+
+            if (ani.Emotion == Animator.EmoType.Normal)
+            {
+                if (hEmo.Width > HOME_WIDTH)
+                {
+                    outImage = new Bitmap(HOME_WIDTH, HOME_HEIGHT);
+                    gr = Graphics.FromImage(outImage);
+                    gr.Clear(Color.FromArgb(0, 0, 0, 0));
+                    gr.DrawImage(hEmo, dstRect, srcRect, GraphicsUnit.Pixel);
+                    gr.Dispose();
+                    hEmo.Dispose();
+                    hEmo = outImage;
+                }
+
+                return;
+            }
+
 
             DownloadedFile df = null;
             Animator home = new Animator(ani);
@@ -421,17 +448,14 @@ namespace FKG_Info
             if (df == null) return;
             lock (df.Locker) if (df.Image == null) return;
 
-            Bitmap outImage = new Bitmap(803, 640);
-            Graphics gr = Graphics.FromImage(outImage);
 
+            outImage = new Bitmap(HOME_WIDTH, HOME_HEIGHT);
+            gr = Graphics.FromImage(outImage);
             gr.Clear(Color.FromArgb(0, 0, 0, 0));
-
             // Lock, Lock, Looooooooooooooock!!!
             lock (df.Locker) gr.DrawImage(df.Image, 0, 0);
-            gr.DrawImage(hEmo, 0, 0);
-
+            gr.DrawImage(hEmo, dstRect, srcRect, GraphicsUnit.Pixel);
             gr.Dispose();
-
             hEmo.Dispose();
             hEmo = outImage;
         }

@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace FKG_Info
 {
@@ -109,6 +110,41 @@ namespace FKG_Info
             row.Cells.Add(textCell);
 
             return row;
+        }
+
+
+
+        public static bool XmlGetText(XmlNode node, string child, ref string result)
+        {
+            try
+            {
+                result = node[child].InnerText;
+                return true;
+            }
+            catch { return false; }
+        }
+
+
+
+        public static bool XmlGetInt32(XmlNode node, string child, ref int result)
+        {
+            try
+            {
+                result = int.Parse(node[child].InnerText);
+                return true;
+            }
+            catch { return false; }
+        }
+
+
+
+        public static bool XmlCheckNode(XmlNode node, string child, string value)
+        {
+            string temp = null;
+
+            XmlGetText(node, child, ref temp);
+
+            return value == temp;
         }
     }
 }

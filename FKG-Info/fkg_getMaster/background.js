@@ -1,5 +1,5 @@
 var getDMaster = "http://web.flower-knight-girls.co.jp/api/v1/master/getMaster";
-var getNMaster = "http://rn.floweknightgirl.com/api/v1/master/getMaster";
+var getNMaster = "https://rn-ssl.floweknightgirl.com/api/v1/master/getMaster";
 
 var reqHeaders;
 var reqMessage;

@@ -47,6 +47,10 @@
             this._Label04 = new System.Windows.Forms.Label();
             this.NumSoundVolume = new System.Windows.Forms.NumericUpDown();
             this._Label06 = new System.Windows.Forms.Label();
+            this._Label07 = new System.Windows.Forms.Label();
+            this._Label08 = new System.Windows.Forms.Label();
+            this.TxBoxAcc1Name = new System.Windows.Forms.TextBox();
+            this.TxBoxAcc2Name = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.NumSoundVolume)).BeginInit();
             this.SuspendLayout();
             // 
@@ -226,12 +230,50 @@
             this._Label06.TabIndex = 111;
             this._Label06.Text = "Sound Volume";
             // 
+            // _Label07
+            // 
+            this._Label07.AutoSize = true;
+            this._Label07.Location = new System.Drawing.Point(256, 251);
+            this._Label07.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this._Label07.Name = "_Label07";
+            this._Label07.Size = new System.Drawing.Size(90, 13);
+            this._Label07.TabIndex = 112;
+            this._Label07.Text = "Account 1 Name:";
+            // 
+            // _Label08
+            // 
+            this._Label08.AutoSize = true;
+            this._Label08.Location = new System.Drawing.Point(256, 277);
+            this._Label08.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this._Label08.Name = "_Label08";
+            this._Label08.Size = new System.Drawing.Size(90, 13);
+            this._Label08.TabIndex = 113;
+            this._Label08.Text = "Account 2 Name:";
+            // 
+            // TxBoxAcc1Name
+            // 
+            this.TxBoxAcc1Name.Location = new System.Drawing.Point(349, 248);
+            this.TxBoxAcc1Name.Name = "TxBoxAcc1Name";
+            this.TxBoxAcc1Name.Size = new System.Drawing.Size(135, 20);
+            this.TxBoxAcc1Name.TabIndex = 114;
+            // 
+            // TxBoxAcc2Name
+            // 
+            this.TxBoxAcc2Name.Location = new System.Drawing.Point(349, 274);
+            this.TxBoxAcc2Name.Name = "TxBoxAcc2Name";
+            this.TxBoxAcc2Name.Size = new System.Drawing.Size(135, 20);
+            this.TxBoxAcc2Name.TabIndex = 115;
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(496, 362);
             this.ControlBox = false;
+            this.Controls.Add(this.TxBoxAcc2Name);
+            this.Controls.Add(this.TxBoxAcc1Name);
+            this.Controls.Add(this._Label08);
+            this.Controls.Add(this._Label07);
             this.Controls.Add(this._Label06);
             this.Controls.Add(this.NumSoundVolume);
             this.Controls.Add(this._Label04);
@@ -286,5 +328,9 @@
         private System.Windows.Forms.Label _Label04;
         private System.Windows.Forms.NumericUpDown NumSoundVolume;
         private System.Windows.Forms.Label _Label06;
+        private System.Windows.Forms.Label _Label07;
+        private System.Windows.Forms.Label _Label08;
+        private System.Windows.Forms.TextBox TxBoxAcc1Name;
+        private System.Windows.Forms.TextBox TxBoxAcc2Name;
     }
 }

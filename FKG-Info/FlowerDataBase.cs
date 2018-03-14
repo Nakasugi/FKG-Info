@@ -33,6 +33,8 @@ namespace FKG_Info
 
         public int SoundVolume;
 
+        public string Account1Name, Account2Name;
+
 
         private string DefaultFolder;
 
@@ -43,6 +45,8 @@ namespace FKG_Info
         public ImageSources ImageSource;
 
         public bool StoreDownloaded;
+
+        private bool NeedSaveOptions;
 
 
 
@@ -66,6 +70,8 @@ namespace FKG_Info
             public const string ImageSource = "ImageSource";
             public const string StoreDownloaded = "StoreDownloaded";
             public const string SoundVolume = "SoundVolume";
+            public const string Acc1Name = "Account1Name";
+            public const string Acc2Name = "Account2Name";
         };
 
 
@@ -103,8 +109,13 @@ namespace FKG_Info
 
             SoundVolume = 25;
 
+            Account1Name = "Account 1";
+            Account2Name = "Account 2";
+
             ImageSource = ImageSources.DMM;
             StoreDownloaded = true;
+
+            NeedSaveOptions = false;
 
             AbilityIcons = new System.Drawing.Image[AB_ICONS_COUNT];
             int x = 0, y = 0;
@@ -241,6 +252,7 @@ namespace FKG_Info
             FlowerDataBase db = new FlowerDataBase();
 
             XmlDocument xmlData = new XmlDocument();
+            XmlNodeList accHasList = null;
             if (File.Exists(fileName))
             {
                 xmlData.Load(fileName);
@@ -251,26 +263,28 @@ namespace FKG_Info
                 
 
                 XmlNode opt = xmlData.SelectSingleNode("//Options");
+                XmlNode has = xmlData.SelectSingleNode("//HasFlowers");
+                if (has != null) accHasList = has.ChildNodes;
 
                 if (optver == curver)
                 {
-                    try { db.DMMURL = opt[NodeName.DMMURL].InnerText; } catch { }
-                    try { db.NutakuURL = opt[NodeName.NutakuURL].InnerText; } catch { }
+                    Helper.XmlGetText(opt, NodeName.DMMURL, ref db.DMMURL);
+                    Helper.XmlGetText(opt, NodeName.NutakuURL, ref db.NutakuURL);
                 }
 
-                try { db.DataFolder = opt[NodeName.DataFolder].InnerText; } catch { }
-                try { db.ImagesFolder = opt[NodeName.ImagesFolder].InnerText; } catch { }
-                try { db.SoundFolder = opt[NodeName.SoundsFolder].InnerText; } catch { }
-                try { db.SoundVolume = int.Parse(opt[NodeName.SoundVolume].InnerText); } catch { }
-                try { if (opt[NodeName.StoreDownloaded].InnerText == "True") db.StoreDownloaded = true; } catch { }
+                Helper.XmlGetText(opt, NodeName.DataFolder, ref db.DataFolder);
+                Helper.XmlGetText(opt, NodeName.ImagesFolder, ref db.ImagesFolder);
+                Helper.XmlGetText(opt, NodeName.SoundsFolder, ref db.SoundFolder);
+                Helper.XmlGetInt32(opt, NodeName.SoundVolume, ref db.SoundVolume);
+                Helper.XmlGetText(opt, NodeName.Acc1Name, ref db.Account1Name);
+                Helper.XmlGetText(opt, NodeName.Acc2Name, ref db.Account2Name);
 
-                try
-                {
-                    var enumText = opt[NodeName.ImageSource].InnerText;
-                    db.ImageSource = (ImageSources)Enum.Parse(typeof(ImageSources), enumText);
-                }
-                catch { db.ImageSource = ImageSources.Local; }
+                db.StoreDownloaded = Helper.XmlCheckNode(opt, NodeName.StoreDownloaded, "True");
 
+                string enumText = db.ImageSource.ToString();
+                Helper.XmlGetText(opt, NodeName.ImageSource, ref enumText);
+                db.ImageSource = (ImageSources)Enum.Parse(typeof(ImageSources), enumText);
+                
                 db.IconsFolder = db.ImagesFolder + "\\" + FolderNames.Icons;
                 db.EquipFolder = db.ImagesFolder + "\\" + FolderNames.Equip;
             }
@@ -323,6 +337,22 @@ namespace FKG_Info
             EquipmentInfo.SearchSets(db.Equipments);
 
             foreach (FlowerInfo fw in db.Flowers) fw.FindExclusiveSkin(db.Skins);
+
+            if (accHasList != null)
+            {
+                foreach (XmlNode hasNode in accHasList)
+                {
+                    bool error = false;
+                    error |= !int.TryParse(hasNode.Name.Substring(2), out int id);
+                    error |= !int.TryParse(hasNode.InnerText, out int hsts);
+                    if (error) continue;
+
+                    FlowerInfo fw = db.Flowers.Find(f => f.ID == id);
+                    if (fw == null) continue;
+
+                    fw.SetAccStatus(hsts);
+                }
+            }
 
             return db;
         }
@@ -386,6 +416,17 @@ namespace FKG_Info
             xmlWriter.WriteElementString(NodeName.ImageSource, ImageSource.ToString());
             xmlWriter.WriteElementString(NodeName.StoreDownloaded, StoreDownloaded.ToString());
             xmlWriter.WriteElementString(NodeName.SoundVolume, SoundVolume.ToString());
+            xmlWriter.WriteElementString(NodeName.Acc1Name, Account1Name);
+            xmlWriter.WriteElementString(NodeName.Acc2Name, Account2Name);
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("HasFlowers");
+            foreach (FlowerInfo flower in Flowers)
+            {
+                int accStatus = flower.GetAccStatus();
+                if (accStatus != 0)
+                    xmlWriter.WriteElementString("ID" + flower.ID.ToString("D4"), accStatus.ToString());
+            }
             xmlWriter.WriteEndElement();
 
             xmlWriter.WriteEndElement();
@@ -503,5 +544,56 @@ namespace FKG_Info
                 if (flower != null) flower.Name.EngNutaku = chFields[5].Replace("\"", "");
             }
         }
+
+
+
+        public void ExportNames()
+        {
+            string folder = Program.DB.DataFolder + "\\Export";
+            if (!Directory.Exists(folder)) try { Directory.CreateDirectory(folder); } catch { return; }
+
+            string path = folder + "\\FlowerNames.txt";
+            FileStream fs = new FileStream(path, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+
+            int maxID = 0;
+            foreach (FlowerInfo fw in Flowers) if (maxID < fw.ID) maxID = fw.ID;
+            maxID++;
+
+            List<int> toExpot = new List<int>();
+
+            for (int id = 0; id < maxID; id++)
+            {
+                FlowerInfo fw = Flowers.Find(f => f.ID == id);
+                if (fw == null) continue;
+                if (fw.NoKnight) continue;
+
+                bool repeat = false;
+
+                foreach(int i in toExpot)
+                {
+                    FlowerInfo rfw = Flowers.Find(f => f.ID == i);
+                    if (rfw == null) continue;
+                    if (rfw.ShortName == fw.ShortName) { repeat = true; break; }
+                }
+
+                if (repeat) continue;
+
+                toExpot.Add(id);
+            }
+
+            foreach(int id in toExpot)
+            {
+                FlowerInfo fw = Flowers.Find(f => f.ID == id);
+                sw.WriteLine(fw.ShortName + ";" + fw.Name.EngDMM);
+            }
+
+            sw.Close();
+        }
+
+
+
+        public void OptionsChanged() { NeedSaveOptions = true; }
+        public void SaveOptIfNeeded() { if (NeedSaveOptions) SaveOptions(); }
     }
 }

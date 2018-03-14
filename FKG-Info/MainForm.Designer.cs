@@ -43,6 +43,7 @@
             this.MMItemFileImportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportIDs = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MMItemFileExperimental = new System.Windows.Forms.ToolStripMenuItem();
             this.getMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,11 +60,11 @@
             this._lbWait = new System.Windows.Forms.Label();
             this.ChBoxExSkin = new System.Windows.Forms.CheckBox();
             this.BtEquip = new System.Windows.Forms.Button();
+            this.BtVoices = new System.Windows.Forms.Button();
             this.PicBoxIconBloom = new FKG_Info.AdvPictureBox(this.components);
             this.PicBoxIconAwak = new FKG_Info.AdvPictureBox(this.components);
             this.PicBoxIconBase = new FKG_Info.AdvPictureBox(this.components);
             this.PicBoxBig = new FKG_Info.AdvPictureBox(this.components);
-            this.BtVoices = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBloom)).BeginInit();
@@ -182,6 +183,7 @@
             this.MMItemFileImportMaster,
             this.MMItemFileExportMaster,
             this.MMItemFileExportIDs,
+            this.toolStripMenuItem1,
             this.toolStripSeparator1,
             this.MMItemFileExperimental});
             this.MMItemFile.Name = "MMItemFile";
@@ -208,6 +210,13 @@
             this.MMItemFileExportIDs.Size = new System.Drawing.Size(149, 22);
             this.MMItemFileExportIDs.Text = "Export IDs";
             this.MMItemFileExportIDs.Click += new System.EventHandler(this.MMItemFileExportIDs_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 22);
+            this.toolStripMenuItem1.Text = "Export Names";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.MMItemFileExportNames_Click);
             // 
             // toolStripSeparator1
             // 
@@ -342,6 +351,17 @@
             this.BtEquip.UseVisualStyleBackColor = true;
             this.BtEquip.Click += new System.EventHandler(this.BtEquip_Click);
             // 
+            // BtVoices
+            // 
+            this.BtVoices.BackgroundImage = global::FKG_Info.Properties.Resources.chbox_ico_sound;
+            this.BtVoices.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.BtVoices.Location = new System.Drawing.Point(1005, 647);
+            this.BtVoices.Name = "BtVoices";
+            this.BtVoices.Size = new System.Drawing.Size(32, 32);
+            this.BtVoices.TabIndex = 29;
+            this.BtVoices.UseVisualStyleBackColor = true;
+            this.BtVoices.Click += new System.EventHandler(this.BtVoices_Click);
+            // 
             // PicBoxIconBloom
             // 
             this.PicBoxIconBloom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -385,17 +405,6 @@
             this.PicBoxBig.TabStop = false;
             this.PicBoxBig.Visible = false;
             this.PicBoxBig.Click += new System.EventHandler(this.PicBoxBig_Click);
-            // 
-            // BtVoices
-            // 
-            this.BtVoices.BackgroundImage = global::FKG_Info.Properties.Resources.chbox_ico_sound;
-            this.BtVoices.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.BtVoices.Location = new System.Drawing.Point(1005, 647);
-            this.BtVoices.Name = "BtVoices";
-            this.BtVoices.Size = new System.Drawing.Size(32, 32);
-            this.BtVoices.TabIndex = 29;
-            this.BtVoices.UseVisualStyleBackColor = true;
-            this.BtVoices.Click += new System.EventHandler(this.BtVoices_Click);
             // 
             // MainForm
             // 
@@ -470,6 +479,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn GIC1;
         private System.Windows.Forms.DataGridViewTextBoxColumn GIC2;
         private System.Windows.Forms.Button BtVoices;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 

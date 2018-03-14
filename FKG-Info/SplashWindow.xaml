@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FKG_Info"
         mc:Ignorable="d"
-        Title="SplashWindow" Height="640" Width="640" Background="#002443AE" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" AllowsTransparency="True" WindowStyle="None">
+        Title="SplashWindow" Height="640" Width="640" Background="#002443AE" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" AllowsTransparency="True" WindowStyle="None" ShowInTaskbar="False">
 
     <Image x:Name="StartingImage" VerticalAlignment="Top" Source="Images/splash_img_0.png" HorizontalAlignment="Right" Stretch="None" Opacity="0.1"/>
 </Window>

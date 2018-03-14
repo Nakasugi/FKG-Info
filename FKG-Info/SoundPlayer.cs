@@ -1,18 +1,27 @@
 ﻿using System.IO;
 using System.Net;
 using System.Threading;
-using Microsoft.DirectX.AudioVideoPlayback;
 using WMPLib;
+using System.Runtime.InteropServices;
 using System;
+using System.Text;
+
+//[DllImport("winmm.dll")]
+
 
 namespace FKG_Info
 {
     class SoundPlayer
     {
+        [DllImport("winmm.dll")]
+        private static extern int mciSendString(string strCommand, StringBuilder strReturn, int iReturnLength, IntPtr hwndCallback);
+
+
         public static void Play(string id, string hashname)
         {
             Thread th = new Thread(() => LoadAndPlay(id, hashname));
             th.Name = "Sound player " + id;
+            th.SetApartmentState(ApartmentState.STA);
             th.Start();
         }
 
@@ -106,25 +115,27 @@ namespace FKG_Info
 
         private static void Play(string path)
         {
-            System.Reflection.Assembly assembly = typeof(Audio).Assembly;
+            string cmd;
+            string media = '"' + path + '"';
+            int res = 0;
 
-            if (assembly.GlobalAssemblyCache)
+            while (true)
             {
-                try
-                {
-                    var dxa = new Audio(path);
-                    double vl;
-                    vl = 0.02 * Program.DB.SoundVolume;
-                    vl = 1 - vl;
-                    vl = 100 - 1000 * Math.Pow(10, vl);
-                    dxa.Volume = (int)vl;
-                    dxa.Play();
-                    while (dxa.CurrentPosition < dxa.Duration) Thread.Sleep(250);
-                    dxa.Dispose();
-                    return;
-                }
-                catch { }
+                cmd = "open " + media + " alias FKGsnd0";
+                res = mciSendString(cmd, null, 0, IntPtr.Zero);
+                if (res != 0) break;
+
+                cmd = "setaudio FKGsnd0 volume to " + Program.DB.SoundVolume * 10;
+                mciSendString(cmd, null, 0, IntPtr.Zero);
+                if (res != 0) break;
+
+                cmd = "play FKGsnd0";
+                mciSendString(cmd, null, 0, IntPtr.Zero);
+                if (res != 0) break;
+
+                return;
             }
+
 
             try
             {

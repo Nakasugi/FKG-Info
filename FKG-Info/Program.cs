@@ -29,6 +29,8 @@ namespace FKG_Info
             MainForm mf = new MainForm();
             SplashWindow.Stop();
             Application.Run(mf);
+
+            DB.SaveOptIfNeeded();
         }
     }
 }

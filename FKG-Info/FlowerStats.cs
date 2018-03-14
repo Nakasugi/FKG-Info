@@ -16,6 +16,11 @@
         public int AttackAmpules;
         public int DefenseAmpules;
 
+        public int HitPointAmpulesEx;
+        public int AttackAmpulesEx;
+        public int DefenseAmpulesEx;
+
+
         private int HitPointAffectionScaling1;
         private int AttackAffectionScaling1;
         private int DefenseAffectionScaling1;
@@ -25,7 +30,15 @@
         private int DefenseAffectionScaling2;
 
 
-        const string Pattern = "{0,-5} +{1,-4}  max={2}";
+        //const string Pattern = "{0,-5} +{1,-4}  max={2}";
+
+
+        public const int STAT_LOW = 0x00;
+        public const int STAT_BASE = 0x01;
+        public const int STAT_AFFECTION = 0x02;
+        public const int STAT_AMP = 0x04;
+        public const int STAT_AMPEX = 0x08;
+        public const int STAT_MAX = STAT_BASE | STAT_AFFECTION | STAT_AMP | STAT_AMPEX;
 
 
         private static class MrFields
@@ -41,12 +54,15 @@
             public const int HpApm = 23;
             public const int AtkAmp = 24;
             public const int DefAmp = 25;
-            public const int HPAff1 = 31;
-            public const int AtkAff1 = 32;
-            public const int DefAff1 = 33;
-            public const int HPAff2 = 37;
-            public const int AtkAff2 = 38;
-            public const int DefAff2 = 39;
+            public const int HpApmEx = 23;
+            public const int AtkAmpEx = 24;
+            public const int DefAmpEx = 25;
+            public const int HPAff1 = 34;
+            public const int AtkAff1 = 35;
+            public const int DefAff1 = 36;
+            public const int HPAff2 = 40;
+            public const int AtkAff2 = 41;
+            public const int DefAff2 = 42;
         }
 
 
@@ -65,6 +81,10 @@
             int.TryParse(masterData[MrFields.HpApm], out HitPointAmpules);
             int.TryParse(masterData[MrFields.AtkAmp], out AttackAmpules);
             int.TryParse(masterData[MrFields.DefAmp], out DefenseAmpules);
+
+            int.TryParse(masterData[MrFields.HpApmEx], out HitPointAmpulesEx);
+            int.TryParse(masterData[MrFields.AtkAmpEx], out AttackAmpulesEx);
+            int.TryParse(masterData[MrFields.DefAmpEx], out DefenseAmpulesEx);
 
             int.TryParse(masterData[MrFields.HPAff1], out HitPointAffectionScaling1);
             int.TryParse(masterData[MrFields.AtkAff1], out AttackAffectionScaling1);
@@ -96,41 +116,91 @@
 
 
 
-        public int GetHitPointsMax()
+        public int GetHitPoints(int attr = STAT_MAX)
         {
-            return HitPointsLvMax + HitPointAmpules + GetHitPointsAffectionBonus(200);
+            if (attr == STAT_LOW) return HitPointsLvMin;
+
+            int res = 0;
+            if ((attr & STAT_BASE) != 0) res += HitPointsLvMax;
+            if ((attr & STAT_AFFECTION) != 0) res += GetHitPointsAffectionBonus(200);
+            if ((attr & STAT_AMP) != 0) res += HitPointAmpules;
+            if ((attr & STAT_AMPEX) != 0) res += HitPointAmpulesEx;
+            return res;
         }
 
-        public int GetAttackMax()
+        public int GetAttack(int attr = STAT_MAX)
         {
-            return AttackLvMax + AttackAmpules + GetAttackAffectionBonus(200);
+            if (attr == STAT_LOW) return AttackLvMin;
+
+            int res = 0;
+            if ((attr & STAT_BASE) != 0) res += AttackLvMax;
+            if ((attr & STAT_AFFECTION) != 0) res += GetAttackAffectionBonus(200);
+            if ((attr & STAT_AMP) != 0) res += AttackAmpules;
+            if ((attr & STAT_AMPEX) != 0) res += AttackAmpulesEx;
+            return res;
         }
 
-        public int GetDefenseMax()
+        public int GetDefense(int attr = STAT_MAX)
         {
-            return DefenseLvMax + DefenseAmpules + GetDefenseAffectionBonus(200);
+            if (attr == STAT_LOW) return DefenseLvMin;
+
+            int res = 0;
+            if ((attr & STAT_BASE) != 0) res += DefenseLvMax;
+            if ((attr & STAT_AFFECTION) != 0) res += GetDefenseAffectionBonus(200);
+            if ((attr & STAT_AMP) != 0) res += DefenseAmpules;
+            if ((attr & STAT_AMPEX) != 0) res += DefenseAmpulesEx;
+            return res;
         }
 
-        public int GetOverallForce()
+
+        public int GetOverallForce(int attr = STAT_MAX)
         {
-            return GetHitPointsMax() + GetAttackMax() + GetDefenseMax();
+            return GetHitPoints(attr) + GetAttack(attr) + GetDefense(attr);
+        }
+
+        public string GetDetailedOverallForceInfo()
+        {
+            string info = "";
+            info += "Lvl Max = " + GetOverallForce(STAT_BASE) + "\r\n";
+            info += "+Affection = " + GetOverallForce(STAT_BASE|STAT_AFFECTION) + "\r\n";
+            info += "+Ampules = " + GetOverallForce(STAT_BASE|STAT_AFFECTION|STAT_AMP) + "\r\n";
+            info += "+AmpulesEx = " + GetOverallForce();
+            return info;
         }
 
 
 
-        public string GetHitPointsInfo()
+        public string GetHitPointsDetailedInfo()
         {
-            return string.Format(Pattern, HitPointsLvMax, GetHitPointsAffectionBonus(200), GetHitPointsMax());
+            string info = "";
+            info += "Lvl Max = " + HitPointsLvMax + "\r\n";
+            info += "Affection = +" + GetHitPointsAffectionBonus(200) + "\r\n";
+            info += "Ampules = +" + HitPointAmpules + "\r\n";
+            info += "AmpulesEx = +" + HitPointAmpulesEx + "\r\n";
+            info += "Total = " + GetHitPoints();
+            return info;
         }
 
-        public string GetAttackInfo()
+        public string GetAttackDetailedInfo()
         {
-            return string.Format(Pattern, AttackLvMax, GetAttackAffectionBonus(200), GetAttackMax());
+            string info = "";
+            info += "Lvl Max = " + AttackLvMax + "\r\n";
+            info += "Affection = +" + GetAttackAffectionBonus(200) + "\r\n";
+            info += "Ampules = +" + AttackAmpules + "\r\n";
+            info += "AmpulesEx = +" + AttackAmpulesEx + "\r\n";
+            info += "Total = " + GetAttack();
+            return info;
         }
 
-        public string GetDefenseInfo()
+        public string GetDefenseDetailedInfo()
         {
-            return string.Format(Pattern, DefenseLvMax, GetDefenseAffectionBonus(200), GetDefenseMax());
+            string info = "";
+            info += "Lvl Max = " + DefenseLvMax + "\r\n";
+            info += "Affection = +" + GetHitPointsAffectionBonus(200) + "\r\n";
+            info += "Ampules = +" + DefenseAmpules + "\r\n";
+            info += "AmpulesEx = +" + DefenseAmpulesEx + "\r\n";
+            info += "Total = " + GetDefense();
+            return info;
         }
 
 

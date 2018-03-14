@@ -21,6 +21,8 @@ namespace FKG_Info
             TxBoxURLNutaku.Text = Program.DB.NutakuURL;
             ChBoxSaveDw.Checked = Program.DB.StoreDownloaded;
             NumSoundVolume.Value = Program.DB.SoundVolume;
+            TxBoxAcc1Name.Text = Program.DB.Account1Name;
+            TxBoxAcc2Name.Text = Program.DB.Account2Name;
 
             switch (Program.DB.ImageSource)
             {
@@ -44,6 +46,8 @@ namespace FKG_Info
             Program.DB.NutakuURL = TxBoxURLNutaku.Text;
             Program.DB.StoreDownloaded = ChBoxSaveDw.Checked;
             Program.DB.SoundVolume = (int)NumSoundVolume.Value;
+            Program.DB.Account1Name = TxBoxAcc1Name.Text;
+            Program.DB.Account2Name = TxBoxAcc2Name.Text;
 
             if (!System.IO.Directory.Exists(Program.DB.ImagesFolder))
             {

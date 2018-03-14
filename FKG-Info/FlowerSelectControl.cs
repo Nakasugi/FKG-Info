@@ -10,6 +10,8 @@ namespace FKG_Info
         private List<FlowerInfo> Flowers;
         private List<AdvPictureBox> Icons;
 
+        private FlowerInfo SelectedFlower;
+
         private bool Reloading;
         private bool Selecting;
         private bool AllTypesSelected;
@@ -18,8 +20,8 @@ namespace FKG_Info
 
         private const string TEXT_SEARCH = "Search...";
 
-
         private Timer SearchTimer;
+
 
 
         struct SortBy
@@ -43,6 +45,8 @@ namespace FKG_Info
         {
             components = new System.ComponentModel.Container();
 
+            SelectedFlower = null;
+
             Visible = false;
             main.LoadingControlsMessage(true);
             SuspendLayout();
@@ -62,6 +66,9 @@ namespace FKG_Info
             CmBoxAbility02.Items.Add("All Abilities");
             CmBoxAbility02.Items.AddRange(Program.DB.GetAbilitiesTags());
             CmBoxAbility02.SelectedIndex = 0;
+
+            ChBoxAcc1Has.Text = Program.DB.Account1Name;
+            ChBoxAcc2Has.Text = Program.DB.Account2Name;
 
             foreach (FlowerInfo.SpecFilter spec in Enum.GetValues(typeof(FlowerInfo.SpecFilter)))
                 CmBoxSpecFilter.Items.Add(spec.ToString().Replace("_", " "));
@@ -158,13 +165,45 @@ namespace FKG_Info
                 switch (spec)
                 {
                     case FlowerInfo.SpecFilter.All_Knights: if (flower.NoKnight) continue; break;
-                    case FlowerInfo.SpecFilter.Has_Bloom_Form: if (flower.HasBloomForm()) break; continue;
-                    case FlowerInfo.SpecFilter.Has_Bloom_CG: if(flower.HasBloomForm(1)) break; continue;
-                    case FlowerInfo.SpecFilter.No_Bloom_CG: if (flower.HasBloomForm(2)) break; continue;
+                    case FlowerInfo.SpecFilter.Has_Bloom_Form: if (flower.CheckBloomForm()) break; continue;
+                    case FlowerInfo.SpecFilter.No_Bloom_Form: if (flower.CheckBloomForm(false, true)) break; continue;
                     case FlowerInfo.SpecFilter.Has_Exclusive_Skin: if (flower.HasExclusiveSkin()) break; continue;
-                    default: if(flower.CheckCategory(spec)) break; continue;
+                    default: if (flower.CheckCategory(spec)) break; continue;
                 }
-                
+
+
+                switch (ChBoxEventKnights.CheckState)
+                {
+                    case CheckState.Checked: if (flower.CheckIsEvent()) break; continue;
+                    case CheckState.Unchecked: if (flower.CheckIsEvent(true)) break; continue;
+                    case CheckState.Indeterminate:
+                    default: break;
+                }
+
+                switch (ChBoxBloomCG.CheckState)
+                {
+                    case CheckState.Checked: if (flower.CheckBloomForm(true)) break; continue;
+                    case CheckState.Unchecked: if (flower.CheckBloomForm(true, true)) break; continue;
+                    case CheckState.Indeterminate:
+                    default: break;
+                }
+
+                switch (ChBoxAcc1Filter.CheckState)
+                {
+                    case CheckState.Checked: if (flower.Account1) break; continue;
+                    case CheckState.Unchecked: if (!flower.Account1) break; continue;
+                    case CheckState.Indeterminate:
+                    default: break;
+                }
+
+                switch (ChBoxAcc2Filter.CheckState)
+                {
+                    case CheckState.Checked: if (flower.Account2) break; continue;
+                    case CheckState.Unchecked: if (!flower.Account2) break; continue;
+                    case CheckState.Indeterminate:
+                    default: break;
+                }
+
 
                 if (CmBoxNation.Text != "All Nations")
                 {
@@ -315,6 +354,38 @@ namespace FKG_Info
         {
             TxBoxSearch.Text = TEXT_SEARCH;
             TxBoxSearch.ForeColor = SystemColors.GrayText;
+        }
+
+
+
+        public void SelectFlower(FlowerInfo flower)
+        {
+            bool selecting = Selecting;
+
+            Selecting = true;
+
+            SelectedFlower = flower;
+            if (SelectedFlower != null)
+            {
+                ChBoxAcc1Has.Checked = SelectedFlower.Account1;
+                ChBoxAcc2Has.Checked = SelectedFlower.Account2;
+            }
+
+            Selecting = selecting;
+        }
+
+
+
+        private void ChBoxAccHas_Changed(object sender, EventArgs ev)
+        {
+            if (Reloading || Selecting) return;
+
+            if (SelectedFlower != null)
+            {
+                SelectedFlower.Account1 = ChBoxAcc1Has.Checked;
+                SelectedFlower.Account2 = ChBoxAcc2Has.Checked;
+                Program.DB.OptionsChanged();
+            }
         }
     }
 }

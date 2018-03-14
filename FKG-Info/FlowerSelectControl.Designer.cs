@@ -46,6 +46,12 @@
             this.CmBoxSpecFilter = new System.Windows.Forms.ComboBox();
             this.CmBoxAbility02 = new System.Windows.Forms.ComboBox();
             this.BtClrSearch = new System.Windows.Forms.Button();
+            this.ChBoxEventKnights = new System.Windows.Forms.CheckBox();
+            this.ChBoxBloomCG = new System.Windows.Forms.CheckBox();
+            this.ChBoxAcc1Has = new System.Windows.Forms.CheckBox();
+            this.ChBoxAcc2Has = new System.Windows.Forms.CheckBox();
+            this.ChBoxAcc1Filter = new System.Windows.Forms.CheckBox();
+            this.ChBoxAcc2Filter = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // PanelFlowers
@@ -60,7 +66,7 @@
             // BtAll
             // 
             this.BtAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.BtAll.Location = new System.Drawing.Point(202, 23);
+            this.BtAll.Location = new System.Drawing.Point(202, 12);
             this.BtAll.Name = "BtAll";
             this.BtAll.Size = new System.Drawing.Size(38, 38);
             this.BtAll.TabIndex = 10;
@@ -75,7 +81,7 @@
             this.ChBoxMagic.Checked = true;
             this.ChBoxMagic.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxMagic.Image = global::FKG_Info.Properties.Resources.chbox_ico_magic;
-            this.ChBoxMagic.Location = new System.Drawing.Point(158, 24);
+            this.ChBoxMagic.Location = new System.Drawing.Point(158, 12);
             this.ChBoxMagic.Name = "ChBoxMagic";
             this.ChBoxMagic.Size = new System.Drawing.Size(38, 38);
             this.ChBoxMagic.TabIndex = 9;
@@ -89,7 +95,7 @@
             this.ChBoxPierce.Checked = true;
             this.ChBoxPierce.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxPierce.Image = global::FKG_Info.Properties.Resources.chbox_ico_pierce;
-            this.ChBoxPierce.Location = new System.Drawing.Point(114, 24);
+            this.ChBoxPierce.Location = new System.Drawing.Point(114, 12);
             this.ChBoxPierce.Name = "ChBoxPierce";
             this.ChBoxPierce.Size = new System.Drawing.Size(38, 38);
             this.ChBoxPierce.TabIndex = 8;
@@ -103,7 +109,7 @@
             this.ChBoxBlunt.Checked = true;
             this.ChBoxBlunt.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxBlunt.Image = global::FKG_Info.Properties.Resources.chbox_ico_blunt;
-            this.ChBoxBlunt.Location = new System.Drawing.Point(70, 24);
+            this.ChBoxBlunt.Location = new System.Drawing.Point(70, 12);
             this.ChBoxBlunt.Name = "ChBoxBlunt";
             this.ChBoxBlunt.Size = new System.Drawing.Size(38, 38);
             this.ChBoxBlunt.TabIndex = 7;
@@ -117,7 +123,7 @@
             this.ChBoxSlash.Checked = true;
             this.ChBoxSlash.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ChBoxSlash.Image = global::FKG_Info.Properties.Resources.chbox_ico_slash;
-            this.ChBoxSlash.Location = new System.Drawing.Point(28, 24);
+            this.ChBoxSlash.Location = new System.Drawing.Point(28, 12);
             this.ChBoxSlash.Name = "ChBoxSlash";
             this.ChBoxSlash.Size = new System.Drawing.Size(38, 38);
             this.ChBoxSlash.TabIndex = 6;
@@ -126,76 +132,71 @@
             // 
             // ChBoxS6
             // 
-            this.ChBoxS6.AutoSize = true;
             this.ChBoxS6.Checked = true;
             this.ChBoxS6.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxS6.Font = new System.Drawing.Font("Arial Unicode MS", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ChBoxS6.Location = new System.Drawing.Point(228, 72);
+            this.ChBoxS6.Font = new System.Drawing.Font("Arial Unicode MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ChBoxS6.Location = new System.Drawing.Point(262, 11);
             this.ChBoxS6.Margin = new System.Windows.Forms.Padding(0);
             this.ChBoxS6.Name = "ChBoxS6";
-            this.ChBoxS6.Size = new System.Drawing.Size(48, 24);
+            this.ChBoxS6.Size = new System.Drawing.Size(48, 20);
             this.ChBoxS6.TabIndex = 15;
-            this.ChBoxS6.Text = "★6";
+            this.ChBoxS6.Text = "★ 6";
             this.ChBoxS6.UseVisualStyleBackColor = true;
             this.ChBoxS6.CheckedChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
             // ChBoxS5
             // 
-            this.ChBoxS5.AutoSize = true;
             this.ChBoxS5.Checked = true;
             this.ChBoxS5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxS5.Font = new System.Drawing.Font("Arial Unicode MS", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ChBoxS5.Location = new System.Drawing.Point(178, 72);
+            this.ChBoxS5.Font = new System.Drawing.Font("Arial Unicode MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ChBoxS5.Location = new System.Drawing.Point(262, 28);
             this.ChBoxS5.Margin = new System.Windows.Forms.Padding(0);
             this.ChBoxS5.Name = "ChBoxS5";
-            this.ChBoxS5.Size = new System.Drawing.Size(48, 24);
+            this.ChBoxS5.Size = new System.Drawing.Size(48, 20);
             this.ChBoxS5.TabIndex = 14;
-            this.ChBoxS5.Text = "★5";
+            this.ChBoxS5.Text = "★ 5";
             this.ChBoxS5.UseVisualStyleBackColor = true;
             this.ChBoxS5.CheckedChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
             // ChBoxS4
             // 
-            this.ChBoxS4.AutoSize = true;
             this.ChBoxS4.Checked = true;
             this.ChBoxS4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxS4.Font = new System.Drawing.Font("Arial Unicode MS", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ChBoxS4.Location = new System.Drawing.Point(128, 72);
+            this.ChBoxS4.Font = new System.Drawing.Font("Arial Unicode MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ChBoxS4.Location = new System.Drawing.Point(262, 45);
             this.ChBoxS4.Margin = new System.Windows.Forms.Padding(0);
             this.ChBoxS4.Name = "ChBoxS4";
-            this.ChBoxS4.Size = new System.Drawing.Size(48, 24);
+            this.ChBoxS4.Size = new System.Drawing.Size(48, 20);
             this.ChBoxS4.TabIndex = 13;
-            this.ChBoxS4.Text = "★4";
+            this.ChBoxS4.Text = "★ 4";
             this.ChBoxS4.UseVisualStyleBackColor = true;
             this.ChBoxS4.CheckedChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
             // ChBoxS3
             // 
-            this.ChBoxS3.AutoSize = true;
             this.ChBoxS3.Checked = true;
             this.ChBoxS3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxS3.Font = new System.Drawing.Font("Arial Unicode MS", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ChBoxS3.Location = new System.Drawing.Point(78, 72);
+            this.ChBoxS3.Font = new System.Drawing.Font("Arial Unicode MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ChBoxS3.Location = new System.Drawing.Point(262, 62);
             this.ChBoxS3.Margin = new System.Windows.Forms.Padding(0);
             this.ChBoxS3.Name = "ChBoxS3";
-            this.ChBoxS3.Size = new System.Drawing.Size(48, 24);
+            this.ChBoxS3.Size = new System.Drawing.Size(48, 20);
             this.ChBoxS3.TabIndex = 12;
-            this.ChBoxS3.Text = "★3";
+            this.ChBoxS3.Text = "★ 3";
             this.ChBoxS3.UseVisualStyleBackColor = true;
             this.ChBoxS3.CheckedChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
             // ChBoxS2
             // 
-            this.ChBoxS2.AutoSize = true;
             this.ChBoxS2.Checked = true;
             this.ChBoxS2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChBoxS2.Font = new System.Drawing.Font("Arial Unicode MS", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ChBoxS2.Location = new System.Drawing.Point(28, 72);
+            this.ChBoxS2.Font = new System.Drawing.Font("Arial Unicode MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ChBoxS2.Location = new System.Drawing.Point(262, 79);
             this.ChBoxS2.Margin = new System.Windows.Forms.Padding(0);
             this.ChBoxS2.Name = "ChBoxS2";
-            this.ChBoxS2.Size = new System.Drawing.Size(48, 24);
+            this.ChBoxS2.Size = new System.Drawing.Size(48, 20);
             this.ChBoxS2.TabIndex = 11;
-            this.ChBoxS2.Text = "★2";
+            this.ChBoxS2.Text = "★ 2";
             this.ChBoxS2.UseVisualStyleBackColor = true;
             this.ChBoxS2.CheckedChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
@@ -204,7 +205,7 @@
             this.CmBoxAbility01.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CmBoxAbility01.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CmBoxAbility01.FormattingEnabled = true;
-            this.CmBoxAbility01.Location = new System.Drawing.Point(616, 51);
+            this.CmBoxAbility01.Location = new System.Drawing.Point(616, 39);
             this.CmBoxAbility01.Name = "CmBoxAbility01";
             this.CmBoxAbility01.Size = new System.Drawing.Size(160, 21);
             this.CmBoxAbility01.TabIndex = 21;
@@ -215,7 +216,7 @@
             this.CmBoxSort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CmBoxSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CmBoxSort.FormattingEnabled = true;
-            this.CmBoxSort.Location = new System.Drawing.Point(451, 24);
+            this.CmBoxSort.Location = new System.Drawing.Point(451, 12);
             this.CmBoxSort.Name = "CmBoxSort";
             this.CmBoxSort.Size = new System.Drawing.Size(159, 21);
             this.CmBoxSort.TabIndex = 20;
@@ -226,7 +227,7 @@
             this.CmBoxNation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CmBoxNation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CmBoxNation.FormattingEnabled = true;
-            this.CmBoxNation.Location = new System.Drawing.Point(616, 24);
+            this.CmBoxNation.Location = new System.Drawing.Point(616, 12);
             this.CmBoxNation.Name = "CmBoxNation";
             this.CmBoxNation.Size = new System.Drawing.Size(160, 21);
             this.CmBoxNation.TabIndex = 19;
@@ -235,7 +236,7 @@
             // TxBoxSearch
             // 
             this.TxBoxSearch.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.TxBoxSearch.Location = new System.Drawing.Point(451, 78);
+            this.TxBoxSearch.Location = new System.Drawing.Point(451, 66);
             this.TxBoxSearch.Name = "TxBoxSearch";
             this.TxBoxSearch.Size = new System.Drawing.Size(134, 22);
             this.TxBoxSearch.TabIndex = 22;
@@ -248,7 +249,7 @@
             this.CmBoxSpecFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CmBoxSpecFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CmBoxSpecFilter.FormattingEnabled = true;
-            this.CmBoxSpecFilter.Location = new System.Drawing.Point(451, 51);
+            this.CmBoxSpecFilter.Location = new System.Drawing.Point(451, 39);
             this.CmBoxSpecFilter.Name = "CmBoxSpecFilter";
             this.CmBoxSpecFilter.Size = new System.Drawing.Size(160, 21);
             this.CmBoxSpecFilter.TabIndex = 23;
@@ -259,7 +260,7 @@
             this.CmBoxAbility02.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CmBoxAbility02.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CmBoxAbility02.FormattingEnabled = true;
-            this.CmBoxAbility02.Location = new System.Drawing.Point(616, 78);
+            this.CmBoxAbility02.Location = new System.Drawing.Point(616, 66);
             this.CmBoxAbility02.Name = "CmBoxAbility02";
             this.CmBoxAbility02.Size = new System.Drawing.Size(160, 21);
             this.CmBoxAbility02.TabIndex = 24;
@@ -267,7 +268,7 @@
             // 
             // BtClrSearch
             // 
-            this.BtClrSearch.Location = new System.Drawing.Point(589, 78);
+            this.BtClrSearch.Location = new System.Drawing.Point(591, 66);
             this.BtClrSearch.Name = "BtClrSearch";
             this.BtClrSearch.Size = new System.Drawing.Size(21, 22);
             this.BtClrSearch.TabIndex = 25;
@@ -275,10 +276,92 @@
             this.BtClrSearch.UseVisualStyleBackColor = true;
             this.BtClrSearch.Click += new System.EventHandler(this.BtClrSearch_Click);
             // 
+            // ChBoxEventKnights
+            // 
+            this.ChBoxEventKnights.AutoSize = true;
+            this.ChBoxEventKnights.Checked = true;
+            this.ChBoxEventKnights.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.ChBoxEventKnights.Location = new System.Drawing.Point(316, 13);
+            this.ChBoxEventKnights.Name = "ChBoxEventKnights";
+            this.ChBoxEventKnights.Size = new System.Drawing.Size(92, 17);
+            this.ChBoxEventKnights.TabIndex = 26;
+            this.ChBoxEventKnights.Text = "Event Knights";
+            this.ChBoxEventKnights.ThreeState = true;
+            this.ChBoxEventKnights.UseVisualStyleBackColor = true;
+            this.ChBoxEventKnights.CheckStateChanged += new System.EventHandler(this.ChBox_CheckedChanged);
+            // 
+            // ChBoxBloomCG
+            // 
+            this.ChBoxBloomCG.AutoSize = true;
+            this.ChBoxBloomCG.Checked = true;
+            this.ChBoxBloomCG.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.ChBoxBloomCG.Location = new System.Drawing.Point(316, 30);
+            this.ChBoxBloomCG.Name = "ChBoxBloomCG";
+            this.ChBoxBloomCG.Size = new System.Drawing.Size(73, 17);
+            this.ChBoxBloomCG.TabIndex = 27;
+            this.ChBoxBloomCG.Text = "Bloom CG";
+            this.ChBoxBloomCG.ThreeState = true;
+            this.ChBoxBloomCG.UseVisualStyleBackColor = true;
+            this.ChBoxBloomCG.CheckStateChanged += new System.EventHandler(this.ChBox_CheckedChanged);
+            // 
+            // ChBoxAcc1Has
+            // 
+            this.ChBoxAcc1Has.AutoSize = true;
+            this.ChBoxAcc1Has.Location = new System.Drawing.Point(50, 64);
+            this.ChBoxAcc1Has.Name = "ChBoxAcc1Has";
+            this.ChBoxAcc1Has.Size = new System.Drawing.Size(75, 17);
+            this.ChBoxAcc1Has.TabIndex = 28;
+            this.ChBoxAcc1Has.Text = "Account 1";
+            this.ChBoxAcc1Has.UseVisualStyleBackColor = true;
+            this.ChBoxAcc1Has.CheckedChanged += new System.EventHandler(this.ChBoxAccHas_Changed);
+            // 
+            // ChBoxAcc2Has
+            // 
+            this.ChBoxAcc2Has.AutoSize = true;
+            this.ChBoxAcc2Has.Location = new System.Drawing.Point(50, 81);
+            this.ChBoxAcc2Has.Name = "ChBoxAcc2Has";
+            this.ChBoxAcc2Has.Size = new System.Drawing.Size(75, 17);
+            this.ChBoxAcc2Has.TabIndex = 29;
+            this.ChBoxAcc2Has.Text = "Account 2";
+            this.ChBoxAcc2Has.UseVisualStyleBackColor = true;
+            this.ChBoxAcc2Has.CheckedChanged += new System.EventHandler(this.ChBoxAccHas_Changed);
+            // 
+            // ChBoxAcc1Filter
+            // 
+            this.ChBoxAcc1Filter.AutoSize = true;
+            this.ChBoxAcc1Filter.Checked = true;
+            this.ChBoxAcc1Filter.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.ChBoxAcc1Filter.Location = new System.Drawing.Point(29, 65);
+            this.ChBoxAcc1Filter.Name = "ChBoxAcc1Filter";
+            this.ChBoxAcc1Filter.Size = new System.Drawing.Size(15, 14);
+            this.ChBoxAcc1Filter.TabIndex = 30;
+            this.ChBoxAcc1Filter.ThreeState = true;
+            this.ChBoxAcc1Filter.UseVisualStyleBackColor = true;
+            this.ChBoxAcc1Filter.CheckStateChanged += new System.EventHandler(this.ChBox_CheckedChanged);
+            // 
+            // ChBoxAcc2Filter
+            // 
+            this.ChBoxAcc2Filter.AutoSize = true;
+            this.ChBoxAcc2Filter.Checked = true;
+            this.ChBoxAcc2Filter.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.ChBoxAcc2Filter.Location = new System.Drawing.Point(29, 82);
+            this.ChBoxAcc2Filter.Name = "ChBoxAcc2Filter";
+            this.ChBoxAcc2Filter.Size = new System.Drawing.Size(15, 14);
+            this.ChBoxAcc2Filter.TabIndex = 31;
+            this.ChBoxAcc2Filter.ThreeState = true;
+            this.ChBoxAcc2Filter.UseVisualStyleBackColor = true;
+            this.ChBoxAcc2Filter.CheckStateChanged += new System.EventHandler(this.ChBox_CheckedChanged);
+            // 
             // FlowerSelectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.ChBoxAcc2Filter);
+            this.Controls.Add(this.ChBoxAcc1Filter);
+            this.Controls.Add(this.ChBoxAcc2Has);
+            this.Controls.Add(this.ChBoxAcc1Has);
+            this.Controls.Add(this.ChBoxBloomCG);
+            this.Controls.Add(this.ChBoxEventKnights);
             this.Controls.Add(this.BtClrSearch);
             this.Controls.Add(this.CmBoxAbility02);
             this.Controls.Add(this.CmBoxSpecFilter);
@@ -324,5 +407,11 @@
         private System.Windows.Forms.ComboBox CmBoxSpecFilter;
         private System.Windows.Forms.ComboBox CmBoxAbility02;
         private System.Windows.Forms.Button BtClrSearch;
+        private System.Windows.Forms.CheckBox ChBoxEventKnights;
+        private System.Windows.Forms.CheckBox ChBoxBloomCG;
+        private System.Windows.Forms.CheckBox ChBoxAcc1Has;
+        private System.Windows.Forms.CheckBox ChBoxAcc2Has;
+        private System.Windows.Forms.CheckBox ChBoxAcc1Filter;
+        private System.Windows.Forms.CheckBox ChBoxAcc2Filter;
     }
 }
