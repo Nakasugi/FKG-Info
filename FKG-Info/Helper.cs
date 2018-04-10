@@ -31,9 +31,10 @@ namespace FKG_Info
 
         /// <summary>
         /// Check is folder exists, create if folder not found.
+        /// Return "true" if folder created or exist, "false" if error.
         /// </summary>
         /// <param name="folder"></param>
-        /// <returns>True if folder exist, False if error.</returns>
+        /// <returns></returns>
         public static bool CheckFolder(string folder)
         {
             if (!Directory.Exists(folder))
@@ -44,7 +45,7 @@ namespace FKG_Info
                 }
                 catch (Exception exp)
                 {
-                    System.Windows.Forms.MessageBox.Show(exp.Message, "Directory Error");
+                    MessageBox.Show(exp.Message, "Directory Error");
                     return false;
                 }
             }
@@ -55,7 +56,7 @@ namespace FKG_Info
 
 
         /// <summary>
-        /// Extract Zip
+        /// Extract Zip, srcStream will closed.
         /// </summary>
         /// <param name="srcStream"></param>
         /// <returns></returns>

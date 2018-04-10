@@ -55,7 +55,7 @@ namespace FKG_Info
                 picBox.Name = equip.ID.ToString();
                 picBox.Width = 100;
                 picBox.Height = 100;
-                picBox.Image = Properties.Resources.equip_default;
+                picBox.SetImage(Properties.Resources.equip_default, false);
                 picBox.AsyncLoadImage(equip);
                 picBox.Visible = false;
                 Icons.Add(picBox);

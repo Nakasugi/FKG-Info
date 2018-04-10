@@ -58,11 +58,12 @@ namespace FKG_Info
         private void VoicesDGV_CellContentClick(object sender, DataGridViewCellEventArgs ev)
         {
             if (ev.ColumnIndex != 0) return;
+            FlowerInfo flower = Program.DB.Flowers.GetSelected();
+            if (flower == null) return;
 
             string name = VoicesDGV.Rows[ev.RowIndex].Cells[3].Value.ToString();
-            string id = Program.DB.GetSelected().GetImageEvolID(0).ToString();
 
-            SoundPlayer.Play(id, name);
+            SoundPlayer.Play(flower.GetBaseID().ToString(), name);
         }
     }
 }

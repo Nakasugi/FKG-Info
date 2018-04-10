@@ -7,7 +7,7 @@ namespace FKG_Info
 {
     public partial class FlowerSelectControl : UserControl
     {
-        private List<FlowerInfo> Flowers;
+        private FlowersList Flowers;
         private List<AdvPictureBox> Icons;
 
         private FlowerInfo SelectedFlower;
@@ -78,6 +78,10 @@ namespace FKG_Info
                 CmBoxSort.Items.Add(fi.GetValue(null).ToString());
             CmBoxSort.SelectedIndex = 0;
 
+            foreach (string vr in FlowerInfo.VariationNames)
+                CmBoxVariations.Items.Add(vr);
+            CmBoxVariations.SelectedIndex = 0;
+
             SearchTimer = new Timer();
             SearchTimer.Interval = 1000;
             SearchTimer.Tick += (s, e) => OnSearchTimer();
@@ -103,8 +107,9 @@ namespace FKG_Info
                 picBox.Name = flower.ID.ToString();
                 picBox.Width = 100;
                 picBox.Height = 100;
-                picBox.Image = Properties.Resources.icon_l_default;
-                picBox.AsyncLoadImage(icon);
+                Program.DB.FlowerIcons.GetImage(picBox);
+                //picBox.Image = Program.DB.FlowerIcons.GetImage(flower.AtlasIconID); //Properties.Resources.icon_l_default;
+                //picBox.AsyncLoadImage(icon);
                 picBox.Visible = false;
                 Icons.Add(picBox);
 
@@ -125,7 +130,17 @@ namespace FKG_Info
             Selecting = false;
             AllTypesSelected = true;
             Visible = true;
+
+            Flowers.ClearHistory();
         }
+
+
+        /*
+        new void Dispose()
+        {
+            foreach (AdvPictureBox pic in Icons) pic.Dispose();
+            base.Dispose();
+        }*/
 
 
 
@@ -142,6 +157,15 @@ namespace FKG_Info
             foreach (FlowerInfo flower in Flowers)
             {
                 flower.Filter = false;
+
+                if (searching)
+                {
+                    if (flower.CheckNames(tofind)) flower.Filter = true;
+                    continue;
+                }
+
+                if (spec != FlowerInfo.SpecFilter.Can_Grow)
+                    if (flower.CheckVariation(CmBoxVariations.SelectedIndex, true)) continue;
 
                 switch (flower.Rarity)
                 {
@@ -164,17 +188,18 @@ namespace FKG_Info
 
                 switch (spec)
                 {
-                    case FlowerInfo.SpecFilter.All_Knights: if (flower.NoKnight) continue; break;
-                    case FlowerInfo.SpecFilter.Has_Bloom_Form: if (flower.CheckBloomForm()) break; continue;
+                    case FlowerInfo.SpecFilter.All_Knights: if (flower.IsKnight) break; continue;
+                    //case FlowerInfo.SpecFilter.Has_Bloom_Form: if (flower.CheckBloomForm()) break; continue;
                     case FlowerInfo.SpecFilter.No_Bloom_Form: if (flower.CheckBloomForm(false, true)) break; continue;
                     case FlowerInfo.SpecFilter.Has_Exclusive_Skin: if (flower.HasExclusiveSkin()) break; continue;
+                    case FlowerInfo.SpecFilter.Can_Grow: if (flower.CanGrow) break; continue;
                     default: if (flower.CheckCategory(spec)) break; continue;
                 }
 
 
                 switch (ChBoxEventKnights.CheckState)
                 {
-                    case CheckState.Checked: if (flower.CheckIsEvent()) break; continue;
+                    case CheckState.Checked: if (flower.CheckIsEvent(false)) break; continue;
                     case CheckState.Unchecked: if (flower.CheckIsEvent(true)) break; continue;
                     case CheckState.Indeterminate:
                     default: break;
@@ -188,18 +213,19 @@ namespace FKG_Info
                     default: break;
                 }
 
+
                 switch (ChBoxAcc1Filter.CheckState)
                 {
-                    case CheckState.Checked: if (flower.Account1) break; continue;
-                    case CheckState.Unchecked: if (!flower.Account1) break; continue;
+                    case CheckState.Checked: if (Flowers.CheckAccStatus(flower.RefID, 1)) break; continue;
+                    case CheckState.Unchecked: if (!Flowers.CheckAccStatus(flower.RefID, 1)) break; continue;
                     case CheckState.Indeterminate:
                     default: break;
                 }
 
                 switch (ChBoxAcc2Filter.CheckState)
                 {
-                    case CheckState.Checked: if (flower.Account2) break; continue;
-                    case CheckState.Unchecked: if (!flower.Account2) break; continue;
+                    case CheckState.Checked: if (Flowers.CheckAccStatus(flower.RefID, 2)) break; continue;
+                    case CheckState.Unchecked: if (!Flowers.CheckAccStatus(flower.RefID, 2)) break; continue;
                     case CheckState.Indeterminate:
                     default: break;
                 }
@@ -220,8 +246,6 @@ namespace FKG_Info
                     if (!flower.CheckAbilityShortName(CmBoxAbility02.Text)) continue;
                 }
 
-
-                if (searching) if (!flower.CheckNames(tofind)) continue;
 
                 flower.Filter = true;
             }
@@ -295,6 +319,7 @@ namespace FKG_Info
 
             if (tcnt == 4) AllTypesSelected = true;
 
+            ClearSearch();
             ReloadList();
             Selecting = false;
         }
@@ -329,14 +354,20 @@ namespace FKG_Info
 
         private void TxBoxSearch_FocusLeave(object sender, EventArgs ev)
         {
-            if (TxBoxSearch.Text.Length < 2)
-            {
-                TxBoxSearch.Text = TEXT_SEARCH;
-                TxBoxSearch.ForeColor = SystemColors.GrayText;
-            }
+            if (TxBoxSearch.Text.Length < 2) ClearSearch();
         }
 
+        public void SetSearchText(string text)
+        {
+            TxBoxSearch.Text = text;
+            if ((text.Length > 0) || (text != TEXT_SEARCH)) TxBoxSearch.ForeColor = SystemColors.WindowText;
+        }
 
+        public void ClearSearch()
+        {
+            TxBoxSearch.Text = TEXT_SEARCH;
+            TxBoxSearch.ForeColor = SystemColors.GrayText;
+        }
 
         private void OnSearchTimer()
         {
@@ -346,15 +377,13 @@ namespace FKG_Info
 
         private void TxBoxSearch_TextChanged(object sender, EventArgs ev)
         {
+            if (SearchTimer == null) return;
+
             SearchTimer.Stop();
             SearchTimer.Start();
         }
 
-        private void BtClrSearch_Click(object sender, EventArgs ev)
-        {
-            TxBoxSearch.Text = TEXT_SEARCH;
-            TxBoxSearch.ForeColor = SystemColors.GrayText;
-        }
+        private void BtClrSearch_Click(object sender, EventArgs ev) { ClearSearch(); }
 
 
 
@@ -365,10 +394,11 @@ namespace FKG_Info
             Selecting = true;
 
             SelectedFlower = flower;
+
             if (SelectedFlower != null)
             {
-                ChBoxAcc1Has.Checked = SelectedFlower.Account1;
-                ChBoxAcc2Has.Checked = SelectedFlower.Account2;
+                ChBoxAcc1Has.Checked = Flowers.CheckAccStatus(SelectedFlower.RefID, 1);
+                ChBoxAcc2Has.Checked = Flowers.CheckAccStatus(SelectedFlower.RefID, 2);
             }
 
             Selecting = selecting;
@@ -382,10 +412,54 @@ namespace FKG_Info
 
             if (SelectedFlower != null)
             {
-                SelectedFlower.Account1 = ChBoxAcc1Has.Checked;
-                SelectedFlower.Account2 = ChBoxAcc2Has.Checked;
+                Flowers.SetAccStatus(SelectedFlower.RefID, 1, ChBoxAcc1Has.Checked);
+                Flowers.SetAccStatus(SelectedFlower.RefID, 2, ChBoxAcc2Has.Checked);
                 Program.DB.OptionsChanged();
             }
+        }
+
+
+
+        private void CmBoxVariations_CheckedChanged(object sender, EventArgs ev)
+        {
+            if (Selecting) return;
+
+            FlowerInfo.SpecFilter spec = (FlowerInfo.SpecFilter)Enum.Parse(typeof(FlowerInfo.SpecFilter), CmBoxSpecFilter.Text.Replace(" ", "_"));
+
+            Selecting = true;
+            if
+            (
+                (
+                    (CmBoxVariations.SelectedIndex != FlowerInfo.Variation.Evolved) &&
+                    (spec == FlowerInfo.SpecFilter.No_Bloom_Form)
+                )
+                ||
+                (spec == FlowerInfo.SpecFilter.Has_Exclusive_Skin)
+                ||
+                (spec == FlowerInfo.SpecFilter.Can_Grow)
+            )
+                CmBoxSpecFilter.SelectedIndex = 0;
+
+            ClearSearch();
+            ReloadList();
+            Selecting = false;
+        }
+
+
+
+        private void CmBoxSpecFilter_CheckedChanged(object sender, EventArgs ev)
+        {
+            if (Selecting) return;
+
+            FlowerInfo.SpecFilter spec = (FlowerInfo.SpecFilter)Enum.Parse(typeof(FlowerInfo.SpecFilter), CmBoxSpecFilter.Text.Replace(" ", "_"));
+
+            Selecting = true;
+            if (spec == FlowerInfo.SpecFilter.Has_Exclusive_Skin) CmBoxVariations.SelectedIndex = FlowerInfo.Variation.Base;
+            if (spec == FlowerInfo.SpecFilter.No_Bloom_Form) CmBoxVariations.SelectedIndex = FlowerInfo.Variation.Evolved;
+
+            ClearSearch();
+            ReloadList();
+            Selecting = false;
         }
     }
 }

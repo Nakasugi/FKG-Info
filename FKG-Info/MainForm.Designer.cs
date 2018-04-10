@@ -43,7 +43,7 @@
             this.MMItemFileImportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportIDs = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemFileExportNames = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MMItemFileExperimental = new System.Windows.Forms.ToolStripMenuItem();
             this.getMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,20 +56,26 @@
             this.MMItemOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemSelect = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemPrev = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemNext = new System.Windows.Forms.ToolStripMenuItem();
             this._lbLoading = new System.Windows.Forms.Label();
             this._lbWait = new System.Windows.Forms.Label();
             this.ChBoxExSkin = new System.Windows.Forms.CheckBox();
             this.BtEquip = new System.Windows.Forms.Button();
             this.BtVoices = new System.Windows.Forms.Button();
-            this.PicBoxIconBloom = new FKG_Info.AdvPictureBox(this.components);
-            this.PicBoxIconAwak = new FKG_Info.AdvPictureBox(this.components);
-            this.PicBoxIconBase = new FKG_Info.AdvPictureBox(this.components);
+            this.BtEvolutions = new System.Windows.Forms.Button();
+            this.BtVariations = new System.Windows.Forms.Button();
+            this.BtPrevEvolution = new System.Windows.Forms.Button();
+            this.PicBoxIconV2 = new FKG_Info.AdvPictureBox(this.components);
+            this.PicBoxIconV1 = new FKG_Info.AdvPictureBox(this.components);
+            this.PicBoxIconMain = new FKG_Info.AdvPictureBox(this.components);
             this.PicBoxBig = new FKG_Info.AdvPictureBox(this.components);
+            this.MMItemFileExportCurrent = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBloom)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconAwak)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBase)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxBig)).BeginInit();
             this.SuspendLayout();
             // 
@@ -120,7 +126,7 @@
             this.GridInfo.RowTemplate.Height = 18;
             this.GridInfo.RowTemplate.ReadOnly = true;
             this.GridInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.GridInfo.Size = new System.Drawing.Size(312, 522);
+            this.GridInfo.Size = new System.Drawing.Size(364, 522);
             this.GridInfo.TabIndex = 5;
             this.GridInfo.TabStop = false;
             this.GridInfo.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GridInfo_MouseMove);
@@ -135,7 +141,7 @@
             this.GIC1.ReadOnly = true;
             this.GIC1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.GIC1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.GIC1.Width = 80;
+            this.GIC1.Width = 92;
             // 
             // GIC2
             // 
@@ -168,12 +174,14 @@
             this.MMItemMode,
             this.MMItemOptions,
             this.MMItemSelect,
-            this.MMItemAbout});
+            this.MMItemAbout,
+            this.MMItemPrev,
+            this.MMItemNext});
             this.MainMenu.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.MainMenu.Size = new System.Drawing.Size(339, 24);
+            this.MainMenu.Size = new System.Drawing.Size(501, 24);
             this.MainMenu.TabIndex = 23;
             this.MainMenu.Text = "MainMenu";
             // 
@@ -183,7 +191,8 @@
             this.MMItemFileImportMaster,
             this.MMItemFileExportMaster,
             this.MMItemFileExportIDs,
-            this.toolStripMenuItem1,
+            this.MMItemFileExportNames,
+            this.MMItemFileExportCurrent,
             this.toolStripSeparator1,
             this.MMItemFileExperimental});
             this.MMItemFile.Name = "MMItemFile";
@@ -193,42 +202,42 @@
             // MMItemFileImportMaster
             // 
             this.MMItemFileImportMaster.Name = "MMItemFileImportMaster";
-            this.MMItemFileImportMaster.Size = new System.Drawing.Size(149, 22);
+            this.MMItemFileImportMaster.Size = new System.Drawing.Size(215, 22);
             this.MMItemFileImportMaster.Text = "Import Master";
             this.MMItemFileImportMaster.Click += new System.EventHandler(this.MMItemFileImportMaster_Click);
             // 
             // MMItemFileExportMaster
             // 
             this.MMItemFileExportMaster.Name = "MMItemFileExportMaster";
-            this.MMItemFileExportMaster.Size = new System.Drawing.Size(149, 22);
+            this.MMItemFileExportMaster.Size = new System.Drawing.Size(215, 22);
             this.MMItemFileExportMaster.Text = "Export Master";
             this.MMItemFileExportMaster.Click += new System.EventHandler(this.MMItemFileExportMaster_Click);
             // 
             // MMItemFileExportIDs
             // 
             this.MMItemFileExportIDs.Name = "MMItemFileExportIDs";
-            this.MMItemFileExportIDs.Size = new System.Drawing.Size(149, 22);
+            this.MMItemFileExportIDs.Size = new System.Drawing.Size(215, 22);
             this.MMItemFileExportIDs.Text = "Export IDs";
             this.MMItemFileExportIDs.Click += new System.EventHandler(this.MMItemFileExportIDs_Click);
             // 
-            // toolStripMenuItem1
+            // MMItemFileExportNames
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 22);
-            this.toolStripMenuItem1.Text = "Export Names";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.MMItemFileExportNames_Click);
+            this.MMItemFileExportNames.Name = "MMItemFileExportNames";
+            this.MMItemFileExportNames.Size = new System.Drawing.Size(215, 22);
+            this.MMItemFileExportNames.Text = "Export Names";
+            this.MMItemFileExportNames.Click += new System.EventHandler(this.MMItemFileExportNames_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(146, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(212, 6);
             // 
             // MMItemFileExperimental
             // 
             this.MMItemFileExperimental.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.getMasterToolStripMenuItem});
             this.MMItemFileExperimental.Name = "MMItemFileExperimental";
-            this.MMItemFileExperimental.Size = new System.Drawing.Size(149, 22);
+            this.MMItemFileExperimental.Size = new System.Drawing.Size(215, 22);
             this.MMItemFileExperimental.Text = "Experimental";
             // 
             // getMasterToolStripMenuItem
@@ -303,6 +312,20 @@
             this.MMItemAbout.Text = "&About";
             this.MMItemAbout.Click += new System.EventHandler(this.MMItemAbout_Click);
             // 
+            // MMItemPrev
+            // 
+            this.MMItemPrev.Name = "MMItemPrev";
+            this.MMItemPrev.Size = new System.Drawing.Size(35, 20);
+            this.MMItemPrev.Text = "<<";
+            this.MMItemPrev.Click += new System.EventHandler(this.MMItemPrev_Click);
+            // 
+            // MMItemNext
+            // 
+            this.MMItemNext.Name = "MMItemNext";
+            this.MMItemNext.Size = new System.Drawing.Size(35, 20);
+            this.MMItemNext.Text = ">>";
+            this.MMItemNext.Click += new System.EventHandler(this.MMItemNext_Click);
+            // 
             // _lbLoading
             // 
             this._lbLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -362,41 +385,76 @@
             this.BtVoices.UseVisualStyleBackColor = true;
             this.BtVoices.Click += new System.EventHandler(this.BtVoices_Click);
             // 
-            // PicBoxIconBloom
+            // BtEvolutions
             // 
-            this.PicBoxIconBloom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PicBoxIconBloom.Location = new System.Drawing.Point(1021, 12);
-            this.PicBoxIconBloom.Name = "PicBoxIconBloom";
-            this.PicBoxIconBloom.Size = new System.Drawing.Size(100, 100);
-            this.PicBoxIconBloom.TabIndex = 3;
-            this.PicBoxIconBloom.TabStop = false;
-            this.PicBoxIconBloom.Click += new System.EventHandler(this.PicBoxIconBloom_Click);
-            this.PicBoxIconBloom.DoubleClick += new System.EventHandler(this.PicBoxIcon_DoubleClick);
+            this.BtEvolutions.Font = new System.Drawing.Font("Calibri", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BtEvolutions.Location = new System.Drawing.Point(914, 12);
+            this.BtEvolutions.Name = "BtEvolutions";
+            this.BtEvolutions.Size = new System.Drawing.Size(48, 28);
+            this.BtEvolutions.TabIndex = 30;
+            this.BtEvolutions.Text = "All Evolutions";
+            this.BtEvolutions.UseVisualStyleBackColor = true;
+            this.BtEvolutions.Click += new System.EventHandler(this.BtEvolutions_Click);
             // 
-            // PicBoxIconAwak
+            // BtVariations
             // 
-            this.PicBoxIconAwak.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PicBoxIconAwak.Location = new System.Drawing.Point(915, 12);
-            this.PicBoxIconAwak.Name = "PicBoxIconAwak";
-            this.PicBoxIconAwak.Size = new System.Drawing.Size(100, 100);
-            this.PicBoxIconAwak.TabIndex = 2;
-            this.PicBoxIconAwak.TabStop = false;
-            this.PicBoxIconAwak.Click += new System.EventHandler(this.PicBoxIconAwak_Click);
-            this.PicBoxIconAwak.DoubleClick += new System.EventHandler(this.PicBoxIcon_DoubleClick);
+            this.BtVariations.Font = new System.Drawing.Font("Calibri", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BtVariations.Location = new System.Drawing.Point(914, 42);
+            this.BtVariations.Name = "BtVariations";
+            this.BtVariations.Size = new System.Drawing.Size(48, 28);
+            this.BtVariations.TabIndex = 33;
+            this.BtVariations.Text = "All Variations";
+            this.BtVariations.UseVisualStyleBackColor = true;
+            this.BtVariations.Click += new System.EventHandler(this.BtVariations_Click);
             // 
-            // PicBoxIconBase
+            // BtPrevEvolution
             // 
-            this.PicBoxIconBase.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PicBoxIconBase.Location = new System.Drawing.Point(809, 12);
-            this.PicBoxIconBase.Name = "PicBoxIconBase";
-            this.PicBoxIconBase.Size = new System.Drawing.Size(100, 100);
-            this.PicBoxIconBase.TabIndex = 1;
-            this.PicBoxIconBase.TabStop = false;
-            this.PicBoxIconBase.Click += new System.EventHandler(this.PicBoxIconBase_Click);
-            this.PicBoxIconBase.DoubleClick += new System.EventHandler(this.PicBoxIcon_DoubleClick);
+            this.BtPrevEvolution.Font = new System.Drawing.Font("Calibri", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BtPrevEvolution.Location = new System.Drawing.Point(914, 84);
+            this.BtPrevEvolution.Name = "BtPrevEvolution";
+            this.BtPrevEvolution.Size = new System.Drawing.Size(48, 28);
+            this.BtPrevEvolution.TabIndex = 34;
+            this.BtPrevEvolution.Text = "Prev Evolution";
+            this.BtPrevEvolution.UseVisualStyleBackColor = true;
+            this.BtPrevEvolution.Click += new System.EventHandler(this.BtPrevEvolution_Click);
+            // 
+            // PicBoxIconV2
+            // 
+            this.PicBoxIconV2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PicBoxIconV2.Image = null;
+            this.PicBoxIconV2.Location = new System.Drawing.Point(1073, 12);
+            this.PicBoxIconV2.Name = "PicBoxIconV2";
+            this.PicBoxIconV2.Size = new System.Drawing.Size(100, 100);
+            this.PicBoxIconV2.TabIndex = 3;
+            this.PicBoxIconV2.TabStop = false;
+            this.PicBoxIconV2.Click += new System.EventHandler(this.PicBoxIconV2_Click);
+            // 
+            // PicBoxIconV1
+            // 
+            this.PicBoxIconV1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PicBoxIconV1.Image = null;
+            this.PicBoxIconV1.Location = new System.Drawing.Point(967, 12);
+            this.PicBoxIconV1.Name = "PicBoxIconV1";
+            this.PicBoxIconV1.Size = new System.Drawing.Size(100, 100);
+            this.PicBoxIconV1.TabIndex = 2;
+            this.PicBoxIconV1.TabStop = false;
+            this.PicBoxIconV1.Click += new System.EventHandler(this.PicBoxIconV1_Click);
+            // 
+            // PicBoxIconMain
+            // 
+            this.PicBoxIconMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PicBoxIconMain.Image = null;
+            this.PicBoxIconMain.Location = new System.Drawing.Point(809, 12);
+            this.PicBoxIconMain.Name = "PicBoxIconMain";
+            this.PicBoxIconMain.Size = new System.Drawing.Size(100, 100);
+            this.PicBoxIconMain.TabIndex = 1;
+            this.PicBoxIconMain.TabStop = false;
+            this.PicBoxIconMain.Click += new System.EventHandler(this.PicBoxIconBase_Click);
+            this.PicBoxIconMain.DoubleClick += new System.EventHandler(this.PicBoxIconBase_DoubleClick);
             // 
             // PicBoxBig
             // 
+            this.PicBoxBig.Image = null;
             this.PicBoxBig.Location = new System.Drawing.Point(0, 46);
             this.PicBoxBig.Name = "PicBoxBig";
             this.PicBoxBig.Size = new System.Drawing.Size(803, 640);
@@ -406,21 +464,31 @@
             this.PicBoxBig.Visible = false;
             this.PicBoxBig.Click += new System.EventHandler(this.PicBoxBig_Click);
             // 
+            // MMItemFileExportCurrent
+            // 
+            this.MMItemFileExportCurrent.Name = "MMItemFileExportCurrent";
+            this.MMItemFileExportCurrent.Size = new System.Drawing.Size(215, 22);
+            this.MMItemFileExportCurrent.Text = "Export Current Knight Data";
+            this.MMItemFileExportCurrent.Click += new System.EventHandler(this.MMItemFileExportCurrent_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(1132, 686);
+            this.ClientSize = new System.Drawing.Size(1184, 686);
+            this.Controls.Add(this.BtPrevEvolution);
+            this.Controls.Add(this.BtVariations);
+            this.Controls.Add(this.BtEvolutions);
             this.Controls.Add(this.BtVoices);
             this.Controls.Add(this.BtEquip);
             this.Controls.Add(this.ChBoxExSkin);
             this.Controls.Add(this._lbLoading);
             this.Controls.Add(this.BtSelect);
             this.Controls.Add(this.GridInfo);
-            this.Controls.Add(this.PicBoxIconBloom);
-            this.Controls.Add(this.PicBoxIconAwak);
-            this.Controls.Add(this.PicBoxIconBase);
+            this.Controls.Add(this.PicBoxIconV2);
+            this.Controls.Add(this.PicBoxIconV1);
+            this.Controls.Add(this.PicBoxIconMain);
             this.Controls.Add(this.PicBoxBig);
             this.Controls.Add(this.MainMenu);
             this.Controls.Add(this._lbWait);
@@ -428,8 +496,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MainMenu;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1148, 724);
-            this.MinimumSize = new System.Drawing.Size(1148, 724);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FKG-Info";
@@ -438,9 +504,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).EndInit();
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBloom)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconAwak)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconBase)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconMain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxBig)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -450,9 +516,9 @@
         #endregion
 
         private AdvPictureBox PicBoxBig;
-        private AdvPictureBox PicBoxIconBase;
-        private AdvPictureBox PicBoxIconAwak;
-        private AdvPictureBox PicBoxIconBloom;
+        private AdvPictureBox PicBoxIconMain;
+        private AdvPictureBox PicBoxIconV1;
+        private AdvPictureBox PicBoxIconV2;
         private System.Windows.Forms.DataGridView GridInfo;
         private System.Windows.Forms.Button BtSelect;
         private System.Windows.Forms.MenuStrip MainMenu;
@@ -476,10 +542,16 @@
         private System.Windows.Forms.ToolStripMenuItem MMItemFileExportIDs;
         private System.Windows.Forms.CheckBox ChBoxExSkin;
         private System.Windows.Forms.Button BtEquip;
+        private System.Windows.Forms.Button BtVoices;
+        private System.Windows.Forms.ToolStripMenuItem MMItemFileExportNames;
         private System.Windows.Forms.DataGridViewTextBoxColumn GIC1;
         private System.Windows.Forms.DataGridViewTextBoxColumn GIC2;
-        private System.Windows.Forms.Button BtVoices;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.Button BtEvolutions;
+        private System.Windows.Forms.Button BtVariations;
+        private System.Windows.Forms.Button BtPrevEvolution;
+        private System.Windows.Forms.ToolStripMenuItem MMItemPrev;
+        private System.Windows.Forms.ToolStripMenuItem MMItemNext;
+        private System.Windows.Forms.ToolStripMenuItem MMItemFileExportCurrent;
     }
 }
 

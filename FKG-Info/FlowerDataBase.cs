@@ -9,18 +9,21 @@ namespace FKG_Info
 {
     public class FlowerDataBase
     {
-        public List<FlowerInfo> Flowers;
         public List<SkillInfo> Skills;
         public List<AbilityInfo> Abilities;
         public List<EquipmentInfo> Equipments;
         public List<SkinInfo> Skins;
+        public GrowInfo GrownImageIDReplacer;
+
+        public FlowersList Flowers { get; private set; }
 
         public MasterData Master;
 
         public bool Running;
 
 
-        int Selected;
+        public IconsAtlas FlowerIcons;
+
 
 
         public string DMMURL;
@@ -38,6 +41,7 @@ namespace FKG_Info
 
         private string DefaultFolder;
 
+        private int LastFlowerVersion;
 
 
         public enum ImageSources { Local, Nutaku, NutakuDMM, DMM, DMMNutaku }
@@ -72,6 +76,7 @@ namespace FKG_Info
             public const string SoundVolume = "SoundVolume";
             public const string Acc1Name = "Account1Name";
             public const string Acc2Name = "Account2Name";
+            public const string VersionFlowers = "LastFlowerVersion";
         };
 
 
@@ -91,11 +96,12 @@ namespace FKG_Info
         {
             Running = true;
 
-            Flowers = new List<FlowerInfo>();
+            Flowers = new FlowersList();
             Skills = new List<SkillInfo>();
             Abilities = new List<AbilityInfo>();
             Equipments = new List<EquipmentInfo>();
             Skins = new List<SkinInfo>();
+            GrownImageIDReplacer = new GrowInfo();
 
             DMMURL = "http://dugrqaqinbtcq.cloudfront.net/product/";
             NutakuURL = "http://cdn.flowerknight.nutaku.net/bin/commons/";
@@ -127,7 +133,7 @@ namespace FKG_Info
                 if (x == 640) { x -= 640; y += 40; }
             }
 
-            Unselect();
+            Flowers.Unselect();
         }
 
 
@@ -139,6 +145,8 @@ namespace FKG_Info
             switch (newInfo.BaseType)
             {
                 case BaseInfo.ObjectType.Flower:
+                    Flowers.Add((FlowerInfo)newInfo);
+                    /*
                     FlowerInfo flower = Flowers.Find(f => f.ID == newInfo.ID);
                     if (flower == null)
                     {
@@ -147,7 +155,7 @@ namespace FKG_Info
                     else
                     {
                         flower.Update((FlowerInfo)newInfo);
-                    }
+                    }*/
                     break;
                 case BaseInfo.ObjectType.Skill:
                     SkillInfo skill = Skills.Find(sk => sk.ID == newInfo.ID);
@@ -171,11 +179,11 @@ namespace FKG_Info
 
 
 
-        public FlowerInfo GetSelected() { if (IsSelected()) return Flowers[Selected]; return null; }
-        public void Select(int n) { Selected = n; }
-        public void Select(FlowerInfo flower) { Selected = Flowers.IndexOf(flower); }
-        public void Unselect() { Selected = -1; }
-        public bool IsSelected() { return Selected != -1; }
+        //public FlowerInfo GetSelected() { if (IsSelected()) return Flowers[Selected]; return null; }
+        //public void Select(int n) { Selected = n; }
+        //public void Select(FlowerInfo flower) { Selected = Flowers.IndexOf(flower); }
+        //public void Unselect() { Selected = -1; }
+        //public bool IsSelected() { return Selected != -1; }
 
 
 
@@ -188,7 +196,7 @@ namespace FKG_Info
 
         public SkillInfo GetSkill(int id = -1)
         {
-            if (id == -1) id = Selected;
+            //if (id == -1) id = Selected;
             if (id == -1) return null;
 
             return Skills.Find(s => s.ID == id);
@@ -198,7 +206,7 @@ namespace FKG_Info
 
         public AbilityInfo GetAbility(int id = -1)
         {
-            if (id == -1) id = Selected;
+            //if (id == -1) id = Selected;
             if (id == -1) return null;
 
             return Abilities.Find(s => s.ID == id);
@@ -279,6 +287,8 @@ namespace FKG_Info
                 Helper.XmlGetText(opt, NodeName.Acc1Name, ref db.Account1Name);
                 Helper.XmlGetText(opt, NodeName.Acc2Name, ref db.Account2Name);
 
+                Helper.XmlGetInt32(opt, NodeName.VersionFlowers, ref db.LastFlowerVersion);
+
                 db.StoreDownloaded = Helper.XmlCheckNode(opt, NodeName.StoreDownloaded, "True");
 
                 string enumText = db.ImageSource.ToString();
@@ -324,10 +334,12 @@ namespace FKG_Info
                 db.LoadMasterData(db.Master.GetData("masterCharacterEquipment"), BaseInfo.ObjectType.Equipment);
                 db.LoadMasterData(db.Master.GetData("masterCharacterSkin"), BaseInfo.ObjectType.Skin);
 
+                db.GrownImageIDReplacer.ReadMasterData(db.Master.GetData("masterCharacterRarityEvolution"));
+
                 db.LoadNutakuNames();
             }
 
-
+            //db.Flowers.UpdateLinks();
 
             db.TranslatorAbilities = new Translator(db.DataFolder + "\\en_abilities.txt");
             db.TranslatorSkills = new Translator(db.DataFolder + "\\en_skills.txt");
@@ -336,21 +348,18 @@ namespace FKG_Info
 
             EquipmentInfo.SearchSets(db.Equipments);
 
-            foreach (FlowerInfo fw in db.Flowers) fw.FindExclusiveSkin(db.Skins);
+            foreach (FlowerInfo fw in db.Flowers) fw.FindExclusiveSkin(db);
 
             if (accHasList != null)
             {
                 foreach (XmlNode hasNode in accHasList)
                 {
                     bool error = false;
-                    error |= !int.TryParse(hasNode.Name.Substring(2), out int id);
-                    error |= !int.TryParse(hasNode.InnerText, out int hsts);
+                    error |= !int.TryParse(hasNode.Name.Substring(2), out int refId);
+                    error |= !int.TryParse(hasNode.InnerText, out int accStatus);
                     if (error) continue;
 
-                    FlowerInfo fw = db.Flowers.Find(f => f.ID == id);
-                    if (fw == null) continue;
-
-                    fw.SetAccStatus(hsts);
+                    db.Flowers.SetAccStatus(refId, accStatus);
                 }
             }
 
@@ -418,16 +427,10 @@ namespace FKG_Info
             xmlWriter.WriteElementString(NodeName.SoundVolume, SoundVolume.ToString());
             xmlWriter.WriteElementString(NodeName.Acc1Name, Account1Name);
             xmlWriter.WriteElementString(NodeName.Acc2Name, Account2Name);
+            xmlWriter.WriteElementString(NodeName.VersionFlowers, LastFlowerVersion.ToString());
             xmlWriter.WriteEndElement();
 
-            xmlWriter.WriteStartElement("HasFlowers");
-            foreach (FlowerInfo flower in Flowers)
-            {
-                int accStatus = flower.GetAccStatus();
-                if (accStatus != 0)
-                    xmlWriter.WriteElementString("ID" + flower.ID.ToString("D4"), accStatus.ToString());
-            }
-            xmlWriter.WriteEndElement();
+            Flowers.WriteXmlAccLinks(xmlWriter);
 
             xmlWriter.WriteEndElement();
             xmlWriter.Close();
@@ -537,9 +540,9 @@ namespace FKG_Info
                 if (chLine == null) break;
 
                 chFields = chLine.Split(',');
-                int.TryParse(chFields[4], out chID);
+                int.TryParse(chFields[0], out chID);
 
-                flower = Flowers.Find(f => f.ID == chID);
+                flower = Flowers.Find(fw => fw.ID == chID);
 
                 if (flower != null) flower.Name.EngNutaku = chFields[5].Replace("\"", "");
             }
@@ -566,7 +569,7 @@ namespace FKG_Info
             {
                 FlowerInfo fw = Flowers.Find(f => f.ID == id);
                 if (fw == null) continue;
-                if (fw.NoKnight) continue;
+                if (!fw.IsKnight) continue;
 
                 bool repeat = false;
 
@@ -595,5 +598,21 @@ namespace FKG_Info
 
         public void OptionsChanged() { NeedSaveOptions = true; }
         public void SaveOptIfNeeded() { if (NeedSaveOptions) SaveOptions(); }
+
+
+
+        public void UpdateVersions()
+        {
+            if (Flowers.CheckVersions(ref LastFlowerVersion)) NeedSaveOptions = true;
+
+            foreach (FlowerInfo flower in Flowers)
+            {
+                if (flower.Updated)
+                {
+                    flower.Updated = false;
+                    Program.ImageLoader.DeleteImages(flower.ID);
+                }
+            }
+        }
     }
 }

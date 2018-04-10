@@ -11,8 +11,11 @@ namespace FKG_Info
 
         private MainForm Main;
 
-        public FlowerInfo Flower { get; private set; }
-        public EquipmentInfo Equipment { get; private set; }
+        //public FlowerInfo Flower { get; private set; }
+        //public int RefID { get; private set; }
+
+        public FlowerInfo Flower;
+        public EquipmentInfo Equipment;
 
 
 
@@ -20,6 +23,20 @@ namespace FKG_Info
 
         private Type PictureType;
         private bool PartialIcon;
+
+
+
+        private bool NeedImageDispose;
+
+        public new System.Drawing.Image Image { get { return base.Image; } set { SetImage(value); } }
+
+        public void SetImage(System.Drawing.Image image, bool needDispose = true)
+        {
+            if ((base.Image != null) && NeedImageDispose) base.Image.Dispose();
+            NeedImageDispose = needDispose;
+            base.Image = image;
+        }
+
 
 
 
@@ -72,6 +89,19 @@ namespace FKG_Info
         }
 
 
+        /*
+        new void Dispose()
+        {
+            if ((base.Image != null) && NeedImageDispose)
+            {
+                base.Image.Dispose();
+                base.Image = null;
+            }
+
+            base.Dispose();
+        }*/
+
+
 
         public void AsyncLoadImage(Animator ani)
         {
@@ -96,7 +126,7 @@ namespace FKG_Info
 
 
 
-        public void Clear() { lock (Locker) { LastName = null; Image = null; } }
+        public void Clear() { lock (Locker) { LastName = null; SetImage(null); } }
 
 
 
@@ -104,13 +134,13 @@ namespace FKG_Info
         {
             lock (Locker)
             {
-                if (df == null) { Image = null; return; }
+                if (df == null) { SetImage(null); return; }
 
                 if (LastName != df.Name) return;
 
                 // Lock! Lock!! Lock!!! Image protection need more Locks!
                 // No more "Object is currently in use elsewhere"!
-                lock (df.Locker) Image = df.Image;
+                lock (df.Locker) SetImage(df.Image, false);
             }
         }
 

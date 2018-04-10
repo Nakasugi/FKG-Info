@@ -128,7 +128,7 @@ namespace FKG_Info
         public void ExportIDs()
         {
             string folder = Program.DB.DataFolder + "\\Export";
-            if (!Directory.Exists(folder)) try { Directory.CreateDirectory(folder); } catch { return; }
+            if (!Helper.CheckFolder(folder)) return;
 
             string path = folder + "\\FlowerIDs.txt";
             FileStream fs = new FileStream(path, FileMode.Create);
@@ -146,6 +146,72 @@ namespace FKG_Info
 
             sr.Close();
             sw.Close();
+        }
+
+
+
+        public void ExportFlowerData(int refid)
+        {
+            string folder = Program.DB.DataFolder + "\\Export";
+            if (!Helper.CheckFolder(folder)) return;
+
+            string path = folder + "\\Flower" + refid.ToString("D4") + ".csv";
+            FileStream fs = new FileStream(path, FileMode.Create);
+            StreamWriter sw = new StreamWriter(fs);
+
+            List<string[]> flowerData = new List<string[]>();
+
+            string data = GetData("masterCharacter");
+
+            StringReader sr = new StringReader(data);
+            while (true)
+            {
+                string line = sr.ReadLine();
+                if (line == null) break;
+
+                string[] values = line.Split(',');
+                if (values[37] != refid.ToString()) continue;
+
+                flowerData.Add(values);
+            }
+            sr.Close();
+
+            string[] fieldNames =
+            {
+                "ID",          "ID",            "Family",      "Nation",
+                "unknown",     "ShortName",     "unknown",     "Rarity",
+                "Type",        "FavGift",       "Ability1ID",  "Ability2ID",
+                "SkillID",     "unknown",       "unknown",     "HPLvMin",
+                "HPLvMax",     "AtkLvMin",      "AtkLvMax",    "DefLvMin",
+                "DefLvMax",    "SpdLvMin",      "SpdLvMax",    "HpApm",
+                "AtkAmp",      "DefAmp",        "HpApmEx",     "AtkAmpEx",
+                "DefAmpEx",    "SellCost",      "SortCat",     "unknown",
+                "isNotPreEvo", "IsKnight",      "HPAff1",      "AtkAff1",
+                "DefAff1",     "RefID",         "Evolution",   "unknown",
+                "HPAff2",      "AtkAff2",       "DefAff2",     "unknown",
+                "unknown",     "IsBloomed",     "CanBloom",    "Name",
+                "NoBloomCG",   "unknown",       "unknown",     "LibararyID",
+                "unknown",     "IsEventKnight", "unknown",     "unknown",
+                "unknown",     "unknown",       "GrownID",     "IsGrown",
+                "CanGrow"
+            };
+
+            sw.WriteLine("CSV");
+            if (flowerData.Count > 0)
+            {
+                for (int i = 0; i < flowerData[0].Length; i++)
+                {
+                    string line = i.ToString("D2") + ";";
+                    if (i < fieldNames.Length) line += fieldNames[i];
+
+                    foreach (string[] fdt in flowerData) line += ";" + fdt[i];
+
+                    sw.WriteLine(line);
+                }
+            }
+
+            sw.Close();
+
         }
     }
 }

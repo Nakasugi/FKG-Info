@@ -82,6 +82,8 @@
     <Compile Include="AdvPictureBox.Designer.cs">
       <DependentUpon>AdvPictureBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="BrowsingHistory.cs" />
+    <Compile Include="IconsAtlas.cs" />
     <Compile Include="ComplexName.cs" />
     <Compile Include="EquipFastViewForm.cs">
       <SubType>Form</SubType>
@@ -109,10 +111,12 @@
     <Compile Include="FlowerSelectControl.Designer.cs">
       <DependentUpon>FlowerSelectControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="FlowersList.cs" />
     <Compile Include="FlowerStats.cs" />
     <Compile Include="BaseInfo.cs" />
     <Compile Include="GardenItemInfo.cs" />
     <Compile Include="getMaster.cs" />
+    <Compile Include="GrowInfo.cs" />
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="FlowerDataBase.cs" />
     <Compile Include="FlowerInfo.cs" />
@@ -131,6 +135,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResHelper.cs" />
     <Compile Include="SkillInfo.cs" />
     <Compile Include="SkinInfo.cs" />
     <Compile Include="SoundPlayer.cs" />

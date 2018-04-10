@@ -19,6 +19,10 @@ namespace FKG_Info
         public int ID { get; protected set; }
 
         public bool Filter;
+        public bool Updated;
+
+        public int Version { get; private set; }
+
 
 
 
@@ -28,6 +32,8 @@ namespace FKG_Info
 
             ID = 0;
             Filter = true;
+            Version = 0;
+            Updated = false;
         }
 
 
@@ -51,5 +57,22 @@ namespace FKG_Info
 
 
         public virtual int CompareTo(object obj, SortBy sortType) { return CompareTo((BaseInfo)obj); }
+
+
+        protected int SetVersion(string version)
+        {
+            if (version == null) return 0;
+
+            Version = 0;
+
+            try
+            {
+                string[] subvs = version.Split('.');
+                Version = 1000000 * int.Parse(subvs[0]) + 1000 * int.Parse(subvs[1]) + int.Parse(subvs[2]);
+            }
+            catch { }
+
+            return Version;
+        }
     }
 }

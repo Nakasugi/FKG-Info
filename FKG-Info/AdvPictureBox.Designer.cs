@@ -16,6 +16,12 @@ namespace FKG_Info
             if (disposing && (components != null))
             {
                 components.Dispose();
+
+                if ((base.Image != null) && NeedImageDispose)
+                {
+                    base.Image.Dispose();
+                    base.Image = null;
+                }
             }
             base.Dispose(disposing);
         }

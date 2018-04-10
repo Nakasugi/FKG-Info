@@ -6,33 +6,39 @@
 
         public string ShortName { get; private set; }
 
-        public int Rarity{ get; private set; }
+        public int RefID { get; private set; }
+        public int Rarity { get; private set; }
         public int Nation { get; private set; }
         public int AttackType { get; private set; }
         public int FavoriteGift { get; private set; }
         public int Family { get; private set; }
 
+        public int Evolution { get; private set; }
+
         private int Skill;
 
-        private int[] Ability1;
-        private int[] Ability2;
-
-        private int[] ImageID;
-
-        private int ExclusiveSkinID;
+        private int Ability1;
+        private int Ability2;
 
 
-        private int Evol;
-        private int EvolMax;
-        private bool NoBloomCG;
-        private bool IsEventKnight;
+        public bool CanBloom { get; private set; }
+        private bool IsBloomed;
+        private int GrownID;
+        public bool CanGrow { get; private set; }
+        public bool IsGrown { get; private set; }
+
+
+
+        public bool NoBloomCG { get; private set; }
+        public bool IsEventKnight { get; private set; }
 
 
         public int SortCategory { get; private set; }
-        public bool NoKnight { get; private set; }
+        public bool IsKnight { get; private set; }
 
-        
-        private FlowerStats[] Stats;
+        private int ExclusiveSkinID;
+
+        public FlowerStats Stats { get; private set; }
 
         private const int EVOL_NUM = 3;
 
@@ -41,14 +47,13 @@
         public Animator.Type SelectedImage { get; private set; }
         public Animator.EmoType SelectedEmotion { get; private set; }
 
-
-        public bool Account1, Account2;
+        public int AtlasIconID;
 
 
 
         private static class MrFields
         {
-            public const int ImageID = 0;
+            public const int ID = 0;
             public const int Family = 2;
             public const int Nation = 3;
             public const int ShortName = 5;
@@ -59,13 +64,20 @@
             public const int Ability2ID = 11;
             public const int SkillID = 12;
             public const int SortCat = 30;
-            public const int NoKnight = 32;
-            public const int ID = 37;
-            public const int Evol = 38;
+            public const int isNotPreEvo = 32;
+            public const int IsKnight = 33;
+            public const int RefID = 37;
+            public const int Evolution = 38;
+            public const int IsBloomed = 45;
+            public const int CanBloom = 46;
             public const int Name = 47;
             public const int NoBloomCG = 48;
             public const int LibararyID = 51;
             public const int IsEventKnight = 53;
+            public const int Version = 57;
+            public const int GrownID = 58;
+            public const int IsGrown = 59;
+            public const int CanGrow = 60;
         }
 
 
@@ -109,91 +121,97 @@
             "Book"
         };
 
- 
+
+
         public enum SpecFilter
         {
-            All_Knights, Has_Bloom_Form, No_Bloom_Form, Has_Exclusive_Skin,
+            All_Knights, No_Bloom_Form, Has_Exclusive_Skin, Can_Grow,
             All_Units, All_Materials,
             Bloom_Materials, Skill_Materials, Equip_Materials,
             Other
+
         }
 
 
-        public struct Evolution
+        public struct Variation
         {
             public const int Base = 0;
-            public const int Awakened = 1;
+            public const int Evolved = 1;
             public const int Bloomed = 2;
+            public const int GrownEvolved = 3;
+            public const int GrownBloomed = 4;
+            public const int Grown = 98;
+            //public const int Count = 4;
         };
+
+        public static readonly string[] VariationNames = 
+            { "Base", "Evolved", "Bloomed", "Grown Evolved", "Grown Bloomed" };
 
 
 
         public FlowerInfo()
         {
+            ID = 0;
             BaseType = ObjectType.Flower;
 
-            ID = 0;
-            EvolMax = 0;
-
             Name = new ComplexName();
-
-            Ability1 = new int[EVOL_NUM];
-            Ability2 = new int[EVOL_NUM];
-            ImageID = new int[EVOL_NUM];
-
-            NoBloomCG = false;
-            NoKnight = false;
-
-            Account1 = false;
-            Account2 = false;
-
-            Stats = new FlowerStats[EVOL_NUM];
         }
 
 
 
         public FlowerInfo(string[] masterData) : this()
         {
-            if (masterData.Length < 54) return;
+            if (masterData.Length < 62) return;
 
             int parsedValue;
             if (!int.TryParse(masterData[MrFields.ID], out parsedValue)) return;
-
             ID = parsedValue;
+
+            int.TryParse(masterData[MrFields.RefID], out parsedValue); RefID = parsedValue;
+            if (RefID == 0) ID = 0;
+            if (ID == 0) return;
+
             Name.Kanji = masterData[MrFields.Name].Replace("\"", "");
             Name.AutoRomaji();
 
             ShortName = masterData[MrFields.ShortName].Replace("\"", "");
 
-            int.TryParse(masterData[MrFields.Evol], out Evol); Evol--;
-            if ((Evol < 0) || (Evol > 2)) { ID = 0; return; }
+            SetVersion(masterData[MrFields.Version]);
 
-            EvolMax = Evol;
 
-            if (masterData[MrFields.NoBloomCG] == "1") NoBloomCG = true;
-            if (masterData[MrFields.IsEventKnight] == "1") IsEventKnight = true;
+            //if ((Evol < 0) || (Evol > 2)) { ID = 0; return; }
 
-            int.TryParse(masterData[MrFields.ImageID], out ImageID[Evol]);
-            int.TryParse(masterData[MrFields.Ability1ID], out Ability1[Evol]);
-            int.TryParse(masterData[MrFields.Ability2ID], out Ability2[Evol]);
+            //EvolMax = Evol;
+
+
+            if (masterData[MrFields.CanBloom] != "0") CanBloom = true;
+            if (masterData[MrFields.IsBloomed] != "0") IsBloomed = true;
+            if (masterData[MrFields.NoBloomCG] != "0") NoBloomCG = true;
+            if (masterData[MrFields.IsEventKnight] != "0") IsEventKnight = true;
+            if (masterData[MrFields.IsKnight] != "0") IsKnight = true;
+            if (masterData[MrFields.CanGrow] != "0") CanGrow = true;
+            if (masterData[MrFields.IsGrown] != "0") IsGrown = true;
+
+            int.TryParse(masterData[MrFields.Evolution], out parsedValue); Evolution = parsedValue - 1;
+
+            int.TryParse(masterData[MrFields.SkillID], out Skill);
+            int.TryParse(masterData[MrFields.Ability1ID], out Ability1);
+            int.TryParse(masterData[MrFields.Ability2ID], out Ability2);
 
             int.TryParse(masterData[MrFields.Family], out parsedValue); Family = parsedValue;
             int.TryParse(masterData[MrFields.Rarity], out parsedValue); Rarity = parsedValue;
             int.TryParse(masterData[MrFields.Nation], out parsedValue); Nation = parsedValue;
             int.TryParse(masterData[MrFields.Type], out parsedValue); AttackType = parsedValue;
             int.TryParse(masterData[MrFields.FavGift], out parsedValue); FavoriteGift = parsedValue;
+           
 
-            int.TryParse(masterData[MrFields.SkillID], out Skill);
+            int.TryParse(masterData[MrFields.SortCat], out parsedValue); SortCategory = parsedValue;
+            int.TryParse(masterData[MrFields.GrownID], out parsedValue); GrownID = parsedValue;
 
-            if (Evol == 0)
-            {
-                int.TryParse(masterData[MrFields.SortCat], out parsedValue); SortCategory = parsedValue;
-                if (masterData[MrFields.NoKnight] != "0") NoKnight = true;
-            }
 
-            Stats[Evol] = new FlowerStats(masterData);
+            Stats = new FlowerStats(masterData);
 
-            if (ImageID[Evol] >= 700000) ID = 0;
+            if (ID >= 700000) ID = 0;
         }
 
 
@@ -204,9 +222,9 @@
         /// <param name="view"></param>
         /// <param name="evol"></param>
         /// <param name="translation"></param>
-        public void FillGrid(System.Windows.Forms.DataGridView view, int evol)
+        public void FillGrid(System.Windows.Forms.DataGridView view)
         {
-            evol = evol > EvolMax ? EvolMax : evol;
+            //evol = evol > EvolMax ? EvolMax : evol;
 
             int rowid;
 
@@ -214,7 +232,7 @@
 
             view.Rows.Clear();
 
-            view.Rows.Add("Ev:ID:ImID", evol + ":" + ID + ":" + ImageID[evol]);
+            view.Rows.Add("RefID:ImgID", RefID + ":" + ID);
             view.Rows.Add("Kanji", Name.Kanji);
             view.Rows.Add("Romaji", Name.Romaji);
             view.Rows.Add("DMM Wiki", Name.EngDMM);
@@ -223,16 +241,17 @@
             view.Rows.Add("Nation", GetNation());
             view.Rows.Add("Gift", Gifts[FavoriteGift]);
 
-            FlowerStats fwst = Stats[evol];
+            FlowerStats fwst = Stats;
             if (fwst != null)
             {
-                rowid = view.Rows.Add("HitPoints", fwst.GetHitPoints());
+                rowid = view.Rows.Add("HitPoints", fwst.GetHitPointsInfo());
                 view.Rows[rowid].Cells[1].ToolTipText = fwst.GetHitPointsDetailedInfo();
+                //view.Rows[rowid].Cells[1].
                 view.Rows[rowid].Cells[1].Style = blueFonfStyle;
-                rowid = view.Rows.Add("Attack", fwst.GetAttack());
+                rowid = view.Rows.Add("Attack", fwst.GetAttackInfo());
                 view.Rows[rowid].Cells[1].ToolTipText = fwst.GetAttackDetailedInfo();
                 view.Rows[rowid].Cells[1].Style = blueFonfStyle;
-                rowid = view.Rows.Add("Defense", fwst.GetDefense());
+                rowid = view.Rows.Add("Defense", fwst.GetDefenseInfo());
                 view.Rows[rowid].Cells[1].ToolTipText = fwst.GetDefenseDetailedInfo();
                 view.Rows[rowid].Cells[1].Style = blueFonfStyle;
 
@@ -245,23 +264,25 @@
 
             for (int i = 0; i < 2 * AbilityInfo.SUBABL_NUM; i++)
             {
-                var adata = GetAbilityData(i, evol);
+                var adata = GetAbilityData(i);
                 if (adata == null) continue;
                 if (adata[0] == 0) continue;
 
-                var info = GetAbilitiesInfo(i, evol);
+                var info = GetAbilitiesInfo(i);
                 if (info == null) continue;
 
                 var image = Program.DB.AbilityIcons[Program.DB.TranslatorAbilities.GetIconId(adata)];
-                var ids = GetAbilitiesInfo(i, evol, true);
+                var ids = GetAbilitiesInfo(i, true);
                 view.Rows.Add(Helper.CreateDGVRow(image, info, ids));
             }
 
             if (fwst != null)
             {
-                rowid = view.Rows.Add("Overall Force", fwst.GetOverallForce());
+                rowid = view.Rows.Add("Overall Force", fwst.GetOverallForceInfo());
                 view.Rows[rowid].Cells[1].ToolTipText = fwst.GetDetailedOverallForceInfo();
             }
+
+            //view.Rows.Add("Version", Version.ToString());
 
             if (view.Rows.Count > 11)
             {
@@ -273,11 +294,9 @@
 
 
 
-        public int[] GetAbilityData(int n, int evol)
+        public int[] GetAbilityData(int n)
         {
-            evol = CheckEvolutionValue(evol);
-
-            AbilityInfo ab = Program.DB.GetAbility(Ability1[evol]);
+            AbilityInfo ab = Program.DB.GetAbility(Ability1);
 
             if (ab != null)
             {
@@ -288,7 +307,7 @@
                 else
                 {
                     n -= ab.Count;
-                    ab = Program.DB.GetAbility(Ability2[evol]);
+                    ab = Program.DB.GetAbility(Ability2);
                     if (ab != null) return ab.GetParams(n);
                 }
             }
@@ -298,24 +317,24 @@
 
 
 
-        public int GetAbilityTypeID(int n, int evol)
+        public int GetAbilityTypeID(int n)
         {
-            return GetAbilityData(n, evol)[0];
+            return GetAbilityData(n)[0];
         }
 
 
 
-        public string GetAbilitiesInfo(int n, int evol, bool getIDs = false)
+        public string GetAbilitiesInfo(int n, bool getIDs = false)
         {
 
 
-            int id = GetAbilityTypeID(n, evol);
+            int id = GetAbilityTypeID(n);
 
             if (id == 0) return null;
 
-            evol = CheckEvolutionValue(evol);
+            //evol = CheckEvolutionValue(evol);
 
-            AbilityInfo ab = Program.DB.GetAbility(Ability1[evol]);
+            AbilityInfo ab = Program.DB.GetAbility(Ability1);
 
             if (ab != null)
             {
@@ -326,7 +345,7 @@
                 else
                 {
                     n -= ab.Count;
-                    ab = Program.DB.GetAbility(Ability2[evol]);
+                    ab = Program.DB.GetAbility(Ability2);
                     if (ab != null) return ab.GetInfo(n, getIDs);
                 }
             }
@@ -351,17 +370,10 @@
         {
             AbilityInfo ability;
 
-            foreach (int ab1 in Ability1)
-            {
-                ability = Program.DB.GetAbility(ab1);
-                if (ability != null) if (ability.CheckTypeID(type)) return true;
-            }
-
-            foreach (int ab2 in Ability2)
-            {
-                ability = Program.DB.GetAbility(ab2);
-                if (ability != null) if (ability.CheckTypeID(type)) return true;
-            }
+            ability = Program.DB.GetAbility(Ability1);
+            if (ability != null) if (ability.CheckTypeID(type)) return true;
+            ability = Program.DB.GetAbility(Ability2);
+            if (ability != null) if (ability.CheckTypeID(type)) return true;
 
             return false;
         }
@@ -372,17 +384,10 @@
         {
             AbilityInfo ability;
 
-            foreach (int ab1 in Ability1)
-            {
-                ability = Program.DB.GetAbility(ab1);
-                if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
-            }
-
-            foreach (int ab2 in Ability2)
-            {
-                ability = Program.DB.GetAbility(ab2);
-                if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
-            }
+            ability = Program.DB.GetAbility(Ability1);
+            if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
+            ability = Program.DB.GetAbility(Ability2);
+            if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
 
             return false;
         }
@@ -393,13 +398,30 @@
         {
             bool res = false;
 
-            search = search.ToLower();
-            if (Name.Kanji != null) res |= Name.Kanji.ToLower().Contains(search);
-            if (Name.Romaji != null) res |= Name.Romaji.ToLower().Contains(search);
-            if (Name.EngDMM != null) res |= Name.EngDMM.ToLower().Contains(search);
-            if (Name.EngNutaku != null) res |= Name.EngNutaku.ToLower().Contains(search);
+            string lowSearch = search.ToLower();
 
-            for (int i = 0; i < EVOL_NUM; i++) if (ImageID[i] != 0) res |= ImageID[i].ToString().Contains(search);
+            if (Name.Kanji != null) res |= Name.Kanji.ToLower().Contains(lowSearch);
+            if (Name.Romaji != null) res |= Name.Romaji.ToLower().Contains(lowSearch);
+            if (Name.EngDMM != null) res |= Name.EngDMM.ToLower().Contains(lowSearch);
+            if (Name.EngNutaku != null) res |= Name.EngNutaku.ToLower().Contains(lowSearch);
+
+            res |= ID.ToString().Contains(search);
+
+            if (lowSearch.Length > 3)
+            {
+                if (lowSearch.Substring(0, 3) == "id=")
+                {
+                    if (lowSearch.Substring(3) == RefID.ToString()) res = true;
+                }
+            }
+
+            if (lowSearch.Length > 5)
+            {
+                if (lowSearch.Substring(0, 5) == "name=")
+                {
+                    if (search.Substring(5) == Name.Romaji) res = true;
+                }
+            }
 
             return res;
         }
@@ -422,37 +444,40 @@
 
 
 
-        /// <summary>
-        /// Image ID
-        /// </summary>
-        /// <param name="evol">Evolution tear: 0 = base, 1 = evol, 2 = bloom.</param>
-        /// <param name="ex">If true, return exclusive skin ID.</param>
-        /// <returns></returns>
-        public int GetImageEvolID(int evol, bool ex = false)
+        public int GetImageID(bool exskin = false)
         {
-            if ((ex) && (ExclusiveSkinID != 0)) return ExclusiveSkinID;
+            if (exskin) return ExclusiveSkinID;
 
-            return evol > EvolMax ? 0 : ImageID[evol];
+            if (IsGrown)
+                return Program.DB.GrownImageIDReplacer.ReplaceImageID(GrownID);
+            else
+                return ID;
+        }
+
+        public string GetImageStringID(bool exskin = false)
+        {
+            return GetImageID(exskin).ToString();
         }
 
 
-        public int CheckEvolutionValue(int evol) { return evol > EvolMax ? EvolMax : evol; }
+
+        public bool CheckIsEvent(bool invert = false)
+        {
+            if (!IsKnight) return false;
+
+            return IsEventKnight ^ invert;
+        }
 
 
-        /// <summary>
-        /// Check is flower has bloom form or bloom CG.
-        /// </summary>
-        /// <param name="checkcg"></param>
-        /// <param name="invert"></param>
-        /// <returns></returns>
+
         public bool CheckBloomForm(bool checkcg = false, bool invert = false)
         {
-            if (NoKnight) return false;
+            if (!IsKnight) return false;
 
-            bool res;
+            bool res = true;
 
-            if(!checkcg)
-                res = (EvolMax > 1) ^ invert;
+            if (!checkcg)
+                res = CanBloom ^ invert;
             else
                 res = (!NoBloomCG) ^ invert;
 
@@ -460,17 +485,100 @@
         }
 
 
+
+        public int GetBaseID()
+        {
+            if (!IsKnight) return ID;
+
+            switch (Evolution)
+            {
+                case Variation.Evolved: return ID - 1;
+                case Variation.Bloomed: return ID - 300000;
+                case Variation.Grown:
+                    if (CanBloom) return ID - 300000;
+                    if (IsBloomed) return ID - 300001;
+                    break;
+                default: break;
+            }
+
+            return ID;
+        }
+
+
+
+        private int GetVariation()
+        {
+            if (Evolution == Variation.Grown)
+            {
+                if (CanBloom) return Variation.GrownEvolved;
+                if (IsBloomed) return Variation.GrownBloomed;
+            }
+            return Evolution;
+        }
+
+
+
+        public int GetNextEvolutionID()
+        {
+            int nextid = -1;
+
+            switch (Evolution)
+            {
+                case Variation.Base: nextid = ID + 1; break;
+                case Variation.Evolved: nextid = ID + 300000 - 1; break;
+                case Variation.Bloomed: nextid = ID + 1; break;
+                case Variation.Grown: if (CanBloom) nextid = ID + 1; break;
+                default: break;
+            }
+
+            return nextid;
+        }
+
+
+
+        public int GetPrevEvolutionID()
+        {
+            int previd = -1;
+
+            switch (Evolution)
+            {
+                case Variation.Evolved: previd = ID - 1; break;
+                case Variation.Bloomed: previd = ID - 300000 + 1; break;
+                case Variation.Grown:
+                    if (CanBloom)
+                        previd = ID - 300000 + 1;
+                    else
+                        previd = ID - 1;
+                    break;
+                default: break;
+            }
+
+            return previd;
+        }
+
+        
+
         /// <summary>
-        /// Check is event knight, based on isEvent param.
-        /// If invert = true, return true only for no event.
+        /// 0,1,2 - evol, 3 - grown env, 4 grown blm.
         /// </summary>
+        /// <param name="variation"></param>
         /// <param name="invert"></param>
         /// <returns></returns>
-        public bool CheckIsEvent(bool invert = false)
+        public bool CheckVariation(int variation, bool invert = false)
         {
-            if (NoKnight) return false;
+            if (!IsKnight) return false;
 
-            return IsEventKnight ^ invert;
+            bool res = false;
+
+            if (Evolution == variation) res = true;
+
+            if (Evolution == 98)
+            {
+                if ((variation == 3) && (CanBloom)) res = true;
+                if ((variation == 4) && (IsBloomed)) res = true;
+            }
+
+            return res ^ invert;
         }
 
 
@@ -480,26 +588,46 @@
             switch (spec)
             {
                 case SpecFilter.All_Units: return true;
-                case SpecFilter.All_Materials: return NoKnight;
+                case SpecFilter.All_Materials: return !IsKnight;
                 case SpecFilter.Skill_Materials:
-                    if ((SortCategory == 101) && (ImageID[0] >= 200000)) return true;
+                    if ((SortCategory == 101) && (ID >= 200000)) return true;
                     break;
                 case SpecFilter.Equip_Materials:
-                    if ((SortCategory == 102) && (ImageID[0] >= 200000)) return true;
+                    if ((SortCategory == 102) && (ID >= 200000)) return true;
                     break;
                 case SpecFilter.Bloom_Materials:
                     if ((SortCategory == 400) || (SortCategory == 500)) return true;
                     break;
                 case SpecFilter.Other:
                     if ((SortCategory == 300) || (SortCategory == 201)) return true;
-                    if ((SortCategory > 100) && (SortCategory < 104) && (ImageID[0] < 200000)) return true;
+                    if ((SortCategory > 100) && (SortCategory < 104) && (ID < 200000)) return true;
                     break;
                 default: break;
             }
             return false;
         }
 
-        
+
+
+        public void FindExclusiveSkin(FlowerDataBase db)
+        {
+            SkinInfo skin;
+
+            int id = ID;
+
+            if (IsGrown) id = db.GrownImageIDReplacer.ReplaceImageID(GrownID);
+
+            skin = db.Skins.Find(sk => sk.ID == id);
+            if (skin == null) return;
+            skin = db.Skins.Find(sk => sk.CheckExclusive(skin));
+            if (skin == null) return;
+
+            ExclusiveSkinID = skin.ID;
+        }
+
+        public bool HasExclusiveSkin() { return ExclusiveSkinID != 0; }
+
+
 
         /// <summary>
         /// Sort: (-1: this, obj) (1: obj, this)
@@ -518,6 +646,9 @@
             // Sl,Bl,Pr,Mg
             if (AttackType > cmpFlower.AttackType) return 1;
             if (AttackType < cmpFlower.AttackType) return -1;
+
+            if (RefID > cmpFlower.RefID) return 1;
+            if (RefID < cmpFlower.RefID) return -1;
 
             //string S0 = Name.Romaji.Substring(0, 2);
             //string S1 = Flower.Name.Romaji.Substring(0, 2);
@@ -542,24 +673,24 @@
                     if (SortCategory > fw.SortCategory) return -1;
                     break;
                 case SortBy.OverallForce:
-                    if (Stats[EvolMax].GetOverallForce() < fw.Stats[fw.EvolMax].GetOverallForce()) return 1;
-                    if (Stats[EvolMax].GetOverallForce() > fw.Stats[fw.EvolMax].GetOverallForce()) return -1;
+                    if (Stats.GetOverallForce() < fw.Stats.GetOverallForce()) return 1;
+                    if (Stats.GetOverallForce() > fw.Stats.GetOverallForce()) return -1;
                     break;
                 case SortBy.Attack:
-                    if (Stats[EvolMax].GetAttack() < fw.Stats[fw.EvolMax].GetAttack()) return 1;
-                    if (Stats[EvolMax].GetAttack() > fw.Stats[fw.EvolMax].GetAttack()) return -1;
+                    if (Stats.GetAttack() < fw.Stats.GetAttack()) return 1;
+                    if (Stats.GetAttack() > fw.Stats.GetAttack()) return -1;
                     break;
                 case SortBy.Defense:
-                    if (Stats[EvolMax].GetDefense() < fw.Stats[fw.EvolMax].GetDefense()) return 1;
-                    if (Stats[EvolMax].GetDefense() > fw.Stats[fw.EvolMax].GetDefense()) return -1;
+                    if (Stats.GetDefense() < fw.Stats.GetDefense()) return 1;
+                    if (Stats.GetDefense() > fw.Stats.GetDefense()) return -1;
                     break;
                 case SortBy.HitPoints:
-                    if (Stats[EvolMax].GetHitPoints() < fw.Stats[fw.EvolMax].GetHitPoints()) return 1;
-                    if (Stats[EvolMax].GetHitPoints() > fw.Stats[fw.EvolMax].GetHitPoints()) return -1;
+                    if (Stats.GetHitPoints() < fw.Stats.GetHitPoints()) return 1;
+                    if (Stats.GetHitPoints() > fw.Stats.GetHitPoints()) return -1;
                     break;
                 case SortBy.Speed:
-                    if (Stats[EvolMax].SpeedLvMax < fw.Stats[fw.EvolMax].SpeedLvMax) return 1;
-                    if (Stats[EvolMax].SpeedLvMax > fw.Stats[fw.EvolMax].SpeedLvMax) return -1;
+                    if (Stats.SpeedLvMax < fw.Stats.SpeedLvMax) return 1;
+                    if (Stats.SpeedLvMax > fw.Stats.SpeedLvMax) return -1;
                     break;
                 default: break;
             }
@@ -567,47 +698,5 @@
             return CompareTo(obj);
         }
 
-
-
-        public void FindExclusiveSkin(System.Collections.Generic.List<SkinInfo> skins)
-        {
-            SkinInfo skin;
-            
-            skin = skins.Find(sk => sk.ID == ImageID[0]);
-            if (skin == null) return;
-
-            skin = skins.Find(sk => sk.CheckExclusive(skin));
-            if (skin == null) return;
-
-            ExclusiveSkinID = skin.ID;
-        }
-
-        public bool HasExclusiveSkin() { return ExclusiveSkinID != 0; }
-
-
-
-        public void Update(FlowerInfo flower)
-        {
-            int evol = flower.Evol;
-
-            if (EvolMax < evol) EvolMax = evol;
-
-            ImageID[evol] = flower.ImageID[evol];
-
-            Ability1[evol] = flower.Ability1[evol];
-            Ability2[evol] = flower.Ability2[evol];
-
-            Stats[evol] = flower.Stats[evol];
-        }
-
-
-
-        public int GetAccStatus() { return ((Account1 ? 1 : 0) | ((Account2 ? 1 : 0) << 1)); }
-
-        public void SetAccStatus(int status)
-        {
-            if ((status & 0x01) != 0) Account1 = true;
-            if ((status & 0x02) != 0) Account2 = true;
-        }
     }
 }

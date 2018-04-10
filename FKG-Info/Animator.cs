@@ -15,8 +15,9 @@ namespace FKG_Info
         public FlowerInfo Flower;
         public Type ImageType;
         public EmoType Emotion;
-        public int Evolution;
         public bool Exclusive;
+        public bool RawImage;
+        public int ExID;
 
 
         private System.Windows.Forms.Timer AnimationTimer;
@@ -34,8 +35,9 @@ namespace FKG_Info
             Flower = null;
             ImageType = Type.Stand;
             Emotion = EmoType.Normal;
-            Evolution = FlowerInfo.Evolution.Base;
             Exclusive = false;
+            RawImage = false;
+            ExID = 0;
         }
 
 
@@ -45,8 +47,9 @@ namespace FKG_Info
             Flower = ani.Flower;
             ImageType = ani.ImageType;
             Emotion = ani.Emotion;
-            Evolution = ani.Evolution;
             Exclusive = ani.Exclusive;
+            RawImage = ani.RawImage;
+            ExID = ani.ExID;
         }
 
 
@@ -81,13 +84,17 @@ namespace FKG_Info
         {
             if (Flower == null) return null;
 
-            string name = Flower.GetImageEvolID(Evolution, Exclusive).ToString();
+            string name = Flower.GetImageStringID(Exclusive);
             name = GetPrefix(ImageType) + name;
 
             if ((ImageType == Type.Bustup) || (ImageType == Type.Home)) name += GetSuffix(Emotion);
 
             return name;
         }
+
+
+
+        public FlowerInfo GetFlower() { return Flower; }
 
 
 

@@ -39,6 +39,7 @@
         public const int STAT_AMP = 0x04;
         public const int STAT_AMPEX = 0x08;
         public const int STAT_MAX = STAT_BASE | STAT_AFFECTION | STAT_AMP | STAT_AMPEX;
+        public const int STAT_MAX_NOAMPEX = STAT_MAX ^ STAT_AMPEX;
 
 
         private static class MrFields
@@ -54,9 +55,9 @@
             public const int HpApm = 23;
             public const int AtkAmp = 24;
             public const int DefAmp = 25;
-            public const int HpApmEx = 23;
-            public const int AtkAmpEx = 24;
-            public const int DefAmpEx = 25;
+            public const int HpApmEx = 26;
+            public const int AtkAmpEx = 27;
+            public const int DefAmpEx = 28;
             public const int HPAff1 = 34;
             public const int AtkAff1 = 35;
             public const int DefAff1 = 36;
@@ -128,6 +129,16 @@
             return res;
         }
 
+        public string GetHitPointsInfo()
+        {
+            string res;
+            res = GetHitPoints(STAT_MAX_NOAMPEX).ToString() + "      ";
+            res = res.Remove(6);
+            res += "(" + GetHitPoints(STAT_MAX) + ")";
+            return res;
+        }
+
+
         public int GetAttack(int attr = STAT_MAX)
         {
             if (attr == STAT_LOW) return AttackLvMin;
@@ -139,6 +150,16 @@
             if ((attr & STAT_AMPEX) != 0) res += AttackAmpulesEx;
             return res;
         }
+
+        public string GetAttackInfo()
+        {
+            string res;
+            res = GetAttack(STAT_MAX_NOAMPEX).ToString() + "      ";
+            res = res.Remove(6);
+            res += "(" + GetAttack(STAT_MAX) + ")";
+            return res;
+        }
+
 
         public int GetDefense(int attr = STAT_MAX)
         {
@@ -152,21 +173,29 @@
             return res;
         }
 
+        public string GetDefenseInfo()
+        {
+            string res;
+            res = GetDefense(STAT_MAX_NOAMPEX).ToString() + "      ";
+            res = res.Remove(6);
+            res += "(" + GetDefense(STAT_MAX) + ")";
+            return res;
+        }
+
+
 
         public int GetOverallForce(int attr = STAT_MAX)
         {
             return GetHitPoints(attr) + GetAttack(attr) + GetDefense(attr);
         }
 
-        public string GetDetailedOverallForceInfo()
+        public string GetOverallForceInfo()
         {
-            string info = "";
-            info += "Lvl Max = " + GetOverallForce(STAT_BASE) + "\r\n";
-            info += "+Affection = " + GetOverallForce(STAT_BASE|STAT_AFFECTION) + "\r\n";
-            info += "+Ampules = " + GetOverallForce(STAT_BASE|STAT_AFFECTION|STAT_AMP) + "\r\n";
-            info += "+AmpulesEx = " + GetOverallForce();
-            return info;
+            return GetOverallForce(STAT_MAX_NOAMPEX) + " (" + GetOverallForce() + ")";
         }
+
+
+
 
 
 
@@ -174,10 +203,9 @@
         {
             string info = "";
             info += "Lvl Max = " + HitPointsLvMax + "\r\n";
-            info += "Affection = +" + GetHitPointsAffectionBonus(200) + "\r\n";
-            info += "Ampules = +" + HitPointAmpules + "\r\n";
-            info += "AmpulesEx = +" + HitPointAmpulesEx + "\r\n";
-            info += "Total = " + GetHitPoints();
+            info += "Affection = +" + GetHitPointsAffectionBonus(200) + " (" + (HitPointsLvMax + GetHitPointsAffectionBonus(200)) + ")\r\n";
+            info += "Ampules = +" + HitPointAmpules + " (" + (HitPointsLvMax + GetHitPointsAffectionBonus(200) + HitPointAmpules) + ")\r\n";
+            info += "AmpulesEx = +" + HitPointAmpulesEx + " (" + GetHitPoints() + ")";
             return info;
         }
 
@@ -185,10 +213,9 @@
         {
             string info = "";
             info += "Lvl Max = " + AttackLvMax + "\r\n";
-            info += "Affection = +" + GetAttackAffectionBonus(200) + "\r\n";
-            info += "Ampules = +" + AttackAmpules + "\r\n";
-            info += "AmpulesEx = +" + AttackAmpulesEx + "\r\n";
-            info += "Total = " + GetAttack();
+            info += "Affection = +" + GetAttackAffectionBonus(200) + " (" + (AttackLvMax + GetAttackAffectionBonus(200)) + ")\r\n";
+            info += "Ampules = +" + AttackAmpules + " (" + (AttackLvMax + GetAttackAffectionBonus(200) + AttackAmpules) + ")\r\n";
+            info += "AmpulesEx = +" + AttackAmpulesEx + " (" + GetAttack() + ")";
             return info;
         }
 
@@ -196,10 +223,19 @@
         {
             string info = "";
             info += "Lvl Max = " + DefenseLvMax + "\r\n";
-            info += "Affection = +" + GetHitPointsAffectionBonus(200) + "\r\n";
-            info += "Ampules = +" + DefenseAmpules + "\r\n";
-            info += "AmpulesEx = +" + DefenseAmpulesEx + "\r\n";
-            info += "Total = " + GetDefense();
+            info += "Affection = +" + GetDefenseAffectionBonus(200) + " (" + (DefenseLvMax + GetDefenseAffectionBonus(200)) + ")\r\n";
+            info += "Ampules = +" + DefenseAmpules + " (" + (DefenseLvMax + GetDefenseAffectionBonus(200) + DefenseAmpules) + ")\r\n";
+            info += "AmpulesEx = +" + DefenseAmpulesEx + " (" + GetDefense() + ")";
+            return info;
+        }
+
+        public string GetDetailedOverallForceInfo()
+        {
+            string info = "";
+            info += "Lvl Max = " + GetOverallForce(STAT_BASE) + "\r\n";
+            info += "+Affection = " + GetOverallForce(STAT_BASE | STAT_AFFECTION) + "\r\n";
+            info += "+Ampules = " + GetOverallForce(STAT_BASE | STAT_AFFECTION | STAT_AMP) + "\r\n";
+            info += "+AmpulesEx = " + GetOverallForce();
             return info;
         }
 

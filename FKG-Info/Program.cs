@@ -23,8 +23,19 @@ namespace FKG_Info
 
             SplashWindow.Start();
 
+            
             DB = FlowerDataBase.Load();
             ImageLoader = new ImageDownloader();
+
+            DB.UpdateVersions();
+
+
+            System.Threading.Thread.Sleep(500);
+
+            DB.FlowerIcons = new IconsAtlas(DB.Flowers);
+            //System.Threading.Thread.Sleep(5000);
+            //DB.FlowerIcons.Save();
+
 
             MainForm mf = new MainForm();
             SplashWindow.Stop();

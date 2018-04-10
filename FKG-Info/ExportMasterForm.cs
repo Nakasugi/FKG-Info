@@ -28,18 +28,7 @@ namespace FKG_Info
             folder = Program.DB.DataFolder + "\\Export";
 
 
-            if(!Directory.Exists(folder))
-            {
-                try
-                {
-                    Directory.CreateDirectory(folder);
-                }
-                catch
-                {
-                    Close();
-                    return;
-                }
-            }
+            if (!Helper.CheckFolder(folder)) { Close(); return; }
 
 
             foreach(var item in LsBoxMasterFields.SelectedItems)

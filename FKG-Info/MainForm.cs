@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -145,9 +145,9 @@ namespace FKG_Info
 
 
 
-            if (!Program.DB.IsSelected()) return;
+            if (!Program.DB.Flowers.IsSelected()) return;
 
-            Animation.Flower = Program.DB.GetSelected();
+            Animation.Flower = Program.DB.Flowers.GetSelected();
             PicBoxBig.AsyncLoadImage(Animation);
         }
 
@@ -184,11 +184,11 @@ namespace FKG_Info
             CloseFlowerSelector();
             CloseEquipmentSelector();
 
-            PicBoxIconBase.Clear();
-            PicBoxIconAwak.Clear();
-            PicBoxIconBloom.Clear();
+            PicBoxIconMain.Clear();
+            PicBoxIconV1.Clear();
+            PicBoxIconV2.Clear();
 
-            Program.DB.Unselect();
+            Program.DB.Flowers.Unselect();
             GridInfo.Rows.Clear();
 
             if (mode == MMItemModeChara.Name)
@@ -201,6 +201,11 @@ namespace FKG_Info
                 BtEquip.Enabled = true;
                 BtVoices.Enabled = true;
                 MMItemSelect.Enabled = true;
+                BtEvolutions.Visible = true;
+                BtVariations.Visible = true;
+                BtPrevEvolution.Visible = true;
+                PicBoxIconV1.Visible = true;
+                PicBoxIconV2.Visible = true;
             }
 
             if (mode == MMItemModeEquip.Name)
@@ -213,6 +218,11 @@ namespace FKG_Info
                 BtEquip.Enabled = false;
                 BtVoices.Enabled = false;
                 MMItemSelect.Enabled = false;
+                BtEvolutions.Visible = false;
+                BtVariations.Visible = false;
+                BtPrevEvolution.Visible = false;
+                PicBoxIconV1.Visible = false;
+                PicBoxIconV2.Visible = false;
             }
 
             if (mode == MMItemModeFurniture.Name)
@@ -224,6 +234,11 @@ namespace FKG_Info
                 BtEquip.Enabled = false;
                 BtVoices.Enabled = false;
                 MMItemSelect.Enabled = false;
+                BtEvolutions.Visible = false;
+                BtVariations.Visible = false;
+                BtPrevEvolution.Visible = false;
+                PicBoxIconV1.Visible = false;
+                PicBoxIconV2.Visible = false;
             }
 
             if (mode == MMItemModeEnemy.Name)
@@ -235,6 +250,11 @@ namespace FKG_Info
                 BtEquip.Enabled = false;
                 BtVoices.Enabled = false;
                 MMItemSelect.Enabled = false;
+                BtEvolutions.Visible = false;
+                BtVariations.Visible = false;
+                BtPrevEvolution.Visible = false;
+                PicBoxIconV1.Visible = false;
+                PicBoxIconV2.Visible = false;
             }
         }
 
@@ -242,11 +262,11 @@ namespace FKG_Info
 
         private void CMenuDelBloom_Click()
         {
-            if (!Program.DB.IsSelected()) return;
-            int id = Program.DB.GetSelected().GetImageEvolID(Animation.Evolution);
+            if (!Program.DB.Flowers.IsSelected()) return;
+            int id = Program.DB.Flowers.GetSelected().GetImageID();
             if (id == 0) return;
             Program.ImageLoader.DeleteImages(id);
-            Program.DB.Unselect();
+            Program.DB.Flowers.Unselect();
             ReloadFlower();
 
             CloseFlowerSelector();
@@ -286,7 +306,7 @@ namespace FKG_Info
 
         public void SelectFromSelector(FlowerInfo flower, bool selectorHide)
         {
-            Program.DB.Select(flower);
+            Program.DB.Flowers.Select(flower.ID);
 
             FSCtrl.SelectFlower(flower);
 
@@ -303,7 +323,7 @@ namespace FKG_Info
 
         public void SelectFromSelector(EquipmentInfo equip)
         {
-            PicBoxIconBase.AsyncLoadImage(equip);
+            PicBoxIconMain.AsyncLoadImage(equip);
             equip.FillGrid(GridInfo);
         }
 
@@ -314,30 +334,35 @@ namespace FKG_Info
         /// </summary>
         private void ReloadFlower()
         {
-            if (!Program.DB.IsSelected())
+            if (!Program.DB.Flowers.IsSelected())
             {
-                PicBoxBig.Image = null;
-                PicBoxIconBase.Image = null;
-                PicBoxIconAwak.Image = null;
-                PicBoxIconBloom.Image = null;
+                PicBoxBig.SetImage(null);
+                PicBoxIconMain.SetImage(null);
+                PicBoxIconV1.SetImage(null);
+                PicBoxIconV2.SetImage(null);
                 GridInfo.Rows.Clear();
                 return;
             }
 
-            Animation.Flower = Program.DB.GetSelected();
+            FlowerInfo flower = Program.DB.Flowers.GetSelected();
+            Animation.Flower = flower;
             Animation.Exclusive = ChBoxExSkin.Checked;
             PicBoxBig.AsyncLoadImage(Animation);
 
-            Animator icon = new Animator(Animation);
-            icon.ImageType = Animator.Type.IconLarge;
-            icon.Exclusive = false;
+            //Animator icon = new Animator(Animation);
+            //icon.ImageType = Animator.Type.IconLarge;
+            //icon.Exclusive = false;
 
-            icon.Evolution = FlowerInfo.Evolution.Base;
-            PicBoxIconBase.AsyncLoadImage(icon);
-            icon.Evolution = FlowerInfo.Evolution.Awakened;
-            PicBoxIconAwak.AsyncLoadImage(icon);
-            icon.Evolution = FlowerInfo.Evolution.Bloomed;
-            PicBoxIconBloom.AsyncLoadImage(icon);
+            //icon.Variation = FlowerInfo.Variation.Base;
+            PicBoxIconMain.Flower = flower;
+            Program.DB.FlowerIcons.GetImage(PicBoxIconMain);
+            PicBoxIconV1.Flower = Program.DB.Flowers.GetNextEvolution(flower);
+            Program.DB.FlowerIcons.GetImage(PicBoxIconV1);
+            //PicBoxIconMain.AsyncLoadImage(icon);
+            //icon.Variation = FlowerInfo.Variation.Evolved;
+            //PicBoxIconV1.AsyncLoadImage(icon);
+            //icon.Variation = FlowerInfo.Variation.Bloomed;
+            //PicBoxIconV2.AsyncLoadImage(icon);
 
             UpdateFlowerInfo();
         }
@@ -349,11 +374,11 @@ namespace FKG_Info
         /// </summary>
         private void UpdateFlowerInfo()
         {
-            if (!Program.DB.IsSelected()) return;
+            if (!Program.DB.Flowers.IsSelected()) return;
 
-            FlowerInfo flower = Program.DB.GetSelected();
+            FlowerInfo flower = Program.DB.Flowers.GetSelected();
 
-            flower.FillGrid(GridInfo, Animation.Evolution);
+            flower.FillGrid(GridInfo);
             ChBoxExSkin.Enabled = flower.HasExclusiveSkin();
         }
 
@@ -413,9 +438,9 @@ namespace FKG_Info
 
 
 
-        private void PicBoxIcon_DoubleClick(object sender, EventArgs ev)
+        private void PicBoxIconBase_DoubleClick(object sender, EventArgs ev)
         {
-            if (!Program.DB.IsSelected()) return;
+            if (!Program.DB.Flowers.IsSelected()) return;
 
             FSCtrl.Visible = false;
             PicBoxBig.Visible = true;
@@ -423,35 +448,22 @@ namespace FKG_Info
 
         private void PicBoxIconBase_Click(object sender, EventArgs ev)
         {
-            DrawIconSelectionBorder(FlowerInfo.Evolution.Base);
-            Animation.Evolution = FlowerInfo.Evolution.Base;
 
-            if (!Program.DB.IsSelected()) return;
-            Animation.Exclusive = ChBoxExSkin.Checked;
-            PicBoxBig.AsyncLoadImage(Animation);
-            UpdateFlowerInfo();
         }
 
-        private void PicBoxIconAwak_Click(object sender, EventArgs ev)
+        private void PicBoxIconV1_Click(object sender, EventArgs ev)
         {
-            DrawIconSelectionBorder(FlowerInfo.Evolution.Awakened);
-            Animation.Evolution = FlowerInfo.Evolution.Awakened;
+            if ((CurrentMode == Mode.Characters) && (PicBoxIconV1.Flower != null))
+            {
+                Program.DB.Flowers.Select(PicBoxIconV1.Flower.ID);
+                ReloadFlower();
+            }
 
-            if (!Program.DB.IsSelected()) return;
-            Animation.Exclusive = ChBoxExSkin.Checked;
-            PicBoxBig.AsyncLoadImage(Animation);
-            UpdateFlowerInfo();
         }
 
-        private void PicBoxIconBloom_Click(object sender, EventArgs ev)
+        private void PicBoxIconV2_Click(object sender, EventArgs ev)
         {
-            DrawIconSelectionBorder(FlowerInfo.Evolution.Bloomed);
-            Animation.Evolution = FlowerInfo.Evolution.Bloomed;
 
-            if (!Program.DB.IsSelected()) return;
-            Animation.Exclusive = ChBoxExSkin.Checked;
-            PicBoxBig.AsyncLoadImage(Animation);
-            UpdateFlowerInfo();
         }
         
 
@@ -510,6 +522,33 @@ namespace FKG_Info
             MessageBox.Show("Done");
         }
 
+        private void MMItemFileExportCurrent_Click(object sender, EventArgs e)
+        {
+            FlowerInfo flower = Program.DB.Flowers.GetSelected();
+            if (flower == null) return;
+            Program.DB.Master.ExportFlowerData(flower.RefID);
+        }
+
+
+
+        private void MMItemPrev_Click(object sender, EventArgs ev)
+        {
+            if (CurrentMode == Mode.Characters)
+            {
+                FlowerInfo flower = Program.DB.Flowers.GetPrev();
+                if (flower != null) ReloadFlower();
+            }
+        }
+
+
+        private void MMItemNext_Click(object sender, EventArgs ev)
+        {
+            if (CurrentMode == Mode.Characters)
+            {
+                FlowerInfo flower = Program.DB.Flowers.GetNext();
+                if (flower != null) ReloadFlower();
+            }
+        }
 
 
 
@@ -527,17 +566,18 @@ namespace FKG_Info
         private void GridInfo_MouseMove(object sender, MouseEventArgs ev) { GridInfo.Focus(); }
 
 
-
+        /*
         private void DrawIconSelectionBorder(int evol)
         {
             Brush[] brs = new Brush[3];
 
             for (int i = 0; i < 3; i++) if (i == evol) brs[i] = BrPink; else brs[i] = BrBase;
 
-            GR.FillRectangle(brs[0], GetExtRectangle(PicBoxIconBase));
-            GR.FillRectangle(brs[1], GetExtRectangle(PicBoxIconAwak));
-            GR.FillRectangle(brs[2], GetExtRectangle(PicBoxIconBloom));
+            GR.FillRectangle(brs[0], GetExtRectangle(PicBoxIconMain));
+            GR.FillRectangle(brs[1], GetExtRectangle(PicBoxIconV1));
+            GR.FillRectangle(brs[2], GetExtRectangle(PicBoxIconV2));
         }
+        */
 
         private Rectangle GetExtRectangle(PictureBox pic)
         {
@@ -548,32 +588,30 @@ namespace FKG_Info
 
         private void MainForm_Shown(object sender, EventArgs ev)
         {
-            //CurrentMode = Mode.Characters;
-            //FlowerSelect_Click(this, null);
-
-            DrawIconSelectionBorder(0);
             TopMost = true;
             BringToFront();
             TopMost = false;
+
+            //DrawIconSelectionBorder(0);
         }
 
 
 
         private void BtEquip_Click(object sender, EventArgs ev)
         {
-            if (!Program.DB.IsSelected()) return;
+            if (!Program.DB.Flowers.IsSelected()) return;
 
-            var eqs = Program.DB.GetFlowerEquipment(Program.DB.GetSelected().ID);
+            var eqs = Program.DB.GetFlowerEquipment(Program.DB.Flowers.GetSelected().RefID);
 
             new EquipFastViewForm(eqs).ShowDialog(this);
         }
 
 
 
-        private void BtVoices_Click(object sender, EventArgs e)
+        private void BtVoices_Click(object sender, EventArgs ev)
         {
             if (CurrentMode != Mode.Characters) return;
-            if (!Program.DB.IsSelected()) return;
+            if (!Program.DB.Flowers.IsSelected()) return;
 
             if (!VCCtrl.Visible)
             {
@@ -586,6 +624,48 @@ namespace FKG_Info
                 VCCtrl.Hide();
                 FSCtrl.Hide();
                 PicBoxBig.Show();
+            }
+        }
+
+
+
+
+        private void BtEvolutions_Click(object sender, EventArgs ev)
+        {
+            if ((CurrentMode == Mode.Characters) && (Program.DB.Flowers.IsSelected()))
+            {
+                FlowerInfo flower = Program.DB.Flowers.GetSelected();
+                if (flower == null) return;
+                FSCtrl.SetSearchText("id=" + flower.RefID);
+                FSCtrl.Show();
+                VCCtrl.Hide();
+                PicBoxBig.Hide();
+            }
+        }
+
+        private void BtVariations_Click(object sender, EventArgs ev)
+        {
+            if ((CurrentMode == Mode.Characters) && (Program.DB.Flowers.IsSelected()))
+            {
+                FlowerInfo flower = Program.DB.Flowers.GetSelected();
+                if (flower == null) return;
+                FSCtrl.SetSearchText("name=" + flower.Name.Romaji);
+                FSCtrl.Show();
+                VCCtrl.Hide();
+                PicBoxBig.Hide();
+            }
+        }
+
+        private void BtPrevEvolution_Click(object sender, EventArgs ev)
+        {
+            if ((CurrentMode == Mode.Characters) && (Program.DB.Flowers.IsSelected()))
+            {
+                FlowerInfo flower = Program.DB.Flowers.GetSelected();
+                if (flower == null) return;
+                flower = Program.DB.Flowers.GetPrevEvolution(flower);
+                if (flower == null) return;
+                Program.DB.Flowers.Select(flower.ID);
+                ReloadFlower();
             }
         }
     }

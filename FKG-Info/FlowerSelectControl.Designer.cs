@@ -52,6 +52,7 @@
             this.ChBoxAcc2Has = new System.Windows.Forms.CheckBox();
             this.ChBoxAcc1Filter = new System.Windows.Forms.CheckBox();
             this.ChBoxAcc2Filter = new System.Windows.Forms.CheckBox();
+            this.CmBoxVariations = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // PanelFlowers
@@ -238,7 +239,7 @@
             this.TxBoxSearch.Font = new System.Drawing.Font("Arial Unicode MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.TxBoxSearch.Location = new System.Drawing.Point(451, 66);
             this.TxBoxSearch.Name = "TxBoxSearch";
-            this.TxBoxSearch.Size = new System.Drawing.Size(134, 22);
+            this.TxBoxSearch.Size = new System.Drawing.Size(136, 22);
             this.TxBoxSearch.TabIndex = 22;
             this.TxBoxSearch.TextChanged += new System.EventHandler(this.TxBoxSearch_TextChanged);
             this.TxBoxSearch.Enter += new System.EventHandler(this.TxBoxSearch_FocusEnter);
@@ -253,7 +254,7 @@
             this.CmBoxSpecFilter.Name = "CmBoxSpecFilter";
             this.CmBoxSpecFilter.Size = new System.Drawing.Size(160, 21);
             this.CmBoxSpecFilter.TabIndex = 23;
-            this.CmBoxSpecFilter.SelectedIndexChanged += new System.EventHandler(this.ChBox_CheckedChanged);
+            this.CmBoxSpecFilter.SelectedIndexChanged += new System.EventHandler(this.CmBoxSpecFilter_CheckedChanged);
             // 
             // CmBoxAbility02
             // 
@@ -268,9 +269,9 @@
             // 
             // BtClrSearch
             // 
-            this.BtClrSearch.Location = new System.Drawing.Point(591, 66);
+            this.BtClrSearch.Location = new System.Drawing.Point(591, 65);
             this.BtClrSearch.Name = "BtClrSearch";
-            this.BtClrSearch.Size = new System.Drawing.Size(21, 22);
+            this.BtClrSearch.Size = new System.Drawing.Size(21, 23);
             this.BtClrSearch.TabIndex = 25;
             this.BtClrSearch.Text = "C";
             this.BtClrSearch.UseVisualStyleBackColor = true;
@@ -281,7 +282,7 @@
             this.ChBoxEventKnights.AutoSize = true;
             this.ChBoxEventKnights.Checked = true;
             this.ChBoxEventKnights.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.ChBoxEventKnights.Location = new System.Drawing.Point(316, 13);
+            this.ChBoxEventKnights.Location = new System.Drawing.Point(316, 64);
             this.ChBoxEventKnights.Name = "ChBoxEventKnights";
             this.ChBoxEventKnights.Size = new System.Drawing.Size(92, 17);
             this.ChBoxEventKnights.TabIndex = 26;
@@ -295,7 +296,7 @@
             this.ChBoxBloomCG.AutoSize = true;
             this.ChBoxBloomCG.Checked = true;
             this.ChBoxBloomCG.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.ChBoxBloomCG.Location = new System.Drawing.Point(316, 30);
+            this.ChBoxBloomCG.Location = new System.Drawing.Point(316, 81);
             this.ChBoxBloomCG.Name = "ChBoxBloomCG";
             this.ChBoxBloomCG.Size = new System.Drawing.Size(73, 17);
             this.ChBoxBloomCG.TabIndex = 27;
@@ -352,10 +353,22 @@
             this.ChBoxAcc2Filter.UseVisualStyleBackColor = true;
             this.ChBoxAcc2Filter.CheckStateChanged += new System.EventHandler(this.ChBox_CheckedChanged);
             // 
+            // CmBoxVariations
+            // 
+            this.CmBoxVariations.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CmBoxVariations.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CmBoxVariations.FormattingEnabled = true;
+            this.CmBoxVariations.Location = new System.Drawing.Point(316, 12);
+            this.CmBoxVariations.Name = "CmBoxVariations";
+            this.CmBoxVariations.Size = new System.Drawing.Size(129, 21);
+            this.CmBoxVariations.TabIndex = 32;
+            this.CmBoxVariations.SelectedIndexChanged += new System.EventHandler(this.CmBoxVariations_CheckedChanged);
+            // 
             // FlowerSelectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.CmBoxVariations);
             this.Controls.Add(this.ChBoxAcc2Filter);
             this.Controls.Add(this.ChBoxAcc1Filter);
             this.Controls.Add(this.ChBoxAcc2Has);
@@ -413,5 +426,6 @@
         private System.Windows.Forms.CheckBox ChBoxAcc2Has;
         private System.Windows.Forms.CheckBox ChBoxAcc1Filter;
         private System.Windows.Forms.CheckBox ChBoxAcc2Filter;
+        private System.Windows.Forms.ComboBox CmBoxVariations;
     }
 }

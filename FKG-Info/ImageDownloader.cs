@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Threading;
 using SWMI = System.Windows.Media.Imaging;
+
+
 
 namespace FKG_Info
 {
@@ -12,12 +13,15 @@ namespace FKG_Info
     {
         private const int MAX_LOADERS_CH = 16;
         private const int MAX_LOADERS_EQ = 32;
+        private const int MAX_THREADS = 1024;
 
 
         public class DownloadedFile
         {
             public string Name;
             public Image Image;
+
+            public int ExID;
 
             public object Locker;
 
@@ -26,8 +30,8 @@ namespace FKG_Info
 
 
 
-        private List<DownloadedFile> ChFiles;
-        private List<DownloadedFile> EqFiles;
+        private List<DownloadedFile> CharaFiles;
+        private List<DownloadedFile> EquipFiles;
 
         private object Locker = new object();
 
@@ -38,14 +42,11 @@ namespace FKG_Info
         public delegate void DwCompletedCallback(DownloadedFile ifile);
 
 
-        private enum IconElement { Background, Frame, Type, Evolution }
-
-
-
+        
         public ImageDownloader()
         {
-            ChFiles = new List<DownloadedFile>();
-            EqFiles = new List<DownloadedFile>();
+            CharaFiles = new List<DownloadedFile>();
+            EquipFiles = new List<DownloadedFile>();
 
             Count = 0;
             Queue = 0;
@@ -64,13 +65,16 @@ namespace FKG_Info
                 return;
             }
 
-            DownloadedFile df;
-            lock (Locker) df = ChFiles.Find(f => f.Name == fname);
+            DownloadedFile df = null;
+
+            if (ani.RawImage != true) lock (Locker) df = CharaFiles.Find(f => f.Name == fname);
 
             if (df != null) { cbDelegate?.Invoke(df); return; }
 
             Thread th = new Thread(() => Download(aniLock, cbDelegate));
             th.Name = "FKG Chara Downloder";
+
+            while (Queue > MAX_THREADS) Thread.Sleep(500);
             th.Start();
         }
 
@@ -83,7 +87,7 @@ namespace FKG_Info
             if (fname == null) { cbDelegate?.Invoke(null); return; }
 
             DownloadedFile df;
-            lock (Locker) df = EqFiles.Find(f => f.Name == fname);
+            lock (Locker) df = EquipFiles.Find(f => f.Name == fname);
 
             if (df != null) { cbDelegate?.Invoke(df); return; }
 
@@ -102,10 +106,12 @@ namespace FKG_Info
         void Download(Animator ani, DwCompletedCallback cbDelegate)
         {
             Image dwImage = null;
-            DownloadedFile df = new DownloadedFile();
 
+            DownloadedFile df = new DownloadedFile();
             df.Name = ani.GetImageName();
-            lock (Locker) ChFiles.Add(df);
+            df.ExID = ani.ExID;
+
+            if (ani.RawImage != true) lock (Locker) CharaFiles.Add(df);
 
             string path, relurl;
 
@@ -211,7 +217,7 @@ namespace FKG_Info
             DownloadedFile df = new DownloadedFile();
 
             df.Name = equip.GetImageName();
-            lock (Locker) EqFiles.Add(df);
+            lock (Locker) EquipFiles.Add(df);
 
             string path = Program.DB.EquipFolder + "\\" + df.Name + ".png";
 
@@ -321,76 +327,29 @@ namespace FKG_Info
 
         public static void PlaceIconElements(Animator ani, ref Image icon)
         {
+            if (ani.RawImage == true) return;
+
+            FlowerInfo flower = ani.GetFlower();
+
+            if (flower == null) return;
+
             Bitmap outImage = new Bitmap(100, 100);
 
             Graphics gr = Graphics.FromImage(outImage);
             Rectangle rc = new Rectangle(0, 0, 100, 100);
 
+            
+
             gr.Clear(Color.FromArgb(0, 0, 0, 0));
-            gr.DrawImage(GetIconElement(IconElement.Background, ani.Flower.Rarity), 0, 0);
+            gr.DrawImage(ResHelper.GetIconElement(ResHelper.IconElement.Background, flower.Rarity), 0, 0);
             gr.DrawImage(icon, rc, rc, GraphicsUnit.Pixel);
-            gr.DrawImage(GetIconElement(IconElement.Frame, ani.Flower.Rarity), 0, 0);
-            if (!ani.Flower.NoKnight) gr.DrawImage(GetIconElement(IconElement.Type, ani.Flower.AttackType), 0, 0);
+            gr.DrawImage(ResHelper.GetIconElement(ResHelper.IconElement.Frame, flower.Rarity), 0, 0);
+            if (flower.IsKnight) gr.DrawImage(ResHelper.GetIconElement(ResHelper.IconElement.Type, flower.AttackType), 0, 0);
             
             gr.Dispose();
 
             icon.Dispose();
             icon = outImage;
-        }
-
-
-
-        private static Image GetIconElement(IconElement el, int num)
-        {
-            switch (el)
-            {
-                case IconElement.Background:
-                    switch (num)
-                    {
-                        case 1: return Properties.Resources.icon_bg1;
-                        case 2: return Properties.Resources.icon_bg2;
-                        case 3: return Properties.Resources.icon_bg3;
-                        case 4: return Properties.Resources.icon_bg4;
-                        case 5: return Properties.Resources.icon_bg5;
-                        case 6: return Properties.Resources.icon_bg6;
-                        default: break;
-                    }
-                    break;
-                case IconElement.Frame:
-                    switch (num)
-                    {
-                        case 1: return Properties.Resources.icon_frame1;
-                        case 2: return Properties.Resources.icon_frame2;
-                        case 3: return Properties.Resources.icon_frame3;
-                        case 4: return Properties.Resources.icon_frame4;
-                        case 5: return Properties.Resources.icon_frame5;
-                        case 6: return Properties.Resources.icon_frame6;
-                        default: break;
-                    }
-                    break;
-                case IconElement.Type:
-                    switch (num)
-                    {
-                        case 1: return Properties.Resources.icon_type1;
-                        case 2: return Properties.Resources.icon_type2;
-                        case 3: return Properties.Resources.icon_type3;
-                        case 4: return Properties.Resources.icon_type4;
-                        default: break;
-                    }
-                    break;
-                case IconElement.Evolution:
-                    switch (num)
-                    {
-                        case 1: return Properties.Resources.icon_evol1;
-                        case 2: return Properties.Resources.icon_evol2;
-                        case 3: return Properties.Resources.icon_evol3;
-                        default: break;
-                    }
-                    break;
-                default: break;
-            }
-
-            return Properties.Resources.icon_default;
         }
 
 
@@ -436,7 +395,7 @@ namespace FKG_Info
 
             while (true)
             {
-                if (df == null) lock (Locker) df = ChFiles.Find(f => f.Name == fname);
+                if (df == null) lock (Locker) df = CharaFiles.Find(f => f.Name == fname);
                 if (df != null) lock (df.Locker) if (df.Image != null) break;
 
                 tries++;
@@ -472,10 +431,10 @@ namespace FKG_Info
 
             while (true)
             {
-                fl = ChFiles.Find(cf => cf.Name.Contains(pt));
+                fl = CharaFiles.Find(cf => cf.Name.Contains(pt));
                 if (fl == null) break;
                 fl.Image.Dispose();
-                ChFiles.Remove(fl);
+                CharaFiles.Remove(fl);
             }
 
             pt = "*" + pt + "*";
