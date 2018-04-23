@@ -287,17 +287,17 @@ namespace FKG_Info
                 return;
             }
 
-            if (Program.ImageLoader.Count == 0)
+            ImageDownloader imdw = Program.ImageLoader;
+
+            if (imdw.DwCount + imdw.InQueue == 0)
             {
                 if (_lbLoading.Visible) _lbLoading.Visible = false;
             }
             else
             {
                 if (!_lbLoading.Visible) _lbLoading.Visible = true;
-                ImageDownloader imdw = Program.ImageLoader;
-                string ldst = String.Format("{0} loading", imdw.Count);
-                if (imdw.Queue - imdw.Count > 0) ldst += String.Format(", {0} in queue", imdw.Queue - imdw.Count);
-                ldst += " ...";
+
+                string ldst = String.Format("{0} loading, {1} in queue ...", imdw.DwCount, imdw.InQueue);
                 _lbLoading.Text = ldst;
             }
         }
@@ -554,7 +554,7 @@ namespace FKG_Info
 
         public void LoadingControlsMessage(bool visible) { _lbWait.Visible = visible; _lbWait.Refresh(); }
 
-        private void MainForm_Closing(object sender, FormClosingEventArgs ev) { Program.DB.Running = false; }
+        private void MainForm_Closing(object sender, FormClosingEventArgs ev) { Program.Life.Kill(); }
 
         private void MMItemAbout_Click(object sender, EventArgs ev) { new AboutForm().ShowDialog(this); }
 

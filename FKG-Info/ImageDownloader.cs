@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -13,7 +14,7 @@ namespace FKG_Info
     {
         private const int MAX_LOADERS_CH = 16;
         private const int MAX_LOADERS_EQ = 32;
-        private const int MAX_THREADS = 1024;
+        //private const int MAX_THREADS = 1024;
 
 
         public class DownloadedFile
@@ -29,14 +30,19 @@ namespace FKG_Info
         }
 
 
+        
+        private ActionQueueLauncher FlowerImageDwQueue;
+        private ActionQueueLauncher EquipmentImageDwQueue;
+
+
 
         private List<DownloadedFile> CharaFiles;
         private List<DownloadedFile> EquipFiles;
 
         private object Locker = new object();
 
-        public int Count { get; private set; }
-        public int Queue { get; private set; }
+        public int DwCount { get; private set; }
+        public int InQueue { get { return FlowerImageDwQueue.InQueue; } }
 
 
         public delegate void DwCompletedCallback(DownloadedFile ifile);
@@ -48,8 +54,10 @@ namespace FKG_Info
             CharaFiles = new List<DownloadedFile>();
             EquipFiles = new List<DownloadedFile>();
 
-            Count = 0;
-            Queue = 0;
+            FlowerImageDwQueue = new ActionQueueLauncher(Program.Life, MAX_LOADERS_CH);
+            EquipmentImageDwQueue = new ActionQueueLauncher(Program.Life, MAX_LOADERS_EQ);
+
+            DwCount = 0;
         }
 
 
@@ -71,11 +79,8 @@ namespace FKG_Info
 
             if (df != null) { cbDelegate?.Invoke(df); return; }
 
-            Thread th = new Thread(() => Download(aniLock, cbDelegate));
-            th.Name = "FKG Chara Downloder";
 
-            while (Queue > MAX_THREADS) Thread.Sleep(500);
-            th.Start();
+            FlowerImageDwQueue.Add(() => Download(ani, cbDelegate));
         }
 
 
@@ -91,10 +96,14 @@ namespace FKG_Info
 
             if (df != null) { cbDelegate?.Invoke(df); return; }
 
-            Thread th = new Thread(() => Download(equip, cbDelegate));
-            th.Name = "FKG Equip Downloder";
-            th.Start();
+
+            EquipmentImageDwQueue.Add(() => Download(equip, cbDelegate));
+
+            //Thread th = new Thread(() => Download(equip, cbDelegate));
+            //th.Name = "FKG Equip Downloder";
+            //th.Start();
         }
+
 
 
 
@@ -103,7 +112,7 @@ namespace FKG_Info
         /// </summary>
         /// <param name="flower"></param>
         /// <param name="cbDelegate"></param>
-        void Download(Animator ani, DwCompletedCallback cbDelegate)
+        private void Download(Animator ani, DwCompletedCallback cbDelegate)
         {
             Image dwImage = null;
 
@@ -132,14 +141,7 @@ namespace FKG_Info
 
             if ((dwImage == null) && (Program.DB.ImageSource != FlowerDataBase.ImageSources.Local))
             {
-                lock (Locker) Queue++;
-                while (Count >= MAX_LOADERS_CH)
-                {
-                    if (!Program.DB.Running) return;
-
-                    Thread.Sleep(200 + 10 * Queue);
-                }
-                lock (Locker) Count++;
+                lock (Locker) DwCount++;
 
                 WebClient wc = new WebClient();
 
@@ -185,7 +187,7 @@ namespace FKG_Info
                     }
                 }
 
-                lock (Locker) { Count--; Queue--; }
+                lock (Locker) { DwCount--; }
             }
 
 
@@ -211,7 +213,7 @@ namespace FKG_Info
         /// </summary>
         /// <param name="equip"></param>
         /// <param name="cbDelegate"></param>
-        void Download(EquipmentInfo equip, DwCompletedCallback cbDelegate)
+        private void Download(EquipmentInfo equip, DwCompletedCallback cbDelegate)
         {
             Image dwImage = null; ;
             DownloadedFile df = new DownloadedFile();
@@ -226,14 +228,13 @@ namespace FKG_Info
 
             if ((dwImage == null) && (Program.DB.ImageSource != FlowerDataBase.ImageSources.Local))
             {
-                lock (Locker) Queue++;
-                while (Count >= MAX_LOADERS_EQ)
+                while (DwCount >= MAX_LOADERS_EQ)
                 {
-                    if (!Program.DB.Running) return;
+                    if (Program.Life.IsDead) return;
 
-                    Thread.Sleep(200 + 10 * Queue);
+                    Thread.Sleep(200 + 10 * DwCount);
                 }
-                lock (Locker) Count++;
+                lock (Locker) DwCount++;
 
                 WebClient wc = new WebClient();
 
@@ -263,7 +264,7 @@ namespace FKG_Info
 
                 try { dwImage = Image.FromStream(stream); } catch { dwImage = null; }
 
-                lock (Locker) { Count--; Queue--; }
+                lock (Locker) { DwCount--; }
             }
 
 

@@ -82,6 +82,7 @@
     <Compile Include="AdvPictureBox.Designer.cs">
       <DependentUpon>AdvPictureBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="ActionQueueLauncher.cs" />
     <Compile Include="BrowsingHistory.cs" />
     <Compile Include="IconsAtlas.cs" />
     <Compile Include="ComplexName.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="FlowerDataBase.cs" />
     <Compile Include="FlowerInfo.cs" />
+    <Compile Include="LifeContcol.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

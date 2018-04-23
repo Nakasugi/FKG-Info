@@ -8,6 +8,7 @@ namespace FKG_Info
 {
     static class Program
     {
+        public static LifeContcol Life = new LifeContcol();
         public static FlowerDataBase DB;
         public static ImageDownloader ImageLoader;
 

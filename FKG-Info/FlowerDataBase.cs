@@ -19,7 +19,6 @@ namespace FKG_Info
 
         public MasterData Master;
 
-        public bool Running;
 
 
         public IconsAtlas FlowerIcons;
@@ -94,8 +93,6 @@ namespace FKG_Info
 
         public FlowerDataBase()
         {
-            Running = true;
-
             Flowers = new FlowersList();
             Skills = new List<SkillInfo>();
             Abilities = new List<AbilityInfo>();
