@@ -52,46 +52,121 @@ namespace FKG_Info
             return true;
         }
 
-
-
+        
 
         /// <summary>
-        /// Extract Zip, srcStream will closed.
+        /// Compress to zip stream
         /// </summary>
-        /// <param name="srcStream"></param>
-        /// <returns></returns>
-        public static MemoryStream DecompressStream(MemoryStream srcStream)
+        public static MemoryStream CompressStream(Stream srcStream, int offset, bool leaveOpen = false)
         {
+            if (srcStream == null) return null;
+
             MemoryStream dstStream = new MemoryStream();
 
-            srcStream.Position = 2;
+            srcStream.Position = offset;
 
             try
             {
-                using (DeflateStream outStream = new DeflateStream(srcStream, CompressionMode.Decompress))
+                using (DeflateStream workStream = new DeflateStream(dstStream, CompressionMode.Compress, true))
                 {
-                    outStream.CopyTo(dstStream);
+                    srcStream.CopyTo(workStream);
                 }
             }
             catch
             {
-                try
-                {
-                    srcStream.Position = 0;
-                    srcStream.CopyTo(dstStream);
-                }
-                catch
-                {
-                    dstStream.Close();
-                    dstStream = null;
-                }
+                dstStream.Close();
+                dstStream = null;
             }
 
-            srcStream.Close();
+            if (!leaveOpen) srcStream.Close();
 
             return dstStream;
         }
 
+
+
+        /// <summary>
+        /// Extract zip stream
+        /// </summary>
+        public static MemoryStream DecompressStream(Stream srcStream, int offset, bool leaveOpen = false)
+        {
+            if (srcStream == null) return null;
+
+            MemoryStream dstStream = new MemoryStream();
+
+            srcStream.Position = offset;
+
+            try
+            {
+                using (DeflateStream workStream = new DeflateStream(srcStream, CompressionMode.Decompress, true))
+                {
+                    workStream.CopyTo(dstStream);
+                }
+            }
+            catch
+            {
+                dstStream.Close();
+                dstStream = null;
+            }
+
+            if (!leaveOpen) srcStream.Close();
+
+            return dstStream;
+        }
+
+
+
+        public static byte[] CompressData(byte[] data)
+        {
+            if (data == null) return null;
+
+            byte[] res;
+
+            try
+            {
+                using (MemoryStream dstStream = new MemoryStream())
+                {
+                    using (DeflateStream workStream = new DeflateStream(dstStream, CompressionMode.Compress, true))
+                    {
+                        workStream.Write(data, 0, data.Length);
+                    }
+
+                    res = dstStream.ToArray();
+                }
+            }
+            catch { res = null; }
+
+            return res;
+        }
+
+
+        
+        public static byte[] DecompressData(byte[] data)
+        {
+            if (data == null) return null;
+
+            byte[] res;
+
+            try
+            {
+                using (MemoryStream srcStream = new MemoryStream(data))
+                {
+                    using (MemoryStream dstStream = new MemoryStream())
+                    {
+                        using (DeflateStream workStream = new DeflateStream(srcStream, CompressionMode.Decompress))
+                        {
+                            workStream.CopyTo(dstStream);
+                        }
+
+                        res = dstStream.ToArray();
+                    }
+                }
+            }
+            catch { res = null; }
+
+            return res;
+        }
+        
 
 
         public static DataGridViewRow CreateDGVRow(System.Drawing.Image image, string text, string ttip = null)
@@ -146,6 +221,32 @@ namespace FKG_Info
             XmlGetText(node, child, ref temp);
 
             return value == temp;
+        }
+
+
+
+        public static string DataToBase64(byte[] data)
+        {
+            if (data == null) return "Input data is null";
+
+            try
+            {
+                return Convert.ToBase64String(data);
+            }
+            catch { return "Cannot convert to Base64"; }
+        }
+
+
+
+        public static byte[] Base64ToData(string s64)
+        {
+            if (s64 == null) return null;
+
+            try
+            {
+                return Convert.FromBase64String(s64);
+            }
+            catch { return null; }
         }
     }
 }

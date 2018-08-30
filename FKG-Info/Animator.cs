@@ -17,8 +17,6 @@ namespace FKG_Info
         public EmoType Emotion;
         public bool Exclusive;
         public bool RawImage;
-        public int ExID;
-
 
         private System.Windows.Forms.Timer AnimationTimer;
         private int CurrentFrame;
@@ -37,7 +35,6 @@ namespace FKG_Info
             Emotion = EmoType.Normal;
             Exclusive = false;
             RawImage = false;
-            ExID = 0;
         }
 
 
@@ -49,7 +46,6 @@ namespace FKG_Info
             Emotion = ani.Emotion;
             Exclusive = ani.Exclusive;
             RawImage = ani.RawImage;
-            ExID = ani.ExID;
         }
 
 
@@ -69,13 +65,30 @@ namespace FKG_Info
         }
 
 
-
+        
         public bool IsIcon()
         {
             if (ImageType == Type.IconSmall) return true;
             if (ImageType == Type.IconMedium) return true;
             if (ImageType == Type.IconLarge) return true;
             return false;
+        }
+        
+
+
+        public string GetUrlSubFolder()
+        {
+            switch(ImageType)
+            {
+                case Type.IconSmall:
+                case Type.IconMedium:
+                case Type.IconLarge:
+                    return "i/";
+                case Type.Stand:
+                    return "stand/";
+                default:
+                    return "s/";
+            }
         }
 
 
@@ -94,7 +107,7 @@ namespace FKG_Info
 
 
 
-        public FlowerInfo GetFlower() { return Flower; }
+        //public FlowerInfo GetFlower() { return Flower; }
 
 
 

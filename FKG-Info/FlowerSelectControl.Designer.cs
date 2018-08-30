@@ -53,6 +53,7 @@
             this.ChBoxAcc1Filter = new System.Windows.Forms.CheckBox();
             this.ChBoxAcc2Filter = new System.Windows.Forms.CheckBox();
             this.CmBoxVariations = new System.Windows.Forms.ComboBox();
+            this.ChBoxLatestChara = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // PanelFlowers
@@ -364,10 +365,21 @@
             this.CmBoxVariations.TabIndex = 32;
             this.CmBoxVariations.SelectedIndexChanged += new System.EventHandler(this.CmBoxVariations_CheckedChanged);
             // 
+            // ChBoxLatestChara
+            // 
+            this.ChBoxLatestChara.AutoSize = true;
+            this.ChBoxLatestChara.Location = new System.Drawing.Point(316, 41);
+            this.ChBoxLatestChara.Name = "ChBoxLatestChara";
+            this.ChBoxLatestChara.Size = new System.Drawing.Size(108, 17);
+            this.ChBoxLatestChara.TabIndex = 33;
+            this.ChBoxLatestChara.Text = "Latest characters";
+            this.ChBoxLatestChara.UseVisualStyleBackColor = true;
+            // 
             // FlowerSelectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.ChBoxLatestChara);
             this.Controls.Add(this.CmBoxVariations);
             this.Controls.Add(this.ChBoxAcc2Filter);
             this.Controls.Add(this.ChBoxAcc1Filter);
@@ -427,5 +439,6 @@
         private System.Windows.Forms.CheckBox ChBoxAcc1Filter;
         private System.Windows.Forms.CheckBox ChBoxAcc2Filter;
         private System.Windows.Forms.ComboBox CmBoxVariations;
+        private System.Windows.Forms.CheckBox ChBoxLatestChara;
     }
 }

@@ -14,7 +14,7 @@ namespace FKG_Info
     {
         private const int MAX_LOADERS_CH = 16;
         private const int MAX_LOADERS_EQ = 32;
-        //private const int MAX_THREADS = 1024;
+
 
 
         public class DownloadedFile
@@ -22,7 +22,7 @@ namespace FKG_Info
             public string Name;
             public Image Image;
 
-            public int ExID;
+            public int ImageID;
 
             public object Locker;
 
@@ -61,8 +61,10 @@ namespace FKG_Info
         }
 
 
+        public bool IsStopped() { return FlowerImageDwQueue.IsStopped() & EquipmentImageDwQueue.IsStopped(); }
 
-        public void GetImage(Animator ani, DwCompletedCallback cbDelegate)
+
+        public void GetImage(Animator ani, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh = null)
         {
             Animator aniLock = new Animator(ani);
             string fname = aniLock.GetImageName();
@@ -80,12 +82,12 @@ namespace FKG_Info
             if (df != null) { cbDelegate?.Invoke(df); return; }
 
 
-            FlowerImageDwQueue.Add(() => Download(ani, cbDelegate));
+            FlowerImageDwQueue.Add(() => Download(ani, cbDelegate, toRefresh));
         }
 
 
 
-        public void GetImage(EquipmentInfo equip, DwCompletedCallback cbDelegate)
+        public void GetImage(EquipmentInfo equip, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh = null)
         {
             string fname = equip.GetImageName();
 
@@ -97,11 +99,7 @@ namespace FKG_Info
             if (df != null) { cbDelegate?.Invoke(df); return; }
 
 
-            EquipmentImageDwQueue.Add(() => Download(equip, cbDelegate));
-
-            //Thread th = new Thread(() => Download(equip, cbDelegate));
-            //th.Name = "FKG Equip Downloder";
-            //th.Start();
+            EquipmentImageDwQueue.Add(() => Download(equip, cbDelegate, toRefresh));
         }
 
 
@@ -112,28 +110,21 @@ namespace FKG_Info
         /// </summary>
         /// <param name="flower"></param>
         /// <param name="cbDelegate"></param>
-        private void Download(Animator ani, DwCompletedCallback cbDelegate)
+        private void Download(Animator ani, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh)
         {
             Image dwImage = null;
 
             DownloadedFile df = new DownloadedFile();
             df.Name = ani.GetImageName();
-            df.ExID = ani.ExID;
+            df.ImageID = ani.Flower.ID;
 
             if (ani.RawImage != true) lock (Locker) CharaFiles.Add(df);
 
-            string path, relurl;
+            string path, relurl = ani.GetUrlSubFolder();
 
-            if (ani.IsIcon())
-            {
-                path = Program.DB.IconsFolder;
-                relurl = "i/";
-            }
-            else
-            {
-                path = Program.DB.ImagesFolder;
-                relurl = "s/";
-            }
+
+            path = Program.DB.ImagesFolder;
+
             path += "\\" + df.Name + ".png";
 
             try { dwImage = Image.FromFile(path); } catch { dwImage = null; }
@@ -157,7 +148,7 @@ namespace FKG_Info
                 {
                     buffer = wc.DownloadData(url1);
                     stream = new MemoryStream(buffer);
-                    stream = Helper.DecompressStream(stream);
+                    stream = Helper.DecompressStream(stream, 2);
                 }
                 catch
                 {
@@ -165,7 +156,7 @@ namespace FKG_Info
                     {
                         buffer = wc.DownloadData(url2);
                         stream = new MemoryStream(buffer);
-                        stream = Helper.DecompressStream(stream);
+                        stream = Helper.DecompressStream(stream, 2);
                     }
                     catch { stream = null; }
                 }
@@ -193,7 +184,7 @@ namespace FKG_Info
 
             if (dwImage != null)
             {
-                SaveFile(dwImage, path);
+                if (!ani.IsIcon()) SaveFile(dwImage, path);
                 if (ani.ImageType == Animator.Type.IconLarge) PlaceIconElements(ani, ref dwImage);
                 if (ani.ImageType == Animator.Type.Home) DrawBaseHomeImage(ani, ref dwImage);
             }
@@ -204,6 +195,8 @@ namespace FKG_Info
 
             lock (df.Locker) df.Image = dwImage;
             cbDelegate?.Invoke(df);
+
+            if (toRefresh != null) toRefresh?.Invoke(new Action(() => { toRefresh.Refresh(); }));
         }
 
 
@@ -213,12 +206,13 @@ namespace FKG_Info
         /// </summary>
         /// <param name="equip"></param>
         /// <param name="cbDelegate"></param>
-        private void Download(EquipmentInfo equip, DwCompletedCallback cbDelegate)
+        private void Download(EquipmentInfo equip, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh)
         {
             Image dwImage = null; ;
             DownloadedFile df = new DownloadedFile();
-
             df.Name = equip.GetImageName();
+            df.ImageID = equip.ImageID;
+
             lock (Locker) EquipFiles.Add(df);
 
             string path = Program.DB.EquipFolder + "\\" + df.Name + ".png";
@@ -279,6 +273,8 @@ namespace FKG_Info
 
             lock (df.Locker) df.Image = dwImage;
             cbDelegate?.Invoke(df);
+
+            if (toRefresh != null) toRefresh?.Invoke(new Action(() => { toRefresh.Refresh(); }));
         }
 
 
@@ -290,7 +286,7 @@ namespace FKG_Info
         /// <param name="path"></param>
         private void SaveFile(Image image, string path)
         {
-            if (Program.DB.StoreDownloaded)
+            if (Program.DB.StoreDownloadedImages)
             {
                 if (!File.Exists(path))
                 {
@@ -330,7 +326,7 @@ namespace FKG_Info
         {
             if (ani.RawImage == true) return;
 
-            FlowerInfo flower = ani.GetFlower();
+            FlowerInfo flower = ani.Flower;
 
             if (flower == null) return;
 
@@ -443,9 +439,6 @@ namespace FKG_Info
             string[] files;
 
             files = Directory.GetFiles(Program.DB.ImagesFolder, pt);
-            foreach (string file in files) { try { File.Delete(file); } catch { } }
-
-            files = Directory.GetFiles(Program.DB.IconsFolder, pt);
             foreach (string file in files) { try { File.Delete(file); } catch { } }
         }
     }

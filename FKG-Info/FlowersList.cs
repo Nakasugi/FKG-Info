@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 
@@ -8,44 +9,17 @@ namespace FKG_Info
     public class FlowersList
     {
         private List<FlowerInfo> Flowers;
-        private List<AccountLinks> AccLinks;
-
-        //public List<FlowerUnitInfo> Units { get; private set; }
 
         private int SelectedID;
+
 
         public object Locker;
 
         private BrowsingHistory History;
 
-        private int HighestVersion;
 
-
-
-        private class AccountLinks
-        {
-            public int RefID;
-
-            public bool Acc1;
-            public bool Acc2;
-
-            public AccountLinks(int refid) { RefID = refid; Acc1 = false; Acc2 = false; }
-
-            public int GetAccStatus()
-            {
-                int res = 0;
-                if (Acc1) res |= 0x01;
-                if (Acc2) res |= 0x02;
-                return res;
-            }
-
-            public void SetAccStatus(int status)
-            {
-                if ((status & 0x01) != 0) Acc1 = true;
-                if ((status & 0x02) != 0) Acc2 = true;
-            }
-        }
-
+        private SavingDataBlock SavingData;
+        public bool NeedSave { get; private set; }
 
 
 
@@ -56,10 +30,10 @@ namespace FKG_Info
             Flowers = new List<FlowerInfo>();
             SelectedID = -1;
 
-            AccLinks = new List<AccountLinks>();
             History = new BrowsingHistory();
+            SavingData = new SavingDataBlock();
 
-            HighestVersion = 0;
+            NeedSave = false;
         }
 
 
@@ -69,11 +43,6 @@ namespace FKG_Info
             if (flower.ID == 0) return;
 
             Flowers.Add(flower);
-
-            if (HighestVersion < flower.Version) HighestVersion = flower.Version;
-
-            if (AccLinks.Find(ac => ac.RefID == flower.RefID) == null)
-                AccLinks.Add(new AccountLinks(flower.RefID));
         }
 
 
@@ -94,16 +63,6 @@ namespace FKG_Info
 
         public FlowerInfo GetPrev() { SelectedID = History.Prev(); return GetSelected(); }
         public FlowerInfo GetNext() { SelectedID = History.Next(); return GetSelected(); }
-
-        /*
-        public FlowerUnitInfo GetSelectedUnit()
-        {
-            if (!IsSelected()) return null;
-
-            return GetUnit(SelectedRefID);
-        }
-        */
-        //public FlowerUnitInfo GetUnit(int refid) { return Units.Find(u => u.RefID == refid); }
 
 
 
@@ -156,49 +115,33 @@ namespace FKG_Info
 
 
 
-        public void WriteXmlAccLinks(System.Xml.XmlTextWriter xw)
+        private List<int> CreateNoBloomCGData()
         {
-            xw.WriteStartElement("HasFlowers");
+            List<int> ids = new List<int>();
 
-            foreach (AccountLinks links in AccLinks)
-            {
-                int accStatus = links.GetAccStatus();
-                if (accStatus != 0)
-                    xw.WriteElementString("ID" + links.RefID.ToString("D4"), accStatus.ToString());
-            }
+            foreach (FlowerInfo flower in Flowers)
+                if ((flower.Evolution == FlowerInfo.Variation.Bloomed) && (flower.NoBloomCG)) ids.Add(flower.RefID);
 
-            xw.WriteEndElement();
+            return ids;
         }
 
 
 
-        public void SetAccStatus(int refid, int status)
-        {
-            AccountLinks links = AccLinks.Find(al => al.RefID == refid);
-            if (links == null) return;
+        public void LoadSaving(System.Xml.XmlDocument doc) { SavingData = new SavingDataBlock(doc); }
 
-            links.SetAccStatus(status);
+
+
+        public void SaveSaving(System.Xml.XmlWriter xwr)
+        {
+            SavingData.SetBloomCGData(CreateNoBloomCGData().ToArray());
+            SavingData.Save(xwr);
         }
 
-        public void SetAccStatus(int refid, int accnum, bool status)
-        {
-            AccountLinks links = AccLinks.Find(al => al.RefID == refid);
-            if (links == null) return;
 
-            if (accnum == 1) links.Acc1 = status;
-            if (accnum == 2) links.Acc2 = status;
-        }
 
-        public bool CheckAccStatus(int refid, int accnum)
-        {
-            AccountLinks links = AccLinks.Find(al => al.RefID == refid);
-            if (links == null) return false;
-
-            if (accnum == 1) return links.Acc1;
-            if (accnum == 2) return links.Acc2;
-
-            return false;
-        }
+        public bool CheckAccStatus(int refid, int acc) { return SavingData.CheckAccStatus(refid, acc); }
+        public void AddToAccount(int refid, int acc) { SavingData.AddToAccount(refid, acc); NeedSave = true; }
+        public void RemoveFromAccount(int refid, int acc) { SavingData.RemoveFromAccount(refid, acc); NeedSave = true; }
 
 
 
@@ -206,21 +149,27 @@ namespace FKG_Info
 
 
 
-        public bool CheckVersions(ref int version)
+        public void DeleteOldBloomCGs()
         {
-            if (version == 0)
+            List<int> newids = CreateNoBloomCGData();
+            List<int> oldids = SavingData.GetNoBlomCGRefs();
+
+            if (oldids.SequenceEqual(newids)) return;
+
+            NeedSave = true;
+
+            foreach (int id in newids) oldids.Remove(id);
+
+            if (oldids.Count == 0) return;
+
+            foreach(int id in oldids)
             {
-                version = HighestVersion;
-                return true;
+                FlowerInfo flower = Flowers.Find(fw => fw.RefID == id && fw.Evolution == FlowerInfo.Variation.Bloomed);
+
+                if (flower == null) continue;
+
+                Program.ImageLoader.DeleteImages(flower.ID);
             }
-
-            if (version == HighestVersion) return false;
-
-            foreach (FlowerInfo flower in Flowers)
-                if (flower.Version > version) flower.Updated = true;
-
-            version = HighestVersion;
-            return true;
         }
     }
 }

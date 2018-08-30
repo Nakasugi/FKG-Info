@@ -8,7 +8,7 @@ namespace FKG_Info
     public partial class FlowerSelectControl : UserControl
     {
         private FlowersList Flowers;
-        private List<AdvPictureBox> Icons;
+        private List<FastIcon> Icons;
 
         private FlowerInfo SelectedFlower;
 
@@ -93,36 +93,31 @@ namespace FKG_Info
             TTip = new ToolTip();
 
             Flowers = Program.DB.Flowers;
-            Icons = new List<AdvPictureBox>();
+            Icons = new List<FastIcon>();
 
-            AdvPictureBox picBox;
+            FastIcon icon;
 
-            Animator icon = new Animator();
-            icon.ImageType = Animator.Type.IconLarge;
-
+            Animator ani = new Animator();
+            ani.ImageType = Animator.Type.IconLarge;
+            
             foreach (FlowerInfo flower in Flowers)
             {
-                icon.Flower = flower;
-                picBox = new AdvPictureBox((MainForm)Parent, flower);
-                picBox.Name = flower.ID.ToString();
-                picBox.Width = 100;
-                picBox.Height = 100;
-                Program.DB.FlowerIcons.GetImage(picBox);
-                //picBox.Image = Program.DB.FlowerIcons.GetImage(flower.AtlasIconID); //Properties.Resources.icon_l_default;
-                //picBox.AsyncLoadImage(icon);
-                picBox.Visible = false;
-                Icons.Add(picBox);
+                ani.Flower = flower;
+                icon = new FastIcon((MainForm)Parent, flower);
+                icon.Name = flower.ID.ToString();
+                icon.Visible = false;
+                Icons.Add(icon);
 
-                components.Add(picBox); // for auto disposing
+                components.Add(icon); // for auto disposing
 
                 string ttip = flower.Name.Kanji + "\r\n" + flower.Name.Romaji;
                 if (flower.Name.EngDMM != null) ttip += "\r\nDMM: " + flower.Name.EngDMM;
                 if (flower.Name.EngNutaku != null) ttip += "\r\nNutaku: " + flower.Name.EngNutaku;
-                TTip.SetToolTip(picBox, ttip);
+                TTip.SetToolTip(icon, ttip);
 
-                PanelFlowers.Controls.Add(picBox);
+                PanelFlowers.Controls.Add(icon);
             }
-
+            
             Reloading = false;
             ReloadList();
             ResumeLayout();
@@ -133,14 +128,6 @@ namespace FKG_Info
 
             Flowers.ClearHistory();
         }
-
-
-        /*
-        new void Dispose()
-        {
-            foreach (AdvPictureBox pic in Icons) pic.Dispose();
-            base.Dispose();
-        }*/
 
 
 
@@ -278,7 +265,7 @@ namespace FKG_Info
             PanelFlowers.SuspendLayout();
             PanelFlowers.VerticalScroll.Value = 0;
 
-            foreach (AdvPictureBox pic in Icons)
+            foreach (FastIcon pic in Icons)
             {
                 if (!pic.Flower.Filter)
                 {
@@ -412,8 +399,9 @@ namespace FKG_Info
 
             if (SelectedFlower != null)
             {
-                Flowers.SetAccStatus(SelectedFlower.RefID, 1, ChBoxAcc1Has.Checked);
-                Flowers.SetAccStatus(SelectedFlower.RefID, 2, ChBoxAcc2Has.Checked);
+                if (ChBoxAcc1Has.Checked) Flowers.AddToAccount(SelectedFlower.RefID, 1); else Flowers.RemoveFromAccount(SelectedFlower.RefID, 1);
+                if (ChBoxAcc2Has.Checked) Flowers.AddToAccount(SelectedFlower.RefID, 2); else Flowers.RemoveFromAccount(SelectedFlower.RefID, 2);
+
                 Program.DB.OptionsChanged();
             }
         }

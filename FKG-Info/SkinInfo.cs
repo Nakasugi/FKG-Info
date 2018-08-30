@@ -61,7 +61,7 @@
         public bool CheckExclusive(SkinInfo sk)
         {
             if (RefID != sk.RefID) return false;
-            return IsExclusive;
+            return IsExclusive | IsBaseReplace;
         }
     }
 }

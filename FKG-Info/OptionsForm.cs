@@ -19,7 +19,7 @@ namespace FKG_Info
             TxBoxSoundsFolder.Text = Program.DB.SoundFolder;
             TxBoxURLDMM.Text = Program.DB.DMMURL;
             TxBoxURLNutaku.Text = Program.DB.NutakuURL;
-            ChBoxSaveDw.Checked = Program.DB.StoreDownloaded;
+            ChBoxSaveDw.Checked = Program.DB.StoreDownloadedImages;
             NumSoundVolume.Value = Program.DB.SoundVolume;
             TxBoxAcc1Name.Text = Program.DB.Account1Name;
             TxBoxAcc2Name.Text = Program.DB.Account2Name;
@@ -44,7 +44,7 @@ namespace FKG_Info
             Program.DB.SoundFolder = TxBoxSoundsFolder.Text;
             Program.DB.DMMURL = TxBoxURLDMM.Text;
             Program.DB.NutakuURL = TxBoxURLNutaku.Text;
-            Program.DB.StoreDownloaded = ChBoxSaveDw.Checked;
+            Program.DB.StoreDownloadedImages = ChBoxSaveDw.Checked;
             Program.DB.SoundVolume = (int)NumSoundVolume.Value;
             Program.DB.Account1Name = TxBoxAcc1Name.Text;
             Program.DB.Account2Name = TxBoxAcc2Name.Text;

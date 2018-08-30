@@ -10,7 +10,7 @@ namespace FKG_Info
         private bool Reloading;
 
         private List<EquipmentInfo> Equipments;
-        private List<AdvPictureBox> Icons;
+        private List<FastIcon> Icons;
 
         private ToolTip TTip;
 
@@ -45,27 +45,29 @@ namespace FKG_Info
             Location = new Point(0, 26);
             TTip = new ToolTip();
             Equipments = Program.DB.Equipments;
-            Icons = new List<AdvPictureBox>();
+            Icons = new List<FastIcon>();
 
-            AdvPictureBox picBox;
+            FastIcon icon;
 
             foreach (EquipmentInfo equip in Equipments)
             {
-                picBox = new AdvPictureBox((MainForm)Parent, equip);
-                picBox.Name = equip.ID.ToString();
-                picBox.Width = 100;
-                picBox.Height = 100;
-                picBox.SetImage(Properties.Resources.equip_default, false);
-                picBox.AsyncLoadImage(equip);
-                picBox.Visible = false;
-                Icons.Add(picBox);
+                icon = new FastIcon((MainForm)Parent, equip);
+                icon.Name = equip.ID.ToString();
+                /*
+                icon.Width = 100;
+                icon.Height = 100;
+                icon.SetImage(Properties.Resources.equip_default, false);
+                icon.AsyncLoadImage(equip);
+                */
+                icon.Visible = false;
+                Icons.Add(icon);
 
-                components.Add(picBox); // for auto disposing
+                components.Add(icon); // for auto disposing
 
                 string ttip = equip.KName;
-                TTip.SetToolTip(picBox, ttip);
+                TTip.SetToolTip(icon, ttip);
 
-                PanelEquipments.Controls.Add(picBox);
+                PanelEquipments.Controls.Add(icon);
             }
 
 
@@ -163,7 +165,7 @@ namespace FKG_Info
             PanelEquipments.SuspendLayout();
             PanelEquipments.VerticalScroll.Value = 0;
 
-            foreach (AdvPictureBox pic in Icons)
+            foreach (FastIcon pic in Icons)
             {
                 if (!pic.Equipment.Filter)
                 {

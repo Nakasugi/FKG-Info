@@ -44,6 +44,7 @@
             this.MMItemFileExportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportIDs = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportNames = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemFileExportCurrent = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MMItemFileExperimental = new System.Windows.Forms.ToolStripMenuItem();
             this.getMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,16 +67,13 @@
             this.BtEvolutions = new System.Windows.Forms.Button();
             this.BtVariations = new System.Windows.Forms.Button();
             this.BtPrevEvolution = new System.Windows.Forms.Button();
-            this.PicBoxIconV2 = new FKG_Info.AdvPictureBox(this.components);
-            this.PicBoxIconV1 = new FKG_Info.AdvPictureBox(this.components);
-            this.PicBoxIconMain = new FKG_Info.AdvPictureBox(this.components);
+            this.Icon3rd = new FKG_Info.FastIcon(this.components);
+            this.Icon2nd = new FKG_Info.FastIcon(this.components);
+            this.IconMain = new FKG_Info.FastIcon(this.components);
             this.PicBoxBig = new FKG_Info.AdvPictureBox(this.components);
-            this.MMItemFileExportCurrent = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemFileExportIcons = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxBig)).BeginInit();
             this.SuspendLayout();
             // 
@@ -193,6 +191,7 @@
             this.MMItemFileExportIDs,
             this.MMItemFileExportNames,
             this.MMItemFileExportCurrent,
+            this.MMItemFileExportIcons,
             this.toolStripSeparator1,
             this.MMItemFileExperimental});
             this.MMItemFile.Name = "MMItemFile";
@@ -227,6 +226,13 @@
             this.MMItemFileExportNames.Text = "Export Names";
             this.MMItemFileExportNames.Click += new System.EventHandler(this.MMItemFileExportNames_Click);
             // 
+            // MMItemFileExportCurrent
+            // 
+            this.MMItemFileExportCurrent.Name = "MMItemFileExportCurrent";
+            this.MMItemFileExportCurrent.Size = new System.Drawing.Size(215, 22);
+            this.MMItemFileExportCurrent.Text = "Export Current Knight Data";
+            this.MMItemFileExportCurrent.Click += new System.EventHandler(this.MMItemFileExportCurrent_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -243,7 +249,7 @@
             // getMasterToolStripMenuItem
             // 
             this.getMasterToolStripMenuItem.Name = "getMasterToolStripMenuItem";
-            this.getMasterToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.getMasterToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.getMasterToolStripMenuItem.Text = "getMaster";
             this.getMasterToolStripMenuItem.Click += new System.EventHandler(this.MMItemFileGetMaster_Click);
             // 
@@ -418,39 +424,33 @@
             this.BtPrevEvolution.UseVisualStyleBackColor = true;
             this.BtPrevEvolution.Click += new System.EventHandler(this.BtPrevEvolution_Click);
             // 
-            // PicBoxIconV2
+            // Icon3rd
             // 
-            this.PicBoxIconV2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PicBoxIconV2.Image = null;
-            this.PicBoxIconV2.Location = new System.Drawing.Point(1073, 12);
-            this.PicBoxIconV2.Name = "PicBoxIconV2";
-            this.PicBoxIconV2.Size = new System.Drawing.Size(100, 100);
-            this.PicBoxIconV2.TabIndex = 3;
-            this.PicBoxIconV2.TabStop = false;
-            this.PicBoxIconV2.Click += new System.EventHandler(this.PicBoxIconV2_Click);
+            this.Icon3rd.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Icon3rd.Location = new System.Drawing.Point(1072, 12);
+            this.Icon3rd.Name = "Icon3rd";
+            this.Icon3rd.Size = new System.Drawing.Size(100, 100);
+            this.Icon3rd.TabIndex = 37;
+            this.Icon3rd.Click += new System.EventHandler(this.PicBoxIconV2_Click);
             // 
-            // PicBoxIconV1
+            // Icon2nd
             // 
-            this.PicBoxIconV1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PicBoxIconV1.Image = null;
-            this.PicBoxIconV1.Location = new System.Drawing.Point(967, 12);
-            this.PicBoxIconV1.Name = "PicBoxIconV1";
-            this.PicBoxIconV1.Size = new System.Drawing.Size(100, 100);
-            this.PicBoxIconV1.TabIndex = 2;
-            this.PicBoxIconV1.TabStop = false;
-            this.PicBoxIconV1.Click += new System.EventHandler(this.PicBoxIconV1_Click);
+            this.Icon2nd.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Icon2nd.Location = new System.Drawing.Point(967, 12);
+            this.Icon2nd.Name = "Icon2nd";
+            this.Icon2nd.Size = new System.Drawing.Size(100, 100);
+            this.Icon2nd.TabIndex = 36;
+            this.Icon2nd.Click += new System.EventHandler(this.PicBoxIconV1_Click);
             // 
-            // PicBoxIconMain
+            // IconMain
             // 
-            this.PicBoxIconMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PicBoxIconMain.Image = null;
-            this.PicBoxIconMain.Location = new System.Drawing.Point(809, 12);
-            this.PicBoxIconMain.Name = "PicBoxIconMain";
-            this.PicBoxIconMain.Size = new System.Drawing.Size(100, 100);
-            this.PicBoxIconMain.TabIndex = 1;
-            this.PicBoxIconMain.TabStop = false;
-            this.PicBoxIconMain.Click += new System.EventHandler(this.PicBoxIconBase_Click);
-            this.PicBoxIconMain.DoubleClick += new System.EventHandler(this.PicBoxIconBase_DoubleClick);
+            this.IconMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.IconMain.Location = new System.Drawing.Point(809, 12);
+            this.IconMain.Name = "IconMain";
+            this.IconMain.Size = new System.Drawing.Size(100, 100);
+            this.IconMain.TabIndex = 35;
+            this.IconMain.Click += new System.EventHandler(this.PicBoxIconBase_Click);
+            this.IconMain.DoubleClick += new System.EventHandler(this.PicBoxIconBase_DoubleClick);
             // 
             // PicBoxBig
             // 
@@ -464,12 +464,12 @@
             this.PicBoxBig.Visible = false;
             this.PicBoxBig.Click += new System.EventHandler(this.PicBoxBig_Click);
             // 
-            // MMItemFileExportCurrent
+            // MMItemFileExportIcons
             // 
-            this.MMItemFileExportCurrent.Name = "MMItemFileExportCurrent";
-            this.MMItemFileExportCurrent.Size = new System.Drawing.Size(215, 22);
-            this.MMItemFileExportCurrent.Text = "Export Current Knight Data";
-            this.MMItemFileExportCurrent.Click += new System.EventHandler(this.MMItemFileExportCurrent_Click);
+            this.MMItemFileExportIcons.Name = "MMItemFileExportIcons";
+            this.MMItemFileExportIcons.Size = new System.Drawing.Size(215, 22);
+            this.MMItemFileExportIcons.Text = "Export Icons";
+            this.MMItemFileExportIcons.Click += new System.EventHandler(this.MMItemFileExportIcons_Click);
             // 
             // MainForm
             // 
@@ -477,6 +477,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(1184, 686);
+            this.Controls.Add(this.Icon3rd);
+            this.Controls.Add(this.Icon2nd);
+            this.Controls.Add(this.IconMain);
             this.Controls.Add(this.BtPrevEvolution);
             this.Controls.Add(this.BtVariations);
             this.Controls.Add(this.BtEvolutions);
@@ -486,9 +489,6 @@
             this.Controls.Add(this._lbLoading);
             this.Controls.Add(this.BtSelect);
             this.Controls.Add(this.GridInfo);
-            this.Controls.Add(this.PicBoxIconV2);
-            this.Controls.Add(this.PicBoxIconV1);
-            this.Controls.Add(this.PicBoxIconMain);
             this.Controls.Add(this.PicBoxBig);
             this.Controls.Add(this.MainMenu);
             this.Controls.Add(this._lbWait);
@@ -504,9 +504,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).EndInit();
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconV1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicBoxIconMain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxBig)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -516,9 +513,6 @@
         #endregion
 
         private AdvPictureBox PicBoxBig;
-        private AdvPictureBox PicBoxIconMain;
-        private AdvPictureBox PicBoxIconV1;
-        private AdvPictureBox PicBoxIconV2;
         private System.Windows.Forms.DataGridView GridInfo;
         private System.Windows.Forms.Button BtSelect;
         private System.Windows.Forms.MenuStrip MainMenu;
@@ -552,6 +546,9 @@
         private System.Windows.Forms.ToolStripMenuItem MMItemPrev;
         private System.Windows.Forms.ToolStripMenuItem MMItemNext;
         private System.Windows.Forms.ToolStripMenuItem MMItemFileExportCurrent;
+        private FastIcon IconMain;
+        private FastIcon Icon2nd;
+        private FastIcon Icon3rd;
+        private System.Windows.Forms.ToolStripMenuItem MMItemFileExportIcons;
     }
 }
-

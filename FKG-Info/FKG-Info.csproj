@@ -76,14 +76,20 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ActionQueueLauncher.cs" />
     <Compile Include="AdvPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="AdvPictureBox.Designer.cs">
+    <Compile Include="AdvPictureBox.designer.cs">
       <DependentUpon>AdvPictureBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="ActionQueueLauncher.cs" />
     <Compile Include="BrowsingHistory.cs" />
+    <Compile Include="FastIcon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FastIcon.Designer.cs">
+      <DependentUpon>FastIcon.cs</DependentUpon>
+    </Compile>
     <Compile Include="IconsAtlas.cs" />
     <Compile Include="ComplexName.cs" />
     <Compile Include="EquipFastViewForm.cs">
@@ -138,6 +144,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResHelper.cs" />
+    <Compile Include="SavingDataBlock.cs" />
     <Compile Include="SkillInfo.cs" />
     <Compile Include="SkinInfo.cs" />
     <Compile Include="SoundPlayer.cs" />
@@ -163,6 +170,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ExportMasterForm.resx">
       <DependentUpon>ExportMasterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FastIcon.resx">
+      <DependentUpon>FastIcon.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FlowerSelectControl.resx">
       <DependentUpon>FlowerSelectControl.cs</DependentUpon>

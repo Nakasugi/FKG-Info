@@ -28,14 +28,15 @@ namespace FKG_Info
             DB = FlowerDataBase.Load();
             ImageLoader = new ImageDownloader();
 
-            DB.UpdateVersions();
+            DB.DeleteOldBloomCGs();
 
 
-            System.Threading.Thread.Sleep(500);
+            System.Threading.Thread.Sleep(333);
 
-            DB.FlowerIcons = new IconsAtlas(DB.Flowers);
-            //System.Threading.Thread.Sleep(5000);
-            //DB.FlowerIcons.Save();
+            DB.FlowerIcons = IconsAtlas.Load(IconsAtlas.Type.FlowerIcons);
+            if (DB.FlowerIcons == null) DB.FlowerIcons = new IconsAtlas(DB.Flowers);
+            DB.EquipmentIcons = IconsAtlas.Load(IconsAtlas.Type.EquipmentIcons);
+            if (DB.EquipmentIcons == null) DB.EquipmentIcons = new IconsAtlas(DB.Equipments);
 
 
             MainForm mf = new MainForm();
@@ -43,6 +44,7 @@ namespace FKG_Info
             Application.Run(mf);
 
             DB.SaveOptIfNeeded();
+            DB.FlowerIcons.SaveIfNeeded();
         }
     }
 }

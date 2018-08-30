@@ -72,6 +72,10 @@ namespace FKG_Info
 
 
 
+        /// <summary>
+        /// Next action
+        /// </summary>
+        /// <param name="action"></param>
         private void DoAction(Action action)
         {
             lock (Locker) Count++;
@@ -82,11 +86,24 @@ namespace FKG_Info
 
 
 
+        /// <summary>
+        /// Add action (function) to queue
+        /// </summary>
+        /// <param name="action"></param>
         public void Add(Action action)
         {
             lock (Locker) Actions.Add(action);
 
             WakeUp.Set();
+        }
+
+
+
+        public bool IsStopped()
+        {
+            if (Life.IsLife) return false;
+            if (Count != 0) return false;
+            return true;
         }
     }
 }

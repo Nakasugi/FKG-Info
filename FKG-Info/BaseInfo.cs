@@ -74,5 +74,15 @@ namespace FKG_Info
 
             return Version;
         }
+
+
+        protected string GetVersion()
+        {
+            int l0 = Version / 1000000;
+            int l1 = Version / 1000 - l0 * 1000;
+            int l2 = Version - l0 * 1000000 - l1 * 1000;
+
+            return l0 + "." + l1 + "." + l2;
+        }
     }
 }

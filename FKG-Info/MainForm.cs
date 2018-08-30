@@ -184,9 +184,9 @@ namespace FKG_Info
             CloseFlowerSelector();
             CloseEquipmentSelector();
 
-            PicBoxIconMain.Clear();
-            PicBoxIconV1.Clear();
-            PicBoxIconV2.Clear();
+            IconMain.Clear();
+            Icon2nd.Clear();
+            Icon3rd.Clear();
 
             Program.DB.Flowers.Unselect();
             GridInfo.Rows.Clear();
@@ -204,8 +204,8 @@ namespace FKG_Info
                 BtEvolutions.Visible = true;
                 BtVariations.Visible = true;
                 BtPrevEvolution.Visible = true;
-                PicBoxIconV1.Visible = true;
-                PicBoxIconV2.Visible = true;
+                Icon2nd.Visible = true;
+                Icon3rd.Visible = true;
             }
 
             if (mode == MMItemModeEquip.Name)
@@ -221,8 +221,8 @@ namespace FKG_Info
                 BtEvolutions.Visible = false;
                 BtVariations.Visible = false;
                 BtPrevEvolution.Visible = false;
-                PicBoxIconV1.Visible = false;
-                PicBoxIconV2.Visible = false;
+                Icon2nd.Visible = false;
+                Icon3rd.Visible = false;
             }
 
             if (mode == MMItemModeFurniture.Name)
@@ -237,8 +237,8 @@ namespace FKG_Info
                 BtEvolutions.Visible = false;
                 BtVariations.Visible = false;
                 BtPrevEvolution.Visible = false;
-                PicBoxIconV1.Visible = false;
-                PicBoxIconV2.Visible = false;
+                Icon2nd.Visible = false;
+                Icon3rd.Visible = false;
             }
 
             if (mode == MMItemModeEnemy.Name)
@@ -253,8 +253,8 @@ namespace FKG_Info
                 BtEvolutions.Visible = false;
                 BtVariations.Visible = false;
                 BtPrevEvolution.Visible = false;
-                PicBoxIconV1.Visible = false;
-                PicBoxIconV2.Visible = false;
+                Icon2nd.Visible = false;
+                Icon3rd.Visible = false;
             }
         }
 
@@ -323,7 +323,7 @@ namespace FKG_Info
 
         public void SelectFromSelector(EquipmentInfo equip)
         {
-            PicBoxIconMain.AsyncLoadImage(equip);
+            IconMain.SetIcon(equip);
             equip.FillGrid(GridInfo);
         }
 
@@ -337,9 +337,9 @@ namespace FKG_Info
             if (!Program.DB.Flowers.IsSelected())
             {
                 PicBoxBig.SetImage(null);
-                PicBoxIconMain.SetImage(null);
-                PicBoxIconV1.SetImage(null);
-                PicBoxIconV2.SetImage(null);
+                IconMain.Clear();
+                Icon2nd.Clear();
+                Icon3rd.Clear();
                 GridInfo.Rows.Clear();
                 return;
             }
@@ -354,10 +354,10 @@ namespace FKG_Info
             //icon.Exclusive = false;
 
             //icon.Variation = FlowerInfo.Variation.Base;
-            PicBoxIconMain.Flower = flower;
-            Program.DB.FlowerIcons.GetImage(PicBoxIconMain);
-            PicBoxIconV1.Flower = Program.DB.Flowers.GetNextEvolution(flower);
-            Program.DB.FlowerIcons.GetImage(PicBoxIconV1);
+            IconMain.SetIcon(flower);// = flower;
+            //Program.DB.FlowerIcons.GetImage(PicBoxIconMain);
+            Icon2nd.SetIcon(Program.DB.Flowers.GetNextEvolution(flower));
+            //Program.DB.FlowerIcons.GetImage(PicBoxIconV1);
             //PicBoxIconMain.AsyncLoadImage(icon);
             //icon.Variation = FlowerInfo.Variation.Evolved;
             //PicBoxIconV1.AsyncLoadImage(icon);
@@ -453,9 +453,9 @@ namespace FKG_Info
 
         private void PicBoxIconV1_Click(object sender, EventArgs ev)
         {
-            if ((CurrentMode == Mode.Characters) && (PicBoxIconV1.Flower != null))
+            if ((CurrentMode == Mode.Characters) && (Icon2nd.Flower != null))
             {
-                Program.DB.Flowers.Select(PicBoxIconV1.Flower.ID);
+                Program.DB.Flowers.Select(Icon2nd.Flower.ID);
                 ReloadFlower();
             }
 
@@ -588,11 +588,7 @@ namespace FKG_Info
 
         private void MainForm_Shown(object sender, EventArgs ev)
         {
-            TopMost = true;
-            BringToFront();
-            TopMost = false;
-
-            //DrawIconSelectionBorder(0);
+            Activate();
         }
 
 
@@ -667,6 +663,12 @@ namespace FKG_Info
                 Program.DB.Flowers.Select(flower.ID);
                 ReloadFlower();
             }
+        }
+
+        private void MMItemFileExportIcons_Click(object sender, EventArgs e)
+        {
+            Program.DB.FlowerIcons.Export();
+            Program.DB.EquipmentIcons.Export();
         }
     }
 }

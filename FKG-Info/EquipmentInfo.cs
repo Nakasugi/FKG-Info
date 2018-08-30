@@ -20,7 +20,8 @@
 
 
         private int[] FlowerIDs;
-        private int ImageID;
+
+        public int ImageID { get; private set; }
 
         //private static string URL;
 
@@ -51,7 +52,7 @@
             KInfo = masterData[25].Replace("\"", "");
             if (KInfo == "") KInfo = null;
 
-            int.TryParse(masterData[2], out ImageID);
+            int.TryParse(masterData[2], out parsedValue); ImageID = parsedValue;
 
             int.TryParse(masterData[19], out parsedValue); Type = parsedValue;
             int.TryParse(masterData[22], out parsedValue); Rarity = parsedValue;

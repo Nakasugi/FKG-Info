@@ -84,7 +84,7 @@ namespace FKG_Info
             try
             {
                 ms = new MemoryStream(buffer);
-                ms = Helper.DecompressStream(ms);
+                ms = Helper.DecompressStream(ms, 2);
             }
             catch { ms = null; }
 

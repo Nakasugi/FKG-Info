@@ -17,9 +17,8 @@
 
         private int Skill;
 
-        private int Ability1;
-        private int Ability2;
-
+        private int AbilityID1;
+        private int AbilityID2;
 
         public bool CanBloom { get; private set; }
         private bool IsBloomed;
@@ -47,7 +46,29 @@
         public Animator.Type SelectedImage { get; private set; }
         public Animator.EmoType SelectedEmotion { get; private set; }
 
-        public int AtlasIconID;
+        
+        
+        private AbilityInfo Ability1
+        {
+            get
+            {
+                if (Ability1Value == null) Ability1Value = Program.DB.GetAbility(AbilityID1);
+                return Ability1Value;
+            }
+        }
+
+        private AbilityInfo Ability2
+        {
+            get
+            {
+                if (Ability2Value == null) Ability2Value = Program.DB.GetAbility(AbilityID2);
+                return Ability2Value;
+            }
+        }
+
+        private AbilityInfo Ability1Value;
+        private AbilityInfo Ability2Value;
+
 
 
 
@@ -155,6 +176,9 @@
             BaseType = ObjectType.Flower;
 
             Name = new ComplexName();
+
+            Ability1Value = null;
+            Ability2Value = null;
         }
 
 
@@ -195,8 +219,8 @@
             int.TryParse(masterData[MrFields.Evolution], out parsedValue); Evolution = parsedValue - 1;
 
             int.TryParse(masterData[MrFields.SkillID], out Skill);
-            int.TryParse(masterData[MrFields.Ability1ID], out Ability1);
-            int.TryParse(masterData[MrFields.Ability2ID], out Ability2);
+            int.TryParse(masterData[MrFields.Ability1ID], out AbilityID1);
+            int.TryParse(masterData[MrFields.Ability2ID], out AbilityID2);
 
             int.TryParse(masterData[MrFields.Family], out parsedValue); Family = parsedValue;
             int.TryParse(masterData[MrFields.Rarity], out parsedValue); Rarity = parsedValue;
@@ -228,7 +252,7 @@
 
             int rowid;
 
-            var blueFonfStyle= new System.Windows.Forms.DataGridViewCellStyle() { ForeColor = System.Drawing.Color.DarkViolet };
+            var blueFonfStyle = new System.Windows.Forms.DataGridViewCellStyle() { ForeColor = System.Drawing.Color.DarkViolet };
 
             view.Rows.Clear();
 
@@ -282,7 +306,7 @@
                 view.Rows[rowid].Cells[1].ToolTipText = fwst.GetDetailedOverallForceInfo();
             }
 
-            //view.Rows.Add("Version", Version.ToString());
+            view.Rows.Add("Version", GetVersion());
 
             if (view.Rows.Count > 11)
             {
@@ -296,19 +320,16 @@
 
         public int[] GetAbilityData(int n)
         {
-            AbilityInfo ab = Program.DB.GetAbility(Ability1);
-
-            if (ab != null)
+            if (Ability1 != null)
             {
-                if (n < ab.Count)
+                if (n < Ability1.Count)
                 {
-                    return ab.GetParams(n);
+                    return Ability1.GetParams(n);
                 }
                 else
                 {
-                    n -= ab.Count;
-                    ab = Program.DB.GetAbility(Ability2);
-                    if (ab != null) return ab.GetParams(n);
+                    n -= Ability1.Count;
+                    if (Ability2 != null) return Ability2.GetParams(n);
                 }
             }
 
@@ -332,21 +353,16 @@
 
             if (id == 0) return null;
 
-            //evol = CheckEvolutionValue(evol);
-
-            AbilityInfo ab = Program.DB.GetAbility(Ability1);
-
-            if (ab != null)
+            if (Ability1 != null)
             {
-                if (n < ab.Count)
+                if (n < Ability1.Count)
                 {
-                    return ab.GetInfo(n, getIDs);
+                    return Ability1.GetInfo(n, getIDs);
                 }
                 else
                 {
-                    n -= ab.Count;
-                    ab = Program.DB.GetAbility(Ability2);
-                    if (ab != null) return ab.GetInfo(n, getIDs);
+                    n -= Ability1.Count;
+                    if (Ability2 != null) return Ability2.GetInfo(n, getIDs);
                 }
             }
 
@@ -368,12 +384,8 @@
 
         public bool CheckAbilityType(int type)
         {
-            AbilityInfo ability;
-
-            ability = Program.DB.GetAbility(Ability1);
-            if (ability != null) if (ability.CheckTypeID(type)) return true;
-            ability = Program.DB.GetAbility(Ability2);
-            if (ability != null) if (ability.CheckTypeID(type)) return true;
+            if (Ability1 != null) if (Ability1.CheckTypeID(type)) return true;
+            if (Ability2 != null) if (Ability2.CheckTypeID(type)) return true;
 
             return false;
         }
@@ -382,12 +394,8 @@
 
         public bool CheckAbilityShortName(string shortName)
         {
-            AbilityInfo ability;
-
-            ability = Program.DB.GetAbility(Ability1);
-            if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
-            ability = Program.DB.GetAbility(Ability2);
-            if (ability != null) if (ability.CheckAbilityTags(shortName)) return true;
+            if (Ability1 != null) if (Ability1.CheckAbilityTags(shortName)) return true;
+            if (Ability2 != null) if (Ability2.CheckAbilityTags(shortName)) return true;
 
             return false;
         }
@@ -555,8 +563,8 @@
 
             return previd;
         }
-
         
+
 
         /// <summary>
         /// 0,1,2 - evol, 3 - grown env, 4 grown blm.
@@ -698,5 +706,15 @@
             return CompareTo(obj);
         }
 
+
+
+        public int GetBloomCGStatusCode()
+        {
+            if (!IsBloomed) return 0;
+
+            int code = ID << 8;
+
+            return NoBloomCG ? code : code | 4;
+        }
     }
 }
