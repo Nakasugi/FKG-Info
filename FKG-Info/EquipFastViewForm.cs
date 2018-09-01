@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 
@@ -18,11 +17,10 @@ namespace FKG_Info
 
             for (int i = 0; i < equips.Length; i++)
             {
-                PictureBox pic = new PictureBox();
-                pic.Location = new Point(0, 100 * i);
-                pic.Width = pic.Height = 100;
-                Program.ImageLoader.GetImage(equips[i], (ImageDownloader.DownloadedFile f) => { pic.Image = f.Image; });
-                Controls.Add(pic);
+                FastIcon icon = new FastIcon();
+                icon.Location = new Point(0, 100 * i);
+                icon.SetIcon(equips[i]);
+                Controls.Add(icon);
 
                 TextBox txb = new TextBox();
                 txb.Location = new Point(110, 100 * i + 4);

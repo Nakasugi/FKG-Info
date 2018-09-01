@@ -60,12 +60,14 @@ namespace FKG_Info
             CmBoxNation.Items[0] = "All Nations";
             CmBoxNation.SelectedIndex = 0;
 
+            string[] atags = Program.DB.GetAbilitiesTags();
             CmBoxAbility01.Items.Add("All Abilities");
-            CmBoxAbility01.Items.AddRange(Program.DB.GetAbilitiesTags());
+            CmBoxAbility01.Items.AddRange(atags);
             CmBoxAbility01.SelectedIndex = 0;
             CmBoxAbility02.Items.Add("All Abilities");
-            CmBoxAbility02.Items.AddRange(Program.DB.GetAbilitiesTags());
+            CmBoxAbility02.Items.AddRange(atags);
             CmBoxAbility02.SelectedIndex = 0;
+            atags = null;
 
             ChBoxAcc1Has.Text = Program.DB.Account1Name;
             ChBoxAcc2Has.Text = Program.DB.Account2Name;

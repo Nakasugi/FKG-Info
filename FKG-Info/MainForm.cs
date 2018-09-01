@@ -669,6 +669,7 @@ namespace FKG_Info
         {
             Program.DB.FlowerIcons.Export();
             Program.DB.EquipmentIcons.Export();
+            MessageBox.Show("Done");
         }
     }
 }

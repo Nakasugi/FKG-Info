@@ -25,7 +25,7 @@ namespace FKG_Info
 
 
 
-        public ActionQueueLauncher(LifeContcol life, int maxcount = 1)
+        public ActionQueueLauncher(LifeContcol life, int maxcount = 4)
         {
             Actions = new List<Action>();
 
@@ -68,6 +68,8 @@ namespace FKG_Info
                 thread.Name = "Auto Launched " + TotalCounter.ToString();
                 thread.Start();
             }
+
+            while (Count > 0) Thread.Sleep(200);
         }
 
 

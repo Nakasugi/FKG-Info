@@ -22,12 +22,7 @@ namespace FKG_Info
 
         private object DrawLocker;
 
-        //private object QueueLocker;
-        //private int QueueCounter;
-
         private bool NeedSave;
-
-        //private List<AdvPictureBox> PicQueue;
 
         private int LastPosX, LastPosY;
 
@@ -102,26 +97,9 @@ namespace FKG_Info
             IconType = Type.FlowerIcons;
 
             CreateGraphics(flowers.Count);
+            DrawDefaultIcons();
 
-            Rectangle srcRc = new Rectangle(0, 0, IconWidth, IconHeight);
-            Rectangle dstRc = new Rectangle(0, 0, IconWidth, IconHeight);
-
-            int x, y;
-
-            // Draw Default icons
-            for (x = 0; x < Columns; x++)
-            {
-                dstRc.X = x * IconWidth;
-                for (y = 0; y < Rows; y++)
-                {
-                    dstRc.Y = y * IconHeight;
-                    GR.DrawImage(Properties.Resources.icon_l_default, dstRc, srcRc, GraphicsUnit.Pixel);
-                }
-            }
-
-
-            // Create positions list and load images
-            x = 0; y = 0;
+            int x = 0, y = 0;
 
             foreach (FlowerInfo flower in flowers)
             {
@@ -148,26 +126,9 @@ namespace FKG_Info
             IconType = Type.EquipmentIcons;
 
             CreateGraphics(equips.Count);
+            DrawDefaultIcons();
 
-            Rectangle srcRc = new Rectangle(0, 0, IconWidth, IconHeight);
-            Rectangle dstRc = new Rectangle(0, 0, IconWidth, IconHeight);
-
-            int x, y;
-
-            // Draw Default icons
-            for (x = 0; x < Columns; x++)
-            {
-                dstRc.X = x * IconWidth;
-                for (y = 0; y < Rows; y++)
-                {
-                    dstRc.Y = y * IconHeight;
-                    GR.DrawImage(Properties.Resources.icon_l_default, dstRc, srcRc, GraphicsUnit.Pixel);
-                }
-            }
-
-
-            // Create positions list and load images
-            x = 0; y = 0;
+            int x = 0, y = 0;
 
             foreach (EquipmentInfo equip in equips)
             {
@@ -255,11 +216,12 @@ namespace FKG_Info
 
             lock (DrawLocker)
             {
+                if (GR != null) GR.Dispose();
+
                 Bitmap bmp = new Bitmap(AtlasWidth, AtlasHeight, PixelFormat.Format24bppRgb);
-                Graphics gr = Graphics.FromImage(Atlas);
-                gr.Clear(Color.FromArgb(128, 128, 128));
-                gr.DrawImage(Atlas, 0, 0);
-                gr.Dispose();
+                GR = Graphics.FromImage(bmp);
+                DrawDefaultIcons();
+                GR.DrawImage(Atlas, 0, 0);
 
                 Atlas.Dispose();
                 Atlas = bmp;
@@ -268,17 +230,37 @@ namespace FKG_Info
 
 
 
-        public static IconsAtlas Load(Type type)
+        private void DrawDefaultIcons()
         {
-            string path;
+            Rectangle srcRc = new Rectangle(0, 0, IconWidth, IconHeight);
+            Rectangle dstRc = new Rectangle(0, 0, IconWidth, IconHeight);
 
+            for (dstRc.X = 0; dstRc.X < AtlasWidth; dstRc.X += IconWidth)
+            {
+                for (dstRc.Y = 0; dstRc.Y < AtlasHeight; dstRc.Y += IconHeight)
+                {
+                    GR.DrawImage(Properties.Resources.icon_l_default, dstRc, srcRc, GraphicsUnit.Pixel);
+                }
+            }
+        }
+
+
+
+        private static string GetDefaultPath(Type type)
+        {
             switch (type)
             {
-                case Type.FlowerIcons: path = Program.DB.DataFolder + DefaultFwFileName; break;
-                case Type.EquipmentIcons: path = Program.DB.DataFolder + DefaultEqFileName; break;
+                case Type.FlowerIcons: return Program.DB.DataFolder + DefaultFwFileName;
+                case Type.EquipmentIcons: return Program.DB.DataFolder + DefaultEqFileName;
                 default: return null;
             }
-        
+        }
+
+
+
+        public static IconsAtlas Load(Type type)
+        {
+            string path = GetDefaultPath(type);
 
             FileStream srcFile;
             MemoryStream srcStream;
@@ -340,7 +322,7 @@ namespace FKG_Info
         {
             if (!NeedSave) return;
             if (Atlas == null) return;
-            if (path == null) path = Program.DB.DataFolder + DefaultFwFileName;
+            if (path == null) path = GetDefaultPath(IconType);
 
 
             while (!Program.ImageLoader.IsStopped()) System.Threading.Thread.Sleep(200);
@@ -392,9 +374,6 @@ namespace FKG_Info
             savefile.Close();
             st.Close();
             wr.Close();
-
-
-            //Atlas.Save("F:\\atlas.png", ImageFormat.Png);
         }
 
 
@@ -559,66 +538,5 @@ namespace FKG_Info
             ifile.Image.Dispose();
             ifile.Image = null;
         }
-
-
-
-        /*
-        public Bitmap GetImage(int atlasid)
-        {
-            int posY = atlasid / 64;
-            int posX = atlasid - posY * 64;
-
-            posX *= 100; posY *= 100;
-
-            lock (DrawLocker)
-            {
-                return Atlas.Clone(new Rectangle(posX, posY, 100, 100), PixelFormat.Format24bppRgb);
-            }
-        }
-        */
-
-            /*
-        public Bitmap GetImage(int x, int y)
-        {
-            lock (DrawLocker)
-            {
-                return Atlas.Clone(new Rectangle(x, y, IconWidth, IconHeight), PixelFormat.Format24bppRgb);
-            }
-        }
-        */
-
-        /*
-        public void GetImage(AdvPictureBox picBox)
-        {
-            if (picBox.Flower == null)
-            {
-                picBox.SetImage(null);
-                return;
-            }
-
-            //int atlasId = picBox.Flower.AtlasIconID;
-
-            lock (QueueLocker)
-            {
-                IconPosition pos = Positions.Find(p => p.ID == picBox.Flower.ID);
-
-                if (pos!=null)
-                {
-                    picBox.SetImage(GetImage(pos.X, pos.Y));
-                    return;
-                }
-
-                picBox.SetImage(Properties.Resources.icon_l_default, false);
-                PicQueue.Add(picBox);
-            }
-        }
-        */
-
-        /*
-        public void Save()
-        {
-            Atlas.Save("F:\\atlas.png", System.Drawing.Imaging.ImageFormat.Png);
-        }
-        */
     }
 }

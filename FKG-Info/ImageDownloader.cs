@@ -42,7 +42,7 @@ namespace FKG_Info
         private object Locker = new object();
 
         public int DwCount { get; private set; }
-        public int InQueue { get { return FlowerImageDwQueue.InQueue; } }
+        public int InQueue { get { return FlowerImageDwQueue.InQueue + EquipmentImageDwQueue.InQueue; } }
 
 
         public delegate void DwCompletedCallback(DownloadedFile ifile);
@@ -196,7 +196,7 @@ namespace FKG_Info
             lock (df.Locker) df.Image = dwImage;
             cbDelegate?.Invoke(df);
 
-            if (toRefresh != null) toRefresh?.Invoke(new Action(() => { toRefresh.Refresh(); }));
+            RefreshFormsControl(toRefresh);
         }
 
 
@@ -274,7 +274,24 @@ namespace FKG_Info
             lock (df.Locker) df.Image = dwImage;
             cbDelegate?.Invoke(df);
 
-            if (toRefresh != null) toRefresh?.Invoke(new Action(() => { toRefresh.Refresh(); }));
+            RefreshFormsControl(toRefresh);
+        }
+
+
+
+        /// <summary>
+        /// Try refresh control
+        /// </summary>
+        /// <param name="toRefresh"></param>
+        private void RefreshFormsControl(System.Windows.Forms.Control toRefresh)
+        {
+            if (toRefresh == null) return;
+
+            try
+            {
+                toRefresh?.Invoke(new Action(() => { toRefresh.Refresh(); }));
+            }
+            catch { }
         }
 
 
@@ -309,8 +326,6 @@ namespace FKG_Info
                 new SWMI.WmpBitmapDecoder(srcStream, SWMI.BitmapCreateOptions.PreservePixelFormat, SWMI.BitmapCacheOption.Default);
             SWMI.BitmapSource bitmapSource = decoder.Frames[0];
             
-            //if (bitmapSource.Format != System.Windows.Media.PixelFormats.Bgra32) bitmapSource = new SWMI.FormatConvertedBitmap(bitmapSource, System.Windows.Media.PixelFormats.Bgra32, null, 0);
-
             var encoder = new SWMI.BmpBitmapEncoder();
             encoder.Frames.Add(SWMI.BitmapFrame.Create(bitmapSource));
             encoder.Save(dstStream);

@@ -9,9 +9,6 @@ namespace FKG_Info
 {
     public class SavingDataBlock
     {
-        public string Account1Name;
-        public string Account2Name;
-
         private List<int> Account1Refs;
         private List<int> Account2Refs;
         private List<int> NoBloomCGRefs;

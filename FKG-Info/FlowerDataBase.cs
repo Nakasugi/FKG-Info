@@ -313,12 +313,11 @@ namespace FKG_Info
                 db.GrownImageIDReplacer.ReadMasterData(db.Master.GetData("masterCharacterRarityEvolution"));
 
                 db.LoadNutakuNames();
+
+                db.TranslatorAbilities = new Translator(db.DataFolder + "\\en_abilities.txt");
+                db.TranslatorSkills = new Translator(db.DataFolder + "\\en_skills.txt");
+                db.LoadCharaNamesTranslation();
             }
-
-
-            db.TranslatorAbilities = new Translator(db.DataFolder + "\\en_abilities.txt");
-            db.TranslatorSkills = new Translator(db.DataFolder + "\\en_skills.txt");
-            db.LoadCharaNamesTranslation();
 
 
             EquipmentInfo.SearchSets(db.Equipments);
@@ -428,7 +427,12 @@ namespace FKG_Info
 
                 flowers = Flowers.FindAll(fw => fw.ShortName == mName[0]);
 
-                foreach (FlowerInfo flower in flowers) flower.Name.EngDMM = mName[1];
+                foreach (FlowerInfo flower in flowers)
+                {
+                    flower.Name.EngDMM = mName[1];
+                    //flower.Name.EngNutaku = "";
+                    //if (mName.Length > 2) flower.Name.EngNutaku = mName[2];
+                }
             }
 
             rd.Close();
@@ -484,29 +488,7 @@ namespace FKG_Info
         /// </summary>
         private void LoadNutakuNames()
         {
-            MasterData nutaku = new MasterData(DataFolder + "\\nutakuMaster.bin");
-            if (!nutaku.Ok) return;
-
-            string[] chFields;
-
-            FlowerInfo flower;
-            int chID;
-            string chLine;
-            string characters = nutaku.GetData("masterCharacter");
-            StringReader rd = new StringReader(characters);
-
-            while (true)
-            {
-                chLine = rd.ReadLine();
-                if (chLine == null) break;
-
-                chFields = chLine.Split(',');
-                int.TryParse(chFields[0], out chID);
-
-                flower = Flowers.Find(fw => fw.ID == chID);
-
-                if (flower != null) flower.Name.EngNutaku = chFields[5].Replace("\"", "");
-            }
+            MasterData.LoadNutakuNames(Flowers, DataFolder + "\\nutakuMaster.bin");
         }
 
 

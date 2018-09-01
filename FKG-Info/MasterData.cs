@@ -24,54 +24,9 @@ namespace FKG_Info
 
         public MasterData(string fname)
         {
-            Stream stInput;
-
             Ok = false;
-
-            try
-            {
-                stInput = new FileStream(fname, FileMode.Open);
-            }
-            catch { return; }
-
-            if ((stInput.Length < 2) || (stInput.Length > 10000000)) { stInput.Close(); return; }
-
-            StreamReader rd = new StreamReader(stInput);
-            string s64 = rd.ReadToEnd();
-            
-            s64 = s64.Replace("\\", "");
-            byte[] bin;
-
-            try
-            {
-                bin = Convert.FromBase64String(s64);
-                rd.Close();
-                stInput = new MemoryStream(bin);
-            }
-            catch { }
-
-            DeflateStream zip = new DeflateStream(stInput, CompressionMode.Decompress);
-            stInput.Position = 2;
-            Stream stJson = new MemoryStream();
-
-            try
-            {
-                zip.CopyTo(stJson);
-                zip.Close();
-            }
-            catch (Exception exp)
-            {
-                zip.Close();
-                System.Windows.Forms.MessageBox.Show(exp.Message,"Unzip Error");
-                return;
-            }
-
+            string json = LoadJson(fname); if (json == null) return;
             Ok = true;
-
-            stJson.Position = 0;
-            rd = new StreamReader(stJson);
-            string json = rd.ReadToEnd();
-            rd.Close();
 
             json = json.Substring(1, json.Length - 2);
             string[] jsonElements = json.Split(',');
@@ -79,8 +34,9 @@ namespace FKG_Info
             for (int i = 0; i < jsonElements.Length; i++) jsonElements[i] = jsonElements[i].Replace("\"", "");
 
             Data = new List<JsonStruct>();
+            string s64;
             string[] el;
-            
+
             foreach (string s in jsonElements)
             {
                 el = s.Split(':');
@@ -97,7 +53,83 @@ namespace FKG_Info
             }
 
         }
+
+
+
+        public static void LoadNutakuNames(FlowersList flowers, string fname)
+        {
+            string json = LoadJson(fname); if (json == null) return;
+            json = json.Substring(1, json.Length - 2);
+
+            int pos = 0, sbcnt = 0, cut1, cut2;
+
+            cut1 = json.IndexOf('[') + 1;
+
+            while(true)
+            {
+                if (json[pos] == '[') sbcnt++;
+                if (json[pos] == ']')
+                {
+                    sbcnt--;
+                    if (sbcnt == 0) break;
+                }
+                pos++;
+            }
+
+            cut2 = pos - cut1;
+            json = json.Substring(cut1 + 1, cut2 - 2);
+            string[] jsonFlowers = json.Split(new string[] { "},{" }, StringSplitOptions.None);
+            json = null;
+
+            foreach(string fw_str in jsonFlowers)
+            {
+                string[] fw_elms = fw_str.Split(',');
+
+                int.TryParse(fw_elms[0].Split(':')[1].Replace("\"", ""), out int id);
+                string name = fw_elms[5];
+
+                FlowerInfo flower = flowers.Find(fw => fw.ID == id);
+                if (flower != null) flower.Name.EngNutaku = fw_elms[5].Split(':')[1].Replace("\"", "");
+            }
+        }
         
+
+
+        private static string LoadJson(string fname)
+        {
+            Stream stInput;
+
+            try
+            {
+                stInput = new FileStream(fname, FileMode.Open);
+            }
+            catch { return null; }
+
+            if ((stInput.Length < 2) || (stInput.Length > 16000000)) { stInput.Close(); return null; }
+
+            StreamReader rd = new StreamReader(stInput);
+            string s64 = rd.ReadToEnd();
+
+            s64 = s64.Replace("\\", "");
+            byte[] bin;
+
+            try
+            {
+                bin = Convert.FromBase64String(s64);
+                rd.Close();
+                stInput = new MemoryStream(bin);
+            }
+            catch { }
+
+            stInput = Helper.DecompressStream(stInput, 2);
+            stInput.Position = 0;
+            rd = new StreamReader(stInput);
+            string json = rd.ReadToEnd();
+            rd.Close();
+
+            return json;
+        }
+
         
 
         public string GetData(string masterName)

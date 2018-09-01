@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -11,14 +12,15 @@ namespace FKG_Info
     /// </summary>
     public partial class SplashWindow : Window
     {
-        public static SplashWindow WpfWindow = null;
+        public static SplashWindow WPFWindow = null;
+
+        private static Stopwatch SW = new Stopwatch();
 
 
 
         private SplashWindow()
         {
             InitializeComponent();
-
 
             StartingImage.Source = ConvertBitmapToPngSource(Properties.Resources.splash_img_0);
         }
@@ -27,35 +29,38 @@ namespace FKG_Info
         
         public static void Start()
         {
-            if (WpfWindow != null) return;
+            if (WPFWindow != null) return;
 
             Thread th = new Thread(new ThreadStart(ActivateForm));
             th.IsBackground = true;
             th.SetApartmentState(ApartmentState.STA);
             th.Start();
+
+            SW.Start();
         }
 
 
 
         public static void Stop()
         {
-            if (WpfWindow == null) return;
-            WpfWindow.Dispatcher.Invoke(new Action(() => { WpfWindow.Close(); WpfWindow = null; }));
+            if (WPFWindow == null) return;
+            WPFWindow.Dispatcher.Invoke(new Action(() => { WPFWindow.Close(); WPFWindow = null; }));
+            SW.Stop();
         }
 
 
 
         private static void ActivateForm()
         {
-            WpfWindow = new SplashWindow();
-            WpfWindow.Show();
+            WPFWindow = new SplashWindow();
+            WPFWindow.Show();
 
             DoubleAnimation da = new DoubleAnimation();
             da.From = 0.1;
             da.To = 1.0;
-            da.Duration = new Duration(TimeSpan.FromSeconds(1.5));
+            da.Duration = new Duration(TimeSpan.FromSeconds(2));
             da.AutoReverse = false;
-            WpfWindow.StartingImage.BeginAnimation(OpacityProperty, da);
+            WPFWindow.StartingImage.BeginAnimation(OpacityProperty, da);
 
             System.Windows.Threading.Dispatcher.Run();
         }
@@ -72,6 +77,13 @@ namespace FKG_Info
             image.StreamSource = ms;
             image.EndInit();
             return image;
+        }
+
+
+
+        public static void WaitForShow()
+        {
+            if (SW.ElapsedMilliseconds < 2000) Thread.Sleep(2000 - (int)SW.ElapsedMilliseconds);
         }
     }
 }
