@@ -62,20 +62,16 @@ namespace FKG_Info
             string dir = Path.GetDirectoryName(path);
             if (!Helper.CheckFolder(dir)) return false;
 
-            string url1 = Program.DB.GetUrl(1, reluri);
-            string url2 = Program.DB.GetUrl(2, reluri);
+            string url = Program.DB.GetUrl(reluri);
 
             WebClient wc = new WebClient();
             byte[] buffer;
 
             try
             {
-                buffer = wc.DownloadData(url1);
+                buffer = wc.DownloadData(url);
             }
-            catch
-            {
-                try { buffer = wc.DownloadData(url2); } catch { return false; }
-            }
+            catch { return false; }
             finally { wc.Dispose(); }
             
 

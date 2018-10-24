@@ -28,10 +28,10 @@ namespace FKG_Info
 
 
         public string DMMURL;
+        public string MobileURL;
         public string NutakuURL;
         public string ImagesFolder;
         public string DataFolder;
-        public string EquipFolder;
         public string SoundFolder;
 
         public int SoundVolume;
@@ -101,12 +101,23 @@ namespace FKG_Info
 
 
             DMMURL = "http://dugrqaqinbtcq.cloudfront.net/product/";
+            MobileURL = "http://dugrqaqinbtcq.cloudfront.net/product/ynnFQcGDLfaUcGhp/assets/";
             NutakuURL = "http://cdn.flowerknight.nutaku.net/bin/commons/";
+
+
+            /*
+                http://dugrqaqinbtcq.cloudfront.net/product/images/character/
+                http://dugrqaqinbtcq.cloudfront.net/product/ynnFQcGDLfaUcGhp/assets/medium/images/character/general/
+
+                http://dugrqaqinbtcq.cloudfront.net/product/ynnFQcGDLfaUcGhp/assets/medium/images/character/general/i/md5(icon_l_<fkgID>).bin
+                http://dugrqaqinbtcq.cloudfront.net/product/ynnFQcGDLfaUcGhp/assets/medium/images/character/general/s/md5(bustup_<fkgID>).bin
+                http://dugrqaqinbtcq.cloudfront.net/product/ynnFQcGDLfaUcGhp/assets/medium/images/character/general/stand/md5(stand_<fkgID>).bin
+                http://dugrqaqinbtcq.cloudfront.net/product/ynnFQcGDLfaUcGhp/assets/medium/images/character/general/stand_m/md5(stand_m_<fkgID>).bin
+            */
 
             DefaultFolder = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
             DataFolder = DefaultFolder + "\\" + FolderNames.Data;
             ImagesFolder = DefaultFolder + "\\" + FolderNames.Images;
-            EquipFolder = ImagesFolder + "\\" + FolderNames.Equip;
             SoundFolder = DefaultFolder + "\\" + FolderNames.Sounds;
 
             SoundVolume = 25;
@@ -276,8 +287,6 @@ namespace FKG_Info
                 Helper.XmlGetText(opt, NodeName.ImageSource, ref enumText);
                 db.ImageSource = (ImageSources)Enum.Parse(typeof(ImageSources), enumText);
                 
-                db.EquipFolder = db.ImagesFolder + "\\" + FolderNames.Equip;
-
                 db.Flowers.LoadSaving(xmlData);
             }
 
@@ -292,12 +301,6 @@ namespace FKG_Info
             {
                 db.ImagesFolder = db.DefaultFolder + "\\" + FolderNames.Images;
                 Helper.CheckFolder(db.ImagesFolder);
-            }
-
-            if (!Helper.CheckFolder(db.EquipFolder))
-            {
-                db.EquipFolder = db.ImagesFolder + "\\" + FolderNames.Equip;
-                Helper.CheckFolder(db.EquipFolder);
             }
 
 
@@ -322,7 +325,8 @@ namespace FKG_Info
 
             EquipmentInfo.SearchSets(db.Equipments);
 
-            foreach (FlowerInfo fw in db.Flowers) fw.FindExclusiveSkin(db);
+            //db.Skins = db.Skins.FindAll(s => s.CheckActual());
+            db.Flowers.UpdateSkins(db.Skins, db.GrownImageIDReplacer);
 
             return db;
         }
@@ -334,28 +338,15 @@ namespace FKG_Info
         /// </summary>
         /// <param name="type">1 = 1st, 2 = 2nd</param>
         /// <returns></returns>
-        public string GetUrl(int type = 0, string relurl = null)
+        public string GetUrl(string relurl, bool mobile = false)
         {
-            switch (ImageSource)
-            {
-                case ImageSources.Nutaku:
-                    if (type == 1) return NutakuURL + relurl;
-                    break;
-                case ImageSources.NutakuDMM:
-                    if (type == 1) return NutakuURL + relurl;
-                    if (type == 2) return DMMURL + relurl;
-                    break;
-                case ImageSources.DMM:
-                    if (type == 1) return DMMURL + relurl;
-                    break;
-                case ImageSources.DMMNutaku:
-                    if (type == 1) return DMMURL + relurl;
-                    if (type == 2) return NutakuURL + relurl;
-                    break;
-                default: break;
-            }
+            if ((relurl == null) || (relurl == "")) return null;
 
-            return null;
+            if (!mobile)
+                return DMMURL + "images/character/" + relurl;
+            else
+                return MobileURL + "medium/images/character/general/" + relurl;
+
         }
 
 

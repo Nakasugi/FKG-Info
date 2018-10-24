@@ -74,6 +74,7 @@ namespace FKG_Info
 
             public void Loaded() { Flags |= 0x01; }
             public bool IsLoaded() { return (Flags & 0x01) != 0; }
+            public void Reset() { Flags = 0; }
         }
 
         private List<IconPosition> Positions;
@@ -105,8 +106,7 @@ namespace FKG_Info
             {
                 Positions.Add(new IconPosition(flower.ID, x, y));
 
-                Animator ani = new Animator();
-                ani.Flower = flower;
+                Animator ani = new Animator(flower);
                 ani.ImageType = Animator.Type.IconLarge;
                 ani.RawImage = true;
 
@@ -156,8 +156,7 @@ namespace FKG_Info
             if (flower == null) return;
 
 
-            Animator ani = new Animator();
-            ani.Flower = flower;
+            Animator ani = new Animator(flower);
             ani.ImageType = Animator.Type.IconLarge;
             ani.RawImage = true;
 
@@ -168,6 +167,7 @@ namespace FKG_Info
 
         private IconPosition LoadByFlower(FlowerInfo flower, System.Windows.Forms.Control toRefresh)
         {
+
             IconPosition pos = new IconPosition(flower.ID, LastPosX, LastPosY);
             Positions.Add(pos);
 
@@ -378,20 +378,23 @@ namespace FKG_Info
 
 
 
-        public void Export()
+        public bool Export()
         {
             string path;
 
             switch (IconType)
             {
                 case Type.FlowerIcons: path = DefaultFwFileName; break;
-                case Type.EquipmentIcons: path =  DefaultEqFileName; break;
-                default: return;
+                case Type.EquipmentIcons: path = DefaultEqFileName; break;
+                default: return false;
             }
 
-            path = Program.DB.DataFolder + "\\" + Path.GetFileNameWithoutExtension(path) + ".png";
+            path = Program.DB.DataFolder + "\\Export\\" + Path.GetFileNameWithoutExtension(path) + ".png";
 
-            Atlas.Save(path, ImageFormat.Png);
+            Helper.CreateFolderForFile(path);
+
+            lock (DrawLocker) try { Atlas.Save(path, ImageFormat.Png); } catch { return false; }
+            return true;
         }
 
 
@@ -537,6 +540,18 @@ namespace FKG_Info
 
             ifile.Image.Dispose();
             ifile.Image = null;
+        }
+
+
+
+        public void UpdateIconImage(int id)
+        {
+            IconPosition pos = Positions.Find(p => p.ID == id);
+
+            if (pos == null) return;
+
+            pos.Reset();
+            LoadByPosition(pos);
         }
     }
 }

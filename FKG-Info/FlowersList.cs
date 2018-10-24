@@ -120,7 +120,7 @@ namespace FKG_Info
             List<int> ids = new List<int>();
 
             foreach (FlowerInfo flower in Flowers)
-                if ((flower.Evolution == FlowerInfo.Variation.Bloomed) && (flower.NoBloomCG)) ids.Add(flower.RefID);
+                if ((flower.Evolution == FlowerInfo.Variation.Bloomed) && flower.NoBloomCG) ids.Add(flower.RefID);
 
             return ids;
         }
@@ -162,6 +162,9 @@ namespace FKG_Info
 
             if (oldids.Count == 0) return;
 
+
+            List<int> iconids = new List<int>();
+
             foreach(int id in oldids)
             {
                 FlowerInfo flower = Flowers.Find(fw => fw.RefID == id && fw.Evolution == FlowerInfo.Variation.Bloomed);
@@ -169,6 +172,31 @@ namespace FKG_Info
                 if (flower == null) continue;
 
                 Program.ImageLoader.DeleteImages(flower.ID);
+                Program.DB.FlowerIcons.UpdateIconImage(flower.ID);
+            }
+        }
+
+
+
+        public void UpdateSkins(List<SkinInfo> skins, GrowInfo grow)
+        {
+            List<SkinInfo> sklist = skins.ToList();
+
+            foreach (FlowerInfo flower in Flowers)
+            {
+                SkinInfo skin = sklist.Find(sk => sk.ID == flower.ID);
+                if (skin == null) continue;
+                flower.SkinsRefID = skin.RefID;
+                sklist.Remove(skin);
+            }
+
+            sklist = sklist.FindAll(sk => sk.IsExclusive || sk.IsBaseReplace);
+
+            foreach (FlowerInfo flower in Flowers)
+            {
+                if (flower.SkinsRefID == 0) continue;
+
+                foreach (SkinInfo skin in sklist) if (skin.RefID == flower.SkinsRefID) flower.UpdateSkin(skin, grow);
             }
         }
     }

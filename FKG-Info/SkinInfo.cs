@@ -2,9 +2,9 @@
 {
     public class SkinInfo : BaseInfo
     {
-        public string Desc { get; private set; }
+        public string Name { get; private set; }
 
-        public int ImageRep { get; private set; }
+        public int ReplaceID { get; private set; }
         public int RefID { get; private set; }
 
         /// <summary>
@@ -45,23 +45,15 @@
 
             RefID = parsedValue;
 
-            Desc = masterData[6];
+            Name = masterData[6];
 
             int.TryParse(masterData[0], out parsedValue); ID = parsedValue;
-            int.TryParse(masterData[2], out parsedValue); ImageRep = parsedValue;
+            int.TryParse(masterData[2], out parsedValue); ReplaceID = parsedValue;
             int.TryParse(masterData[7], out parsedValue); Position = parsedValue;
 
             if (masterData[3] == "1") IsSkin = true;
             if (masterData[4] == "1") IsBaseReplace = true;
             if (masterData[5] == "1") IsExclusive = true;
-        }
-
-
-
-        public bool CheckExclusive(SkinInfo sk)
-        {
-            if (RefID != sk.RefID) return false;
-            return IsExclusive | IsBaseReplace;
         }
     }
 }

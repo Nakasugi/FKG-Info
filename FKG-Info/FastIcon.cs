@@ -74,7 +74,7 @@ namespace FKG_Info
 
 
 
-        public void Clear() { Cleared = true; }
+        public void Clear() { Cleared = true; Refresh(); }
 
 
 

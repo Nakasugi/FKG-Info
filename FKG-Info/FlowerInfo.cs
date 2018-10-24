@@ -35,7 +35,9 @@
         public int SortCategory { get; private set; }
         public bool IsKnight { get; private set; }
 
-        private int ExclusiveSkinID;
+        //private int ExclusiveSkinID;
+        private SkinsList Skins;
+
 
         public FlowerStats Stats { get; private set; }
 
@@ -203,6 +205,7 @@
             SetVersion(masterData[MrFields.Version]);
 
 
+            Skins = new SkinsList(ID);
             //if ((Evol < 0) || (Evol > 2)) { ID = 0; return; }
 
             //EvolMax = Evol;
@@ -452,19 +455,17 @@
 
 
 
-        public int GetImageID(bool exskin = false)
+        public int GetImageID(int skinIndex = 0)
         {
-            if (exskin) return ExclusiveSkinID;
-
             if (IsGrown)
                 return Program.DB.GrownImageIDReplacer.ReplaceImageID(GrownID);
             else
-                return ID;
+                return Skins.GetByIndex(skinIndex);
         }
 
-        public string GetImageStringID(bool exskin = false)
+        public string GetImageStringID(int skinIndex = 0)
         {
-            return GetImageID(exskin).ToString();
+            return GetImageID(skinIndex).ToString();
         }
 
 
@@ -616,7 +617,7 @@
         }
 
 
-
+        /*
         public void FindExclusiveSkin(FlowerDataBase db)
         {
             SkinInfo skin;
@@ -630,10 +631,26 @@
             skin = db.Skins.Find(sk => sk.CheckExclusive(skin));
             if (skin == null) return;
 
-            ExclusiveSkinID = skin.ID;
+            //ExclusiveSkinID = skin.ID;
+        }
+        */
+
+
+        public void UpdateSkin(SkinInfo skin, GrowInfo grow)
+        {
+            int id = IsGrown ? grow.ReplaceImageID(GrownID) : ID;
+            
+            if (skin.IsBaseReplace && (skin.ReplaceID != id)) return;
+
+            Skins.AddSkin(skin.ID, skin.Name);
         }
 
-        public bool HasExclusiveSkin() { return ExclusiveSkinID != 0; }
+
+        public bool HasAdditionalSkin() { return Skins.HasAdditionalSkin(); }
+
+
+        public string[] GetSkinNames() { return Skins.GetNames(); }
+        public int SkinsRefID { get { return Skins.RefID; } set { Skins.RefID = value; } }
 
 
 

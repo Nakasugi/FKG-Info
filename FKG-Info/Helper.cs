@@ -52,6 +52,24 @@ namespace FKG_Info
             return true;
         }
 
+
+
+        /// <summary>
+        /// Create folder from file path if not exists
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool CreateFolderForFile(string path)
+        {
+            string dir;
+
+            try { dir = Path.GetDirectoryName(path); } catch { return false; }
+            if (Directory.Exists(dir)) return true;
+            try { Directory.CreateDirectory(dir); } catch { return false; }
+
+            return true;
+        }
+
         
 
         /// <summary>

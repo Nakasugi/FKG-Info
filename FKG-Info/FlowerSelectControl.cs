@@ -153,8 +153,10 @@ namespace FKG_Info
                     continue;
                 }
 
-                if (spec != FlowerInfo.SpecFilter.Can_Grow)
+                if ((spec != FlowerInfo.SpecFilter.Can_Grow) && (spec != FlowerInfo.SpecFilter.Has_Exclusive_Skin))
+                {
                     if (flower.CheckVariation(CmBoxVariations.SelectedIndex, true)) continue;
+                }
 
                 switch (flower.Rarity)
                 {
@@ -180,7 +182,7 @@ namespace FKG_Info
                     case FlowerInfo.SpecFilter.All_Knights: if (flower.IsKnight) break; continue;
                     //case FlowerInfo.SpecFilter.Has_Bloom_Form: if (flower.CheckBloomForm()) break; continue;
                     case FlowerInfo.SpecFilter.No_Bloom_Form: if (flower.CheckBloomForm(false, true)) break; continue;
-                    case FlowerInfo.SpecFilter.Has_Exclusive_Skin: if (flower.HasExclusiveSkin()) break; continue;
+                    case FlowerInfo.SpecFilter.Has_Exclusive_Skin: if (flower.HasAdditionalSkin()) break; continue;
                     case FlowerInfo.SpecFilter.Can_Grow: if (flower.CanGrow) break; continue;
                     default: if (flower.CheckCategory(spec)) break; continue;
                 }
@@ -444,7 +446,7 @@ namespace FKG_Info
             FlowerInfo.SpecFilter spec = (FlowerInfo.SpecFilter)Enum.Parse(typeof(FlowerInfo.SpecFilter), CmBoxSpecFilter.Text.Replace(" ", "_"));
 
             Selecting = true;
-            if (spec == FlowerInfo.SpecFilter.Has_Exclusive_Skin) CmBoxVariations.SelectedIndex = FlowerInfo.Variation.Base;
+            //if (spec == FlowerInfo.SpecFilter.Has_Exclusive_Skin) CmBoxVariations.SelectedIndex = FlowerInfo.Variation.Base;
             if (spec == FlowerInfo.SpecFilter.No_Bloom_Form) CmBoxVariations.SelectedIndex = FlowerInfo.Variation.Evolved;
 
             ClearSearch();

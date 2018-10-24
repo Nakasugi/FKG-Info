@@ -41,9 +41,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\..\Pictures\Anime\FKG\FKG-Info\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -147,6 +147,7 @@
     <Compile Include="SavingDataBlock.cs" />
     <Compile Include="SkillInfo.cs" />
     <Compile Include="SkinInfo.cs" />
+    <Compile Include="SkinsList.cs" />
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="SplashWindow.xaml.cs">

@@ -1,8 +1,4 @@
-﻿using System.Linq;
-
-
-
-namespace FKG_Info
+﻿namespace FKG_Info
 {
     public class AbilityInfo : BaseInfo
     {
@@ -15,7 +11,7 @@ namespace FKG_Info
 
 
         public const int SUBABL_NUM = 3;
-        public const int PARAMS_CNT = 5;
+        public const int PARAMS_CNT = 6;
         public const int PARAMS_TOTAL = PARAMS_CNT * SUBABL_NUM;
 
 

@@ -57,11 +57,18 @@ namespace FKG_Info
 
             Animation.InitializeAnimation(PicBoxBig);
 
+            MMItemImageType.DropDownItems.Add("Mobile", null, (s, e) => ImagePlatformChange());
+            MMItemImageType.DropDownItems.Add("-");
+            CMenu.MenuItems.Add("Mobile", (s, e) => ImagePlatformChange());
+            CMenu.MenuItems.Add("-");
+
             Animator.FillMenu(CMenu.MenuItems, MenuImageType_Click);
             Animator.FillMenu(MMItemImageType.DropDownItems, MenuImageType_Click);
 
             CMenu.MenuItems.Add("-");
-            MenuItem mi = CMenu.MenuItems.Add("Delete Images", (s, e) => CMenuDelBloom_Click());
+            CMenu.MenuItems.Add("Download Images", (s, e) => CMenuDownloadAll_Click());
+            CMenu.MenuItems.Add("Delete Images", (s, e) => CMenuDelBloom_Click());
+            
 
             MenuImageType_Click(Animator.Type.Stand);
             PicBoxBig.ContextMenu = CMenu;
@@ -90,6 +97,37 @@ namespace FKG_Info
 
 
 
+        private void ImagePlatformChange()
+        {
+            Animation.Mobile = !Animation.Mobile;
+            PicBoxBig.AsyncLoadImage(Animation);
+            MenuPlatformChange(Animation.Mobile);
+        }
+
+
+
+        private void MenuPlatformChange(bool mobile)
+        {
+            MenuItem cmi = CMenu.MenuItems[0];
+            ToolStripMenuItem tmi = MMItemImageType.DropDownItems[0] as ToolStripMenuItem;
+
+            cmi.Checked = mobile;
+            tmi.Checked = mobile;
+        }
+
+
+
+        private void MenuPlatformEnabled(bool enable)
+        {
+            MenuItem cmi = CMenu.MenuItems[0];
+            ToolStripMenuItem tmi = MMItemImageType.DropDownItems[0] as ToolStripMenuItem;
+
+            cmi.Enabled = enable;
+            tmi.Enabled = enable;
+        }
+
+
+
         /// <summary>
         /// Select image type
         /// </summary>
@@ -108,18 +146,22 @@ namespace FKG_Info
             string sbup = Animator.GetMenuName(Animator.Type.Bustup);
 
 
-            foreach (MenuItem mi in CMenu.MenuItems)
+            for (int i = 2; i < CMenu.MenuItems.Count; i++)
             {
+                MenuItem mi = CMenu.MenuItems[i];
+
                 if (mi.Text == sbup) ctmi = mi;
                 if (mi.Text == stype)
-                { 
+                {
                     if (mi.Text != sbup) mi.Checked = true;
                 }
                 else mi.Checked = false;
             }
 
-            foreach (ToolStripMenuItem mi in MMItemImageType.DropDownItems)
+            for (int i = 2; i < MMItemImageType.DropDownItems.Count; i++)
             {
+                if (!(MMItemImageType.DropDownItems[i] is ToolStripMenuItem mi)) continue;
+
                 if (mi.Text == sbup) tsmi = mi;
                 if (mi.Text == stype)
                 {
@@ -144,6 +186,17 @@ namespace FKG_Info
                 }
 
 
+            // Diseble/enable mobile for home image
+            if (Animation.ImageType == Animator.Type.Home)
+            {
+                Animation.Mobile = false;
+                MenuPlatformChange(false);
+                MenuPlatformEnabled(false);
+            }
+            else
+            {
+                MenuPlatformEnabled(true);
+            }
 
             if (!Program.DB.Flowers.IsSelected()) return;
 
@@ -276,6 +329,19 @@ namespace FKG_Info
 
 
 
+        private void CMenuDownloadAll_Click()
+        {
+            if (!Program.DB.Flowers.IsSelected()) return;
+            FlowerInfo flower = Program.DB.Flowers.GetSelected();
+            if (flower == null) return;
+
+            var frames = Animator.GetAllFrames(flower);
+
+            foreach (var frame in frames) Program.ImageLoader.GetImage(frame, null);
+        }
+
+
+
         /// <summary>
         /// Information about downloading process
         /// </summary>
@@ -346,8 +412,11 @@ namespace FKG_Info
 
             FlowerInfo flower = Program.DB.Flowers.GetSelected();
             Animation.Flower = flower;
-            Animation.Exclusive = ChBoxExSkin.Checked;
+            Animation.SkinIndex = CmBoxSkins.SelectedIndex;
             PicBoxBig.AsyncLoadImage(Animation);
+            CmBoxSkins.Items.Clear();
+            CmBoxSkins.Items.AddRange(flower.GetSkinNames());
+            CmBoxSkins.SelectedIndex = 0;
 
             //Animator icon = new Animator(Animation);
             //icon.ImageType = Animator.Type.IconLarge;
@@ -379,7 +448,7 @@ namespace FKG_Info
             FlowerInfo flower = Program.DB.Flowers.GetSelected();
 
             flower.FillGrid(GridInfo);
-            ChBoxExSkin.Enabled = flower.HasExclusiveSkin();
+            CmBoxSkins.Enabled = flower.HasAdditionalSkin();
         }
 
 
@@ -560,35 +629,20 @@ namespace FKG_Info
 
         private void PicBoxBig_Click(object sender, EventArgs ev) { Animation.AnimationClick(); }
 
-        private void ChBoxExSkin_CheckedChanged(object sender, EventArgs ev) { ReloadFlower(); }
-
+        private void CmBoxSkins_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Animation.SkinIndex = CmBoxSkins.SelectedIndex;
+            PicBoxBig.AsyncLoadImage(Animation);
+        }
 
         private void GridInfo_MouseMove(object sender, MouseEventArgs ev) { GridInfo.Focus(); }
-
-
-        /*
-        private void DrawIconSelectionBorder(int evol)
-        {
-            Brush[] brs = new Brush[3];
-
-            for (int i = 0; i < 3; i++) if (i == evol) brs[i] = BrPink; else brs[i] = BrBase;
-
-            GR.FillRectangle(brs[0], GetExtRectangle(PicBoxIconMain));
-            GR.FillRectangle(brs[1], GetExtRectangle(PicBoxIconV1));
-            GR.FillRectangle(brs[2], GetExtRectangle(PicBoxIconV2));
-        }
-        */
-
-        private Rectangle GetExtRectangle(PictureBox pic)
-        {
-            return new Rectangle(pic.Left - 2, pic.Top - 2, pic.Width + 4, pic.Height + 4);
-        }
 
 
 
         private void MainForm_Shown(object sender, EventArgs ev)
         {
             Activate();
+            SplashWindow.Stop();
         }
 
 
@@ -667,9 +721,14 @@ namespace FKG_Info
 
         private void MMItemFileExportIcons_Click(object sender, EventArgs e)
         {
-            Program.DB.FlowerIcons.Export();
-            Program.DB.EquipmentIcons.Export();
-            MessageBox.Show("Done");
+            bool res = false;
+            res |= Program.DB.FlowerIcons.Export();
+            res |= Program.DB.EquipmentIcons.Export();
+
+            if (res)
+                MessageBox.Show(this, "Icons export successfully completed.", "Export");
+            else
+                MessageBox.Show(this, "Some error occured.", "Export");
         }
     }
 }

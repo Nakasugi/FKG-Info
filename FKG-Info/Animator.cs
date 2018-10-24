@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+
+
+
 
 namespace FKG_Info
 {
@@ -15,7 +19,12 @@ namespace FKG_Info
         public FlowerInfo Flower;
         public Type ImageType;
         public EmoType Emotion;
-        public bool Exclusive;
+        public int SkinIndex;
+        public bool Mobile;
+
+        /// <summary>
+        /// If true then download original, no additional elements will placed (like icon BG, type, etc)
+        /// </summary>
         public bool RawImage;
 
         private System.Windows.Forms.Timer AnimationTimer;
@@ -33,8 +42,16 @@ namespace FKG_Info
             Flower = null;
             ImageType = Type.Stand;
             Emotion = EmoType.Normal;
-            Exclusive = false;
+            SkinIndex = 0;
+            Mobile = false;
             RawImage = false;
+        }
+
+
+
+        public Animator(FlowerInfo flower) : this()
+        {
+            Flower = flower;
         }
 
 
@@ -44,7 +61,8 @@ namespace FKG_Info
             Flower = ani.Flower;
             ImageType = ani.ImageType;
             Emotion = ani.Emotion;
-            Exclusive = ani.Exclusive;
+            SkinIndex = ani.SkinIndex;
+            Mobile = ani.Mobile;
             RawImage = ani.RawImage;
         }
 
@@ -73,21 +91,35 @@ namespace FKG_Info
             if (ImageType == Type.IconLarge) return true;
             return false;
         }
-        
+
 
 
         public string GetUrlSubFolder()
         {
-            switch(ImageType)
+            switch (ImageType)
             {
                 case Type.IconSmall:
                 case Type.IconMedium:
                 case Type.IconLarge:
                     return "i/";
-                case Type.Stand:
-                    return "stand/";
-                default:
-                    return "s/";
+
+                case Type.Stand: return "stand/";
+
+                case Type.StandSmall:
+                    if (!Mobile)
+                        return "stand_s/";
+                    else
+                        return "stand_m/";
+
+                case Type.Cutin:
+                    if (Mobile) return "cutin/";
+                    goto default;
+
+                case Type.Home:
+                    if (Mobile) return "home/";
+                    goto default;
+
+                default: return "s/";
             }
         }
 
@@ -97,8 +129,8 @@ namespace FKG_Info
         {
             if (Flower == null) return null;
 
-            string name = Flower.GetImageStringID(Exclusive);
-            name = GetPrefix(ImageType) + name;
+            string name = Flower.GetImageStringID(SkinIndex);
+            name = GetPrefix() + name;
 
             if ((ImageType == Type.Bustup) || (ImageType == Type.Home)) name += GetSuffix(Emotion);
 
@@ -107,15 +139,11 @@ namespace FKG_Info
 
 
 
-        //public FlowerInfo GetFlower() { return Flower; }
-
-
-
-        public static string GetPrefix(Type type)
+        public string GetPrefix()
         {
             string res = null;
 
-            switch (type)
+            switch (ImageType)
             {
                 case Type.IconSmall: res = "icon_s_"; break;
                 case Type.IconMedium: res = "icon_m_"; break;
@@ -123,7 +151,7 @@ namespace FKG_Info
                 case Type.Cutin: res = "cutin_"; break;
                 case Type.Bustup: res = "bustup_"; break;
                 case Type.Stand: res = "stand_"; break;
-                case Type.StandSmall: res = "stand_s_"; break;
+                case Type.StandSmall: if (Mobile) res = "stand_m_"; else res = "stand_s_"; break;
                 case Type.Home: res = "home_"; break;
                 default: return null;
             }
@@ -289,6 +317,84 @@ namespace FKG_Info
                     }
                 }
             }
+        }
+
+
+
+        public static List<Animator> GetAllFrames(FlowerInfo flower)
+        {
+            if (flower == null) return null;
+
+            List<Animator> frames = new List<Animator>();
+
+            Animator ani;
+
+            ani = new Animator(flower);
+            frames.Add(ani);
+
+            ani = new Animator(flower);
+            ani.ImageType = Type.StandSmall;
+            frames.Add(ani);
+
+            ani = new Animator(flower);
+            ani.ImageType = Type.Cutin;
+            frames.Add(ani);
+
+            foreach (EmoType etp in GetEmotionsForType(Type.Bustup))
+            {
+                ani = new Animator(flower);
+                ani.ImageType = Type.Bustup;
+                ani.Emotion = etp;
+                frames.Add(ani);
+            }
+
+            foreach (EmoType etp in GetEmotionsForType(Type.Home))
+            {
+                ani = new Animator(flower);
+                ani.ImageType = Type.Home;
+                ani.Emotion = etp;
+                frames.Add(ani);
+            }
+
+            List<Animator> mframes = new List<Animator>(frames);
+            foreach (Animator fr in mframes) fr.Mobile = true;
+
+            frames.AddRange(mframes);
+
+            return frames;
+        }
+
+
+
+        private static List<EmoType> GetEmotionsForType(Type type)
+        {
+            List<EmoType> emos = new List<EmoType>();
+
+            if ((type != Type.Bustup) && (type != Type.Home))
+            {
+                emos.Add(EmoType.Normal);
+                return emos;
+            }
+
+            emos.AddRange((EmoType[])Enum.GetValues(typeof(EmoType)));
+
+            if (type == Type.Bustup)
+            {
+                emos.Remove(EmoType.EyesClose);
+                emos.Remove(EmoType.EyesHalf);
+            }
+
+            if (type == Type.Home)
+            {
+                emos.Remove(EmoType.NormalClear);
+                emos.Remove(EmoType.HappyClear);
+                emos.Remove(EmoType.AngryClear);
+                emos.Remove(EmoType.SadClear);
+                emos.Remove(EmoType.ShyClear);
+                emos.Remove(EmoType.SurprisedClear);
+            }
+
+            return emos;
         }
 
 

@@ -27,20 +27,20 @@ namespace FKG_Info
 
             DB = FlowerDataBase.Load();
             ImageLoader = new ImageDownloader();
-            DB.DeleteOldBloomCGs();
 
             DB.FlowerIcons = IconsAtlas.Load(IconsAtlas.Type.FlowerIcons);
             if (DB.FlowerIcons == null) DB.FlowerIcons = new IconsAtlas(DB.Flowers);
             DB.EquipmentIcons = IconsAtlas.Load(IconsAtlas.Type.EquipmentIcons);
             if (DB.EquipmentIcons == null) DB.EquipmentIcons = new IconsAtlas(DB.Equipments);
 
+            DB.DeleteOldBloomCGs();
+
             MainForm mf = new MainForm();
             
-            // Intro off
+            // Intro show 2 sec minimum
             SplashWindow.WaitForShow();
-            SplashWindow.Stop();
 
-            // Rum MainForm
+            // Run MainForm
             Application.Run(mf);
 
             DB.SaveOptIfNeeded();
