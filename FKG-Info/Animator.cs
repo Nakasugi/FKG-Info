@@ -83,15 +83,27 @@ namespace FKG_Info
         }
 
 
-        
-        public bool IsIcon()
+
+        public bool IsIcon() { return IsIcon(ImageType); }
+
+        public static bool IsIcon(Type type)
         {
-            if (ImageType == Type.IconSmall) return true;
-            if (ImageType == Type.IconMedium) return true;
-            if (ImageType == Type.IconLarge) return true;
+            if (type == Type.IconSmall) return true;
+            if (type == Type.IconMedium) return true;
+            if (type == Type.IconLarge) return true;
             return false;
         }
 
+
+        public string GetPath()
+        {
+            string path;
+
+            path = Program.DB.ImagesFolder; if (Mobile) path += "\\Mobile";
+            path += "\\" + GetImageName() + ".png";
+
+            return path;
+        }
 
 
         public string GetUrlSubFolder()

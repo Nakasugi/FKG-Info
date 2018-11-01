@@ -17,17 +17,45 @@ namespace FKG_Info
 
 
 
-        public class DownloadedFile
+        public class DownloadedFile : IDisposable
         {
-            public string Name;
-            public Image Image;
+            public string Name { get; private set; }
+            public Image Image { get; private set; }
 
-            public int ImageID;
-            public bool Mobile;
+            public int ImageID { get; private set; }
+            public bool Mobile { get; private set; }
 
             public object Locker;
 
             public DownloadedFile() { Locker = new object(); }
+
+            public DownloadedFile(Animator ani, Image image) : this()
+            {
+                Name = ani.GetImageName();
+                ImageID = ani.Flower.ID;
+                Mobile = ani.Mobile;
+
+                Image = image;
+            }
+
+            public DownloadedFile(EquipmentInfo equip, Image image)
+            {
+                Name = equip.GetImageName();
+                ImageID = equip.ImageID;
+
+                Image = image;
+            }
+
+            public void SetImage(Image image) { lock (Locker) Image = image; }
+
+            public void Dispose()
+            {
+                lock (Locker)
+                {
+                    Image.Dispose();
+                    Image = null;
+                }
+            }
         }
 
 
@@ -67,23 +95,11 @@ namespace FKG_Info
 
         public void GetImage(Animator ani, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh = null)
         {
-            //Animator aniLock = new Animator(ani);
-            string fname = ani.GetImageName();
+            if (GetLoaded(ani, cbDelegate, toRefresh)) return;
+            if (Load(ani, cbDelegate, toRefresh)) return;
 
-            if(fname == null)
-            {
-                cbDelegate?.Invoke(null);
-                return;
-            }
-
-            DownloadedFile df = null;
-
-            if (ani.RawImage != true) lock (Locker) df = CharaFiles.Find(f => ((f.Name == fname) && (f.Mobile == ani.Mobile)));
-
-            if (df != null) { cbDelegate?.Invoke(df); return; }
-
-
-            FlowerImageDwQueue.Add(() => Download(ani, cbDelegate, toRefresh));
+            if (Program.DB.EnableDownloader)
+                FlowerImageDwQueue.Add(() => Download(ani, cbDelegate, toRefresh));
         }
 
 
@@ -92,16 +108,77 @@ namespace FKG_Info
         {
             string fname = equip.GetImageName();
 
-            if (fname == null) { cbDelegate?.Invoke(null); return; }
+            if (fname == null) { RunCallbacks(null, cbDelegate, toRefresh); return; }
 
-            //DownloadedFile df;
-            //lock (Locker) df = EquipFiles.Find(f => f.Name == fname);
-            //if (df != null) { cbDelegate?.Invoke(df); return; }
-
-
-            EquipmentImageDwQueue.Add(() => Download(equip, cbDelegate, toRefresh));
+            if (Program.DB.EnableDownloader)
+                EquipmentImageDwQueue.Add(() => Download(equip, cbDelegate, toRefresh));
         }
 
+
+
+        private bool GetLoaded(Animator ani, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh)
+        {
+            if (ani.RawImage == true) return false;
+
+            string fname = ani.GetImageName();
+
+            if (fname == null) { RunCallbacks(null, cbDelegate, toRefresh); return true; }
+
+            DownloadedFile df = null;
+            lock (Locker)
+            {
+                df = CharaFiles.Find(f => (f.Name == fname) && (f.Mobile == ani.Mobile));
+            }
+
+            if (df == null) return false;
+
+            RunCallbacks(df, cbDelegate, toRefresh);
+            return true;
+        }
+
+
+
+        /// <summary>
+        /// Try load from HDD
+        /// </summary>
+        /// <param name="ani"></param>
+        /// <param name="cbDelegate"></param>
+        /// <param name="toRefresh"></param>
+        /// <returns></returns>
+        private bool Load(Animator ani, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh)
+        {
+            string path = ani.GetPath();
+
+            if (!File.Exists(path)) return false;
+
+            Image image = null;
+            try { image = Image.FromFile(path); } catch { image = null; }
+
+            if (image == null) return false;
+
+            DownloadedFile df = new DownloadedFile(ani, image);
+
+            if (ani.RawImage != true) lock (Locker) CharaFiles.Add(df);
+
+            RunCallbacks(df, cbDelegate, toRefresh);
+            return true;
+        }
+
+
+
+        private void RunCallbacks(DownloadedFile df, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh)
+        {
+            cbDelegate?.Invoke(df);
+
+            if (toRefresh != null)
+            {
+                try
+                {
+                    toRefresh?.Invoke(new Action(() => { toRefresh.Refresh(); }));
+                }
+                catch { }
+            }
+        }
 
 
 
@@ -112,85 +189,66 @@ namespace FKG_Info
         /// <param name="cbDelegate"></param>
         private void Download(Animator ani, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh)
         {
-            Image dwImage = null;
+            lock (Locker) DwCount++;
 
-            DownloadedFile df = new DownloadedFile();
-            df.Name = ani.GetImageName();
-            df.ImageID = ani.Flower.ID;
-            df.Mobile = ani.Mobile;
+            Image image = null;
 
-            if (ani.RawImage != true) lock (Locker) CharaFiles.Add(df);
+            string relurl = ani.GetUrlSubFolder() + Helper.GetMD5Hash(ani.GetImageName()) + ".bin";
+            string url = Program.DB.GetUrl(relurl, ani.Mobile);
 
-            string path, relurl = ani.GetUrlSubFolder();
+            MemoryStream stream;
+            byte[] buffer;
 
-
-            path = Program.DB.ImagesFolder; if (ani.Mobile) path += "\\Mobile";
-            
-
-            path += "\\" + df.Name + ".png";
-
-            try { dwImage = Image.FromFile(path); } catch { dwImage = null; }
-
-
-            if ((dwImage == null) && (Program.DB.ImageSource != FlowerDataBase.ImageSources.Local))
+            // Download
+            try
             {
-                lock (Locker) DwCount++;
+                var client = new WebClient();
 
-                WebClient wc = new WebClient();
+                buffer = client.DownloadData(url);
+                stream = new MemoryStream(buffer);
+                if (!ani.Mobile) stream = Helper.DecompressStream(stream, 2);
+            }
+            catch { stream = null; }
 
-
-                //relurl = "images/character/" + relurl + Helper.GetMD5Hash(df.Name) + ".bin";
-                relurl += Helper.GetMD5Hash(df.Name) + ".bin";
-
-                string url = Program.DB.GetUrl(relurl, ani.Mobile);
-
-                MemoryStream stream;
-                byte[] buffer;
-
+            // Load
+            if (stream != null)
+            {
                 try
                 {
-                    buffer = wc.DownloadData(url);
-                    stream = new MemoryStream(buffer);
-                    if (!ani.Mobile) stream = Helper.DecompressStream(stream, 2);
-                }
-                catch { stream = null; }
-
-
-                try
-                {
-                    dwImage = Image.FromStream(stream);
+                    image = Image.FromStream(stream);
                 }
                 catch
                 {
                     try
                     {
-                        dwImage = Image.FromStream(ReadJpegXR(stream));
+                        image = Image.FromStream(ReadJpegXR(stream));
                     }
                     catch
                     {
-                        dwImage = null;
+                        image = null;
                     }
                 }
-
-                lock (Locker) { DwCount--; }
             }
 
-
-            if (dwImage != null)
+            // Save if ok
+            if (image != null)
             {
-                if (!ani.IsIcon()) SaveFile(dwImage, path);
-                if (ani.ImageType == Animator.Type.IconLarge) PlaceIconElements(ani, ref dwImage);
-                if (ani.ImageType == Animator.Type.Home) DrawBaseHomeImage(ani, ref dwImage);
+                if (!ani.IsIcon()) SaveFile(image, ani.GetPath());
+                if (ani.ImageType == Animator.Type.IconLarge) PlaceIconElements(ani, ref image);
+                if (ani.ImageType == Animator.Type.Home) DrawBaseHomeImage(ani, ref image);
             }
             else
             {
-                dwImage = Properties.Resources.no_image;
+                image = Properties.Resources.no_image;
             }
 
-            lock (df.Locker) df.Image = dwImage;
-            cbDelegate?.Invoke(df);
 
-            RefreshFormsControl(toRefresh);
+            DownloadedFile df = new DownloadedFile(ani, image);
+            if (ani.RawImage != true) lock (Locker) CharaFiles.Add(df);
+
+            RunCallbacks(df, cbDelegate, toRefresh);
+
+            lock (Locker) DwCount--;
         }
 
 
@@ -202,65 +260,36 @@ namespace FKG_Info
         /// <param name="cbDelegate"></param>
         private void Download(EquipmentInfo equip, DwCompletedCallback cbDelegate, System.Windows.Forms.Control toRefresh)
         {
-            Image dwImage = null; ;
-            DownloadedFile df = new DownloadedFile();
-            df.Name = equip.GetImageName();
-            df.ImageID = equip.ImageID;
-
-            //lock (Locker) EquipFiles.Add(df);
-
-            while (DwCount >= MAX_LOADERS_EQ)
-            {
-                if (Program.Life.IsDead) return;
-
-                Thread.Sleep(200 + 10 * DwCount);
-            }
             lock (Locker) DwCount++;
 
-            WebClient wc = new WebClient();
+            Image image = null;
 
-            string tname = "images/item/100x100/" + df.Name + ".png";
-            string url = Program.DB.GetUrl(tname);
+            string relurl = "images/item/100x100/" + equip.GetImageName() + ".png";
+            string url = Program.DB.GetUrl(relurl);
 
             MemoryStream stream;
             byte[] buffer;
 
+            // Download
             try
             {
-                buffer = wc.DownloadData(url);
+                var client = new WebClient();
+                buffer = client.DownloadData(url);
                 stream = new MemoryStream(buffer);
             }
             catch { stream = null; }
             
-
-            try { dwImage = Image.FromStream(stream); } catch { dwImage = null; }
-
-            lock (Locker) { DwCount--; }
+            // Load
+            try { image = Image.FromStream(stream); } catch { image = null; }
 
 
-            if (dwImage == null) dwImage = Properties.Resources.no_image;
+            if (image == null) image = Properties.Resources.no_image;
 
-            lock (df.Locker) df.Image = dwImage;
-            cbDelegate?.Invoke(df);
+            DownloadedFile df = new DownloadedFile(equip,image);
 
-            RefreshFormsControl(toRefresh);
-        }
+            RunCallbacks(df, cbDelegate, toRefresh);
 
-
-
-        /// <summary>
-        /// Try refresh control
-        /// </summary>
-        /// <param name="toRefresh"></param>
-        private void RefreshFormsControl(System.Windows.Forms.Control toRefresh)
-        {
-            if (toRefresh == null) return;
-
-            try
-            {
-                toRefresh?.Invoke(new Action(() => { toRefresh.Refresh(); }));
-            }
-            catch { }
+            lock (Locker) DwCount--;
         }
 
 
@@ -272,7 +301,7 @@ namespace FKG_Info
         /// <param name="path"></param>
         private void SaveFile(Image image, string path)
         {
-            if (Program.DB.StoreDownloadedImages)
+            if (Program.DB.SaveDownloaded)
             {
                 if (!File.Exists(path))
                 {

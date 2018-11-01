@@ -4,6 +4,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
+
+
 namespace FKG_Info
 {
     public class IconsAtlas : System.IDisposable
@@ -451,9 +453,6 @@ namespace FKG_Info
 
 
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Dispose()
         {
             if (GR != null) GR.Dispose();
@@ -507,8 +506,7 @@ namespace FKG_Info
 
             pos.Loaded();
 
-            ifile.Image.Dispose();
-            ifile.Image = null;
+            ifile.Dispose();
         }
 
 
@@ -538,8 +536,7 @@ namespace FKG_Info
 
             pos.Loaded();
 
-            ifile.Image.Dispose();
-            ifile.Image = null;
+            ifile.Dispose();
         }
 
 

@@ -37,8 +37,8 @@ namespace FKG_Info
 
             Visible = false;
             main.LoadingControlsMessage(true);
-            SuspendLayout();
             InitializeComponent();
+            SuspendLayout();
 
             Parent = main;
             Reloading = true;

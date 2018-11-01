@@ -730,5 +730,10 @@ namespace FKG_Info
             else
                 MessageBox.Show(this, "Some error occured.", "Export");
         }
+
+        private void MMItemFileDownloadImages_Click(object sender, EventArgs e)
+        {
+            new MassDownloaderForm().ShowDialog(this);
+        }
     }
 }

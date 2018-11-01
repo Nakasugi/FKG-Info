@@ -30,12 +30,6 @@
         {
             this.TxBoxImagesFolder = new System.Windows.Forms.TextBox();
             this.TxBoxURLDMM = new System.Windows.Forms.TextBox();
-            this.TxBoxURLNutaku = new System.Windows.Forms.TextBox();
-            this.RdBtLocal = new System.Windows.Forms.RadioButton();
-            this.RdBtNutakuDMM = new System.Windows.Forms.RadioButton();
-            this.RdBtDMM = new System.Windows.Forms.RadioButton();
-            this.RdBtNutaku = new System.Windows.Forms.RadioButton();
-            this.RdBtDMMNutaku = new System.Windows.Forms.RadioButton();
             this.ChBoxSaveDw = new System.Windows.Forms.CheckBox();
             this.BtOk = new System.Windows.Forms.Button();
             this.TxBoxDataFolder = new System.Windows.Forms.TextBox();
@@ -43,15 +37,15 @@
             this._Label01 = new System.Windows.Forms.Label();
             this._Label02 = new System.Windows.Forms.Label();
             this._Label03 = new System.Windows.Forms.Label();
-            this._Label05 = new System.Windows.Forms.Label();
             this._Label04 = new System.Windows.Forms.Label();
-            this.NumSoundVolume = new System.Windows.Forms.NumericUpDown();
             this._Label06 = new System.Windows.Forms.Label();
             this._Label07 = new System.Windows.Forms.Label();
             this._Label08 = new System.Windows.Forms.Label();
             this.TxBoxAcc1Name = new System.Windows.Forms.TextBox();
             this.TxBoxAcc2Name = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.NumSoundVolume)).BeginInit();
+            this.ChBoxAllowDw = new System.Windows.Forms.CheckBox();
+            this.TrackVolume = new System.Windows.Forms.TrackBar();
+            ((System.ComponentModel.ISupportInitialize)(this.TrackVolume)).BeginInit();
             this.SuspendLayout();
             // 
             // TxBoxImagesFolder
@@ -68,71 +62,10 @@
             this.TxBoxURLDMM.Size = new System.Drawing.Size(472, 20);
             this.TxBoxURLDMM.TabIndex = 1;
             // 
-            // TxBoxURLNutaku
-            // 
-            this.TxBoxURLNutaku.Location = new System.Drawing.Point(12, 196);
-            this.TxBoxURLNutaku.Name = "TxBoxURLNutaku";
-            this.TxBoxURLNutaku.Size = new System.Drawing.Size(472, 20);
-            this.TxBoxURLNutaku.TabIndex = 3;
-            // 
-            // RdBtLocal
-            // 
-            this.RdBtLocal.AutoSize = true;
-            this.RdBtLocal.Location = new System.Drawing.Point(12, 222);
-            this.RdBtLocal.Name = "RdBtLocal";
-            this.RdBtLocal.Size = new System.Drawing.Size(148, 17);
-            this.RdBtLocal.TabIndex = 4;
-            this.RdBtLocal.Text = "Use only local image store";
-            this.RdBtLocal.UseVisualStyleBackColor = true;
-            // 
-            // RdBtNutakuDMM
-            // 
-            this.RdBtNutakuDMM.AutoSize = true;
-            this.RdBtNutakuDMM.Location = new System.Drawing.Point(12, 268);
-            this.RdBtNutakuDMM.Name = "RdBtNutakuDMM";
-            this.RdBtNutakuDMM.Size = new System.Drawing.Size(130, 17);
-            this.RdBtNutakuDMM.TabIndex = 6;
-            this.RdBtNutakuDMM.TabStop = true;
-            this.RdBtNutakuDMM.Text = "Download Nutaku first";
-            this.RdBtNutakuDMM.UseVisualStyleBackColor = true;
-            // 
-            // RdBtDMM
-            // 
-            this.RdBtDMM.AutoSize = true;
-            this.RdBtDMM.Location = new System.Drawing.Point(12, 291);
-            this.RdBtDMM.Name = "RdBtDMM";
-            this.RdBtDMM.Size = new System.Drawing.Size(124, 17);
-            this.RdBtDMM.TabIndex = 7;
-            this.RdBtDMM.TabStop = true;
-            this.RdBtDMM.Text = "Download DMM only";
-            this.RdBtDMM.UseVisualStyleBackColor = true;
-            // 
-            // RdBtNutaku
-            // 
-            this.RdBtNutaku.AutoSize = true;
-            this.RdBtNutaku.Location = new System.Drawing.Point(12, 245);
-            this.RdBtNutaku.Name = "RdBtNutaku";
-            this.RdBtNutaku.Size = new System.Drawing.Size(133, 17);
-            this.RdBtNutaku.TabIndex = 5;
-            this.RdBtNutaku.TabStop = true;
-            this.RdBtNutaku.Text = "Download Nutaku only";
-            this.RdBtNutaku.UseVisualStyleBackColor = true;
-            // 
-            // RdBtDMMNutaku
-            // 
-            this.RdBtDMMNutaku.AutoSize = true;
-            this.RdBtDMMNutaku.Location = new System.Drawing.Point(12, 314);
-            this.RdBtDMMNutaku.Name = "RdBtDMMNutaku";
-            this.RdBtDMMNutaku.Size = new System.Drawing.Size(121, 17);
-            this.RdBtDMMNutaku.TabIndex = 8;
-            this.RdBtDMMNutaku.TabStop = true;
-            this.RdBtDMMNutaku.Text = "Download DMM first";
-            this.RdBtDMMNutaku.UseVisualStyleBackColor = true;
-            // 
             // ChBoxSaveDw
             // 
             this.ChBoxSaveDw.AutoSize = true;
-            this.ChBoxSaveDw.Location = new System.Drawing.Point(12, 337);
+            this.ChBoxSaveDw.Location = new System.Drawing.Point(15, 333);
             this.ChBoxSaveDw.Name = "ChBoxSaveDw";
             this.ChBoxSaveDw.Size = new System.Drawing.Size(211, 17);
             this.ChBoxSaveDw.TabIndex = 9;
@@ -193,16 +126,6 @@
             this._Label03.TabIndex = 107;
             this._Label03.Text = "Local sound store";
             // 
-            // _Label05
-            // 
-            this._Label05.AutoSize = true;
-            this._Label05.Location = new System.Drawing.Point(12, 180);
-            this._Label05.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
-            this._Label05.Name = "_Label05";
-            this._Label05.Size = new System.Drawing.Size(65, 13);
-            this._Label05.TabIndex = 108;
-            this._Label05.Text = "Nutaku Link";
-            // 
             // _Label04
             // 
             this._Label04.AutoSize = true;
@@ -213,17 +136,10 @@
             this._Label04.TabIndex = 109;
             this._Label04.Text = "DMM Link";
             // 
-            // NumSoundVolume
-            // 
-            this.NumSoundVolume.Location = new System.Drawing.Point(428, 222);
-            this.NumSoundVolume.Name = "NumSoundVolume";
-            this.NumSoundVolume.Size = new System.Drawing.Size(56, 20);
-            this.NumSoundVolume.TabIndex = 110;
-            // 
             // _Label06
             // 
             this._Label06.AutoSize = true;
-            this._Label06.Location = new System.Drawing.Point(346, 224);
+            this._Label06.Location = new System.Drawing.Point(12, 190);
             this._Label06.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this._Label06.Name = "_Label06";
             this._Label06.Size = new System.Drawing.Size(76, 13);
@@ -233,7 +149,7 @@
             // _Label07
             // 
             this._Label07.AutoSize = true;
-            this._Label07.Location = new System.Drawing.Point(256, 251);
+            this._Label07.Location = new System.Drawing.Point(256, 209);
             this._Label07.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this._Label07.Name = "_Label07";
             this._Label07.Size = new System.Drawing.Size(90, 13);
@@ -243,7 +159,7 @@
             // _Label08
             // 
             this._Label08.AutoSize = true;
-            this._Label08.Location = new System.Drawing.Point(256, 277);
+            this._Label08.Location = new System.Drawing.Point(256, 235);
             this._Label08.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this._Label08.Name = "_Label08";
             this._Label08.Size = new System.Drawing.Size(90, 13);
@@ -252,17 +168,37 @@
             // 
             // TxBoxAcc1Name
             // 
-            this.TxBoxAcc1Name.Location = new System.Drawing.Point(349, 248);
+            this.TxBoxAcc1Name.Location = new System.Drawing.Point(349, 206);
             this.TxBoxAcc1Name.Name = "TxBoxAcc1Name";
             this.TxBoxAcc1Name.Size = new System.Drawing.Size(135, 20);
             this.TxBoxAcc1Name.TabIndex = 114;
             // 
             // TxBoxAcc2Name
             // 
-            this.TxBoxAcc2Name.Location = new System.Drawing.Point(349, 274);
+            this.TxBoxAcc2Name.Location = new System.Drawing.Point(349, 232);
             this.TxBoxAcc2Name.Name = "TxBoxAcc2Name";
             this.TxBoxAcc2Name.Size = new System.Drawing.Size(135, 20);
             this.TxBoxAcc2Name.TabIndex = 115;
+            // 
+            // chBoxAllowDw
+            // 
+            this.ChBoxAllowDw.AutoSize = true;
+            this.ChBoxAllowDw.Location = new System.Drawing.Point(15, 310);
+            this.ChBoxAllowDw.Name = "chBoxAllowDw";
+            this.ChBoxAllowDw.Size = new System.Drawing.Size(117, 17);
+            this.ChBoxAllowDw.TabIndex = 116;
+            this.ChBoxAllowDw.Text = "Enable downloader";
+            this.ChBoxAllowDw.UseVisualStyleBackColor = true;
+            // 
+            // TrackVolume
+            // 
+            this.TrackVolume.LargeChange = 10;
+            this.TrackVolume.Location = new System.Drawing.Point(4, 209);
+            this.TrackVolume.Maximum = 100;
+            this.TrackVolume.Name = "TrackVolume";
+            this.TrackVolume.Size = new System.Drawing.Size(180, 45);
+            this.TrackVolume.TabIndex = 117;
+            this.TrackVolume.TickFrequency = 5;
             // 
             // OptionsForm
             // 
@@ -270,14 +206,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(496, 362);
             this.ControlBox = false;
+            this.Controls.Add(this.TrackVolume);
+            this.Controls.Add(this.ChBoxAllowDw);
             this.Controls.Add(this.TxBoxAcc2Name);
             this.Controls.Add(this.TxBoxAcc1Name);
             this.Controls.Add(this._Label08);
             this.Controls.Add(this._Label07);
             this.Controls.Add(this._Label06);
-            this.Controls.Add(this.NumSoundVolume);
             this.Controls.Add(this._Label04);
-            this.Controls.Add(this._Label05);
             this.Controls.Add(this._Label03);
             this.Controls.Add(this._Label02);
             this.Controls.Add(this._Label01);
@@ -285,12 +221,6 @@
             this.Controls.Add(this.TxBoxDataFolder);
             this.Controls.Add(this.BtOk);
             this.Controls.Add(this.ChBoxSaveDw);
-            this.Controls.Add(this.RdBtDMMNutaku);
-            this.Controls.Add(this.RdBtNutaku);
-            this.Controls.Add(this.RdBtDMM);
-            this.Controls.Add(this.RdBtNutakuDMM);
-            this.Controls.Add(this.RdBtLocal);
-            this.Controls.Add(this.TxBoxURLNutaku);
             this.Controls.Add(this.TxBoxURLDMM);
             this.Controls.Add(this.TxBoxImagesFolder);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -302,7 +232,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
             this.Load += new System.EventHandler(this.Options_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.NumSoundVolume)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TrackVolume)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -311,12 +241,6 @@
         #endregion
         private System.Windows.Forms.TextBox TxBoxImagesFolder;
         private System.Windows.Forms.TextBox TxBoxURLDMM;
-        private System.Windows.Forms.TextBox TxBoxURLNutaku;
-        private System.Windows.Forms.RadioButton RdBtLocal;
-        private System.Windows.Forms.RadioButton RdBtNutakuDMM;
-        private System.Windows.Forms.RadioButton RdBtDMM;
-        private System.Windows.Forms.RadioButton RdBtNutaku;
-        private System.Windows.Forms.RadioButton RdBtDMMNutaku;
         private System.Windows.Forms.CheckBox ChBoxSaveDw;
         private System.Windows.Forms.Button BtOk;
         private System.Windows.Forms.TextBox TxBoxDataFolder;
@@ -324,13 +248,13 @@
         private System.Windows.Forms.Label _Label01;
         private System.Windows.Forms.Label _Label02;
         private System.Windows.Forms.Label _Label03;
-        private System.Windows.Forms.Label _Label05;
         private System.Windows.Forms.Label _Label04;
-        private System.Windows.Forms.NumericUpDown NumSoundVolume;
         private System.Windows.Forms.Label _Label06;
         private System.Windows.Forms.Label _Label07;
         private System.Windows.Forms.Label _Label08;
         private System.Windows.Forms.TextBox TxBoxAcc1Name;
         private System.Windows.Forms.TextBox TxBoxAcc2Name;
+        private System.Windows.Forms.CheckBox ChBoxAllowDw;
+        private System.Windows.Forms.TrackBar TrackVolume;
     }
 }

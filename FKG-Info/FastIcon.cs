@@ -34,7 +34,6 @@ namespace FKG_Info
         {
             InitializeComponent();
 
-
             FirstDraw = true;
             Cleared = false;
             AtlasRect = new Rectangle(0, 0, 100, 100);
@@ -168,7 +167,7 @@ namespace FKG_Info
             // Call the OnPaint method of the base class.  
             base.OnPaint(ev);
 
-            if ((Cleared) || (DesignMode))
+            if (Cleared || DesignMode)
             {
                 Brush br = new SolidBrush(BackColor);
                 ev.Graphics.FillRectangle(br, ev.ClipRectangle);

@@ -18,21 +18,11 @@ namespace FKG_Info
             TxBoxImagesFolder.Text = Program.DB.ImagesFolder;
             TxBoxSoundsFolder.Text = Program.DB.SoundFolder;
             TxBoxURLDMM.Text = Program.DB.DMMURL;
-            TxBoxURLNutaku.Text = Program.DB.NutakuURL;
-            ChBoxSaveDw.Checked = Program.DB.StoreDownloadedImages;
-            NumSoundVolume.Value = Program.DB.SoundVolume;
+            ChBoxAllowDw.Checked = Program.DB.EnableDownloader;
+            ChBoxSaveDw.Checked = Program.DB.SaveDownloaded;
+            TrackVolume.Value = Program.DB.SoundVolume;
             TxBoxAcc1Name.Text = Program.DB.Account1Name;
             TxBoxAcc2Name.Text = Program.DB.Account2Name;
-
-            switch (Program.DB.ImageSource)
-            {
-                case FlowerDataBase.ImageSources.Nutaku: RdBtNutaku.Checked = true; break;
-                case FlowerDataBase.ImageSources.NutakuDMM: RdBtNutakuDMM.Checked = true; break;
-                case FlowerDataBase.ImageSources.DMM: RdBtDMM.Checked = true; break;
-                case FlowerDataBase.ImageSources.DMMNutaku: RdBtDMMNutaku.Checked = true; break;
-
-                default: RdBtLocal.Checked = true; break;
-            }
         }
 
 
@@ -43,9 +33,9 @@ namespace FKG_Info
             Program.DB.ImagesFolder = TxBoxImagesFolder.Text;
             Program.DB.SoundFolder = TxBoxSoundsFolder.Text;
             Program.DB.DMMURL = TxBoxURLDMM.Text;
-            Program.DB.NutakuURL = TxBoxURLNutaku.Text;
-            Program.DB.StoreDownloadedImages = ChBoxSaveDw.Checked;
-            Program.DB.SoundVolume = (int)NumSoundVolume.Value;
+            Program.DB.EnableDownloader = ChBoxAllowDw.Checked;
+            Program.DB.SaveDownloaded = ChBoxSaveDw.Checked;
+            Program.DB.SoundVolume = TrackVolume.Value;
             Program.DB.Account1Name = TxBoxAcc1Name.Text;
             Program.DB.Account2Name = TxBoxAcc2Name.Text;
 
@@ -60,11 +50,6 @@ namespace FKG_Info
             }
 
 
-            if (RdBtLocal.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.Local;
-            if (RdBtNutaku.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.Nutaku;
-            if (RdBtNutakuDMM.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.NutakuDMM;
-            if (RdBtDMM.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.DMM;
-            if (RdBtDMMNutaku.Checked) Program.DB.ImageSource = FlowerDataBase.ImageSources.DMMNutaku;
 
             Program.DB.SaveOptions();
 

@@ -331,8 +331,10 @@
                 }
                 else
                 {
-                    n -= Ability1.Count;
-                    if (Ability2 != null) return Ability2.GetParams(n);
+                    if (Ability2 != null)
+                    {
+                        return Ability2.GetParams(n - Ability1.Count);
+                    }
                 }
             }
 
@@ -350,8 +352,6 @@
 
         public string GetAbilitiesInfo(int n, bool getIDs = false)
         {
-
-
             int id = GetAbilityTypeID(n);
 
             if (id == 0) return null;

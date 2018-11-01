@@ -232,13 +232,16 @@ namespace FKG_Info
 
 
 
-        public static bool XmlCheckNode(XmlNode node, string child, string value)
+        public static bool XmlCheckNode(XmlNode node, string child, ref bool value)
         {
             string temp = null;
 
             XmlGetText(node, child, ref temp);
 
-            return value == temp;
+            if (temp == "True") { value = true; return true; }
+            if (temp == "False") { value = false; return true; }
+
+            return false;
         }
 
 

@@ -40,12 +40,12 @@
             this.BtSelect = new System.Windows.Forms.Button();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.MMItemFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.MMItemFileImportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportIDs = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportNames = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportCurrent = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportIcons = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MMItemFileExperimental = new System.Windows.Forms.ToolStripMenuItem();
             this.getMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,6 +72,7 @@
             this.Icon2nd = new FKG_Info.FastIcon(this.components);
             this.IconMain = new FKG_Info.FastIcon(this.components);
             this.PicBoxBig = new FKG_Info.AdvPictureBox(this.components);
+            this.PgBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicBoxBig)).BeginInit();
@@ -186,24 +187,17 @@
             // MMItemFile
             // 
             this.MMItemFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MMItemFileImportMaster,
             this.MMItemFileExportMaster,
             this.MMItemFileExportIDs,
             this.MMItemFileExportNames,
             this.MMItemFileExportCurrent,
             this.MMItemFileExportIcons,
+            this.downloadImagesToolStripMenuItem,
             this.toolStripSeparator1,
             this.MMItemFileExperimental});
             this.MMItemFile.Name = "MMItemFile";
             this.MMItemFile.Size = new System.Drawing.Size(37, 20);
             this.MMItemFile.Text = "&File";
-            // 
-            // MMItemFileImportMaster
-            // 
-            this.MMItemFileImportMaster.Name = "MMItemFileImportMaster";
-            this.MMItemFileImportMaster.Size = new System.Drawing.Size(215, 22);
-            this.MMItemFileImportMaster.Text = "Import Master";
-            this.MMItemFileImportMaster.Click += new System.EventHandler(this.MMItemFileImportMaster_Click);
             // 
             // MMItemFileExportMaster
             // 
@@ -239,6 +233,13 @@
             this.MMItemFileExportIcons.Size = new System.Drawing.Size(215, 22);
             this.MMItemFileExportIcons.Text = "Export Icons";
             this.MMItemFileExportIcons.Click += new System.EventHandler(this.MMItemFileExportIcons_Click);
+            // 
+            // downloadImagesToolStripMenuItem
+            // 
+            this.downloadImagesToolStripMenuItem.Name = "downloadImagesToolStripMenuItem";
+            this.downloadImagesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.downloadImagesToolStripMenuItem.Text = "Download Images";
+            this.downloadImagesToolStripMenuItem.Click += new System.EventHandler(this.MMItemFileDownloadImages_Click);
             // 
             // toolStripSeparator1
             // 
@@ -421,6 +422,7 @@
             // CmBoxSkins
             // 
             this.CmBoxSkins.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CmBoxSkins.Enabled = false;
             this.CmBoxSkins.FormattingEnabled = true;
             this.CmBoxSkins.Location = new System.Drawing.Point(1043, 648);
             this.CmBoxSkins.Name = "CmBoxSkins";
@@ -468,12 +470,21 @@
             this.PicBoxBig.Visible = false;
             this.PicBoxBig.Click += new System.EventHandler(this.PicBoxBig_Click);
             // 
+            // PgBar
+            // 
+            this.PgBar.Location = new System.Drawing.Point(412, 4);
+            this.PgBar.Name = "PgBar";
+            this.PgBar.Size = new System.Drawing.Size(185, 16);
+            this.PgBar.TabIndex = 40;
+            this.PgBar.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(1184, 686);
+            this.Controls.Add(this.PgBar);
             this.Controls.Add(this.CmBoxSkins);
             this.Controls.Add(this.Icon3rd);
             this.Controls.Add(this.Icon2nd);
@@ -522,7 +533,6 @@
         private System.Windows.Forms.ToolStripMenuItem MMItemModeEquip;
         private System.Windows.Forms.ToolStripMenuItem MMItemModeFurniture;
         private System.Windows.Forms.ToolStripMenuItem MMItemModeEnemy;
-        private System.Windows.Forms.ToolStripMenuItem MMItemFileImportMaster;
         private System.Windows.Forms.ToolStripMenuItem MMItemSelect;
         private System.Windows.Forms.ToolStripMenuItem MMItemFileExperimental;
         private System.Windows.Forms.ToolStripMenuItem getMasterToolStripMenuItem;
@@ -547,5 +557,7 @@
         private FastIcon Icon3rd;
         private System.Windows.Forms.ToolStripMenuItem MMItemFileExportIcons;
         private System.Windows.Forms.ComboBox CmBoxSkins;
+        private System.Windows.Forms.ToolStripMenuItem downloadImagesToolStripMenuItem;
+        private System.Windows.Forms.ProgressBar PgBar;
     }
 }

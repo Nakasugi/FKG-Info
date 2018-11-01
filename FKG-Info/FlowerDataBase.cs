@@ -41,12 +41,8 @@ namespace FKG_Info
 
         private string DefaultFolder;
 
-
-        public enum ImageSources { Local, Nutaku, NutakuDMM, DMM, DMMNutaku }
-
-        public ImageSources ImageSource;
-
-        public bool StoreDownloadedImages;
+        public bool EnableDownloader;
+        public bool SaveDownloaded;
 
         private bool NeedSave;
 
@@ -65,12 +61,11 @@ namespace FKG_Info
         struct NodeName
         {
             public const string DMMURL = "DMMURL";
-            public const string NutakuURL = "NutakuURL";
             public const string DataFolder = "DataFolder";
             public const string ImagesFolder = "ImagesFolder";
             public const string SoundsFolder = "SoundsFolder";
-            public const string ImageSource = "ImageSource";
-            public const string StoreDownloaded = "StoreDownloaded";
+            public const string EnableDownloader = "EnableDownloader";
+            public const string SaveDownloaded = "SaveDownloaded";
             public const string SoundVolume = "SoundVolume";
             public const string Acc1Name = "Account1Name";
             public const string Acc2Name = "Account2Name";
@@ -125,8 +120,8 @@ namespace FKG_Info
             Account1Name = "Account 1";
             Account2Name = "Account 2";
 
-            ImageSource = ImageSources.DMM;
-            StoreDownloadedImages = true;
+            EnableDownloader = true;
+            SaveDownloaded = true;
 
             NeedSave = false;
 
@@ -271,7 +266,6 @@ namespace FKG_Info
                 if (optver == curver)
                 {
                     Helper.XmlGetText(opt, NodeName.DMMURL, ref db.DMMURL);
-                    Helper.XmlGetText(opt, NodeName.NutakuURL, ref db.NutakuURL);
                 }
 
                 Helper.XmlGetText(opt, NodeName.DataFolder, ref db.DataFolder);
@@ -281,12 +275,9 @@ namespace FKG_Info
                 Helper.XmlGetText(opt, NodeName.Acc1Name, ref db.Account1Name);
                 Helper.XmlGetText(opt, NodeName.Acc2Name, ref db.Account2Name);
 
-                db.StoreDownloadedImages = Helper.XmlCheckNode(opt, NodeName.StoreDownloaded, "True");
+                Helper.XmlCheckNode(opt, NodeName.EnableDownloader, ref db.EnableDownloader);
+                Helper.XmlCheckNode(opt, NodeName.SaveDownloaded, ref db.SaveDownloaded);
 
-                string enumText = db.ImageSource.ToString();
-                Helper.XmlGetText(opt, NodeName.ImageSource, ref enumText);
-                db.ImageSource = (ImageSources)Enum.Parse(typeof(ImageSources), enumText);
-                
                 db.Flowers.LoadSaving(xmlData);
             }
 
@@ -370,12 +361,11 @@ namespace FKG_Info
 
             xmlWriter.WriteStartElement("Options");
             xmlWriter.WriteElementString(NodeName.DMMURL, DMMURL);
-            xmlWriter.WriteElementString(NodeName.NutakuURL, NutakuURL);
             xmlWriter.WriteElementString(NodeName.DataFolder, DataFolder);
             xmlWriter.WriteElementString(NodeName.ImagesFolder, ImagesFolder);
             xmlWriter.WriteElementString(NodeName.SoundsFolder, SoundFolder);
-            xmlWriter.WriteElementString(NodeName.ImageSource, ImageSource.ToString());
-            xmlWriter.WriteElementString(NodeName.StoreDownloaded, StoreDownloadedImages.ToString());
+            xmlWriter.WriteElementString(NodeName.EnableDownloader, EnableDownloader.ToString());
+            xmlWriter.WriteElementString(NodeName.SaveDownloaded, SaveDownloaded.ToString());
             xmlWriter.WriteElementString(NodeName.SoundVolume, SoundVolume.ToString());
             xmlWriter.WriteElementString(NodeName.Acc1Name, Account1Name);
             xmlWriter.WriteElementString(NodeName.Acc2Name, Account2Name);
