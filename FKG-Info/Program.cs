@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-
-//using WpfHelper;
-
+using FKG_Info.UserInterface;
 
 namespace FKG_Info
 {
@@ -10,7 +8,7 @@ namespace FKG_Info
     {
         public static LifeContcol Life = new LifeContcol();
         public static FlowerDataBase DB;
-        public static ImageDownloader ImageLoader;
+        public static Downloader.ImageDownloader ImageLoader;
 
         
         /// <summary>
@@ -26,7 +24,7 @@ namespace FKG_Info
             SplashWindow.Start();
 
             DB = FlowerDataBase.Load();
-            ImageLoader = new ImageDownloader();
+            ImageLoader = new Downloader.ImageDownloader();
 
             DB.FlowerIcons = IconsAtlas.Load(IconsAtlas.Type.FlowerIcons);
             if (DB.FlowerIcons == null) DB.FlowerIcons = new IconsAtlas(DB.Flowers);

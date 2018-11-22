@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
-
-
+using FKG_Info.FKG_GameData;
 
 namespace FKG_Info
 {
@@ -30,7 +28,7 @@ namespace FKG_Info
         private System.Windows.Forms.Timer AnimationTimer;
         private int CurrentFrame;
         private int LastFrameTime;
-        private AdvPictureBox AnimPicBox;
+        private UserInterface.AdvPictureBox AnimPicBox;
         private Random RNG;
         
 
@@ -68,7 +66,7 @@ namespace FKG_Info
 
 
 
-        public void InitializeAnimation(AdvPictureBox picBox)
+        public void InitializeAnimation(UserInterface.AdvPictureBox picBox)
         {
             AnimPicBox = picBox;
             CurrentFrame = 0;

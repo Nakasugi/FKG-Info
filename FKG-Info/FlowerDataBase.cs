@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-
-
+using FKG_Info.FKG_GameData;
 
 namespace FKG_Info
 {

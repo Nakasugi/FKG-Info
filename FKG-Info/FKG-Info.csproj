@@ -69,128 +69,130 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbilityInfo.cs" />
-    <Compile Include="AboutForm.cs">
+    <Compile Include="FKG_GameData\AbilityInfo.cs" />
+    <Compile Include="UserInterface\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AboutForm.Designer.cs">
+    <Compile Include="UserInterface\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ActionQueueLauncher.cs" />
-    <Compile Include="AdvPictureBox.cs">
+    <Compile Include="UserInterface\AdvPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="AdvPictureBox.designer.cs">
+    <Compile Include="UserInterface\AdvPictureBox.designer.cs">
       <DependentUpon>AdvPictureBox.cs</DependentUpon>
     </Compile>
     <Compile Include="BrowsingHistory.cs" />
-    <Compile Include="FastIcon.cs">
+    <Compile Include="Downloader\DownloadedImage.cs" />
+    <Compile Include="Downloader\ImageList.cs" />
+    <Compile Include="UserInterface\FastIcon.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FastIcon.Designer.cs">
+    <Compile Include="UserInterface\FastIcon.Designer.cs">
       <DependentUpon>FastIcon.cs</DependentUpon>
     </Compile>
     <Compile Include="IconsAtlas.cs" />
-    <Compile Include="ComplexName.cs" />
-    <Compile Include="EquipFastViewForm.cs">
+    <Compile Include="FKG_GameData\ComplexName.cs" />
+    <Compile Include="UserInterface\EquipFastViewForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EquipFastViewForm.Designer.cs">
+    <Compile Include="UserInterface\EquipFastViewForm.Designer.cs">
       <DependentUpon>EquipFastViewForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="EquipmentInfo.cs" />
-    <Compile Include="EquipmentSelectControl.cs">
+    <Compile Include="FKG_GameData\EquipmentInfo.cs" />
+    <Compile Include="UserInterface\EquipmentSelectControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="EquipmentSelectControl.Designer.cs">
+    <Compile Include="UserInterface\EquipmentSelectControl.Designer.cs">
       <DependentUpon>EquipmentSelectControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExportMasterForm.cs">
+    <Compile Include="UserInterface\ExportMasterForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExportMasterForm.Designer.cs">
+    <Compile Include="UserInterface\ExportMasterForm.Designer.cs">
       <DependentUpon>ExportMasterForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Animator.cs" />
-    <Compile Include="FlowerSelectControl.cs">
+    <Compile Include="UserInterface\FlowerSelectControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FlowerSelectControl.Designer.cs">
+    <Compile Include="UserInterface\FlowerSelectControl.Designer.cs">
       <DependentUpon>FlowerSelectControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="FlowersList.cs" />
-    <Compile Include="FlowerStats.cs" />
-    <Compile Include="BaseInfo.cs" />
-    <Compile Include="GardenItemInfo.cs" />
+    <Compile Include="FKG_GameData\FlowersList.cs" />
+    <Compile Include="FKG_GameData\FlowerStats.cs" />
+    <Compile Include="FKG_GameData\BaseInfo.cs" />
+    <Compile Include="FKG_GameData\GardenItemInfo.cs" />
     <Compile Include="getMaster.cs" />
-    <Compile Include="GrowInfo.cs" />
-    <Compile Include="ImageDownloader.cs" />
+    <Compile Include="FKG_GameData\GrowInfo.cs" />
+    <Compile Include="Downloader\ImageDownloader.cs" />
     <Compile Include="FlowerDataBase.cs" />
-    <Compile Include="FlowerInfo.cs" />
+    <Compile Include="FKG_GameData\FlowerInfo.cs" />
     <Compile Include="LifeContcol.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="UserInterface\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="UserInterface\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MassDownloaderForm.cs">
+    <Compile Include="UserInterface\MassDownloaderForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MassDownloaderForm.Designer.cs">
+    <Compile Include="UserInterface\MassDownloaderForm.Designer.cs">
       <DependentUpon>MassDownloaderForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MasterData.cs" />
-    <Compile Include="OptionsForm.cs">
+    <Compile Include="UserInterface\OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="OptionsForm.Designer.cs">
+    <Compile Include="UserInterface\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResHelper.cs" />
     <Compile Include="SavingDataBlock.cs" />
-    <Compile Include="SkillInfo.cs" />
-    <Compile Include="SkinInfo.cs" />
-    <Compile Include="SkinsList.cs" />
+    <Compile Include="FKG_GameData\SkillInfo.cs" />
+    <Compile Include="FKG_GameData\SkinInfo.cs" />
+    <Compile Include="FKG_GameData\SkinsList.cs" />
     <Compile Include="SoundPlayer.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="SplashWindow.xaml.cs">
+    <Compile Include="UserInterface\SplashWindow.xaml.cs">
       <DependentUpon>SplashWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Translator.cs" />
-    <Compile Include="VoiceControl.cs">
+    <Compile Include="UserInterface\VoiceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VoiceControl.Designer.cs">
+    <Compile Include="UserInterface\VoiceControl.Designer.cs">
       <DependentUpon>VoiceControl.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AboutForm.resx">
+    <EmbeddedResource Include="UserInterface\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EquipFastViewForm.resx">
+    <EmbeddedResource Include="UserInterface\EquipFastViewForm.resx">
       <DependentUpon>EquipFastViewForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EquipmentSelectControl.resx">
+    <EmbeddedResource Include="UserInterface\EquipmentSelectControl.resx">
       <DependentUpon>EquipmentSelectControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExportMasterForm.resx">
+    <EmbeddedResource Include="UserInterface\ExportMasterForm.resx">
       <DependentUpon>ExportMasterForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FastIcon.resx">
+    <EmbeddedResource Include="UserInterface\FastIcon.resx">
       <DependentUpon>FastIcon.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FlowerSelectControl.resx">
+    <EmbeddedResource Include="UserInterface\FlowerSelectControl.resx">
       <DependentUpon>FlowerSelectControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="UserInterface\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MassDownloaderForm.resx">
+    <EmbeddedResource Include="UserInterface\MassDownloaderForm.resx">
       <DependentUpon>MassDownloaderForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="OptionsForm.resx">
+    <EmbeddedResource Include="UserInterface\OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -203,7 +205,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="VoiceControl.resx">
+    <EmbeddedResource Include="UserInterface\VoiceControl.resx">
       <DependentUpon>VoiceControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -302,11 +304,12 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SplashWindow.xaml">
+    <Page Include="UserInterface\SplashWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

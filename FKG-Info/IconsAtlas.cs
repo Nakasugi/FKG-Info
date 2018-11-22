@@ -3,8 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-
-
+using FKG_Info.FKG_GameData;
 
 namespace FKG_Info
 {
@@ -466,31 +465,31 @@ namespace FKG_Info
 
 
 
-        private void DrawToAtlas(ImageDownloader.DownloadedFile ifile)
+        private void DrawToAtlas(Downloader.DownloadedImage dwImg)
         {
             switch(IconType)
             {
-                case Type.FlowerIcons: DrawToAtlasFw(ifile); return;
-                case Type.EquipmentIcons: DrawToAtlasEq(ifile); return;
+                case Type.FlowerIcons: DrawToAtlasFw(dwImg); return;
+                case Type.EquipmentIcons: DrawToAtlasEq(dwImg); return;
                 default: return;
             }
         }
 
 
 
-        private void DrawToAtlasFw(ImageDownloader.DownloadedFile ifile)
+        private void DrawToAtlasFw(Downloader.DownloadedImage dwImg)
         {
-            FlowerInfo flower = Program.DB.Flowers.Find(fw => fw.ID == ifile.ImageID);
+            FlowerInfo flower = Program.DB.Flowers.Find(fw => fw.ID == dwImg.ImageID);
 
             if (flower == null)
             {
-                if (ifile.Image != null) ifile.Image.Dispose();
+                if (dwImg.Image != null) dwImg.Image.Dispose();
                 return;
             }
 
-            if (ifile.Image == null) return;
+            if (dwImg.Image == null) return;
 
-            IconPosition pos = Positions.Find(p => p.ID == ifile.ImageID);
+            IconPosition pos = Positions.Find(p => p.ID == dwImg.ImageID);
 
             Rectangle srcRc = new Rectangle(0, 0, IconWidth, IconHeight);
             Rectangle dstRc = new Rectangle(pos.X, pos.Y, IconWidth, IconHeight);
@@ -499,31 +498,31 @@ namespace FKG_Info
             lock (DrawLocker)
             {
                 GR.DrawImage(ResHelper.GetIconElement(ResHelper.IconElement.Background, flower.Rarity), dstRc, srcRc, GraphicsUnit.Pixel);
-                GR.DrawImage(ifile.Image, dstRc, srcRc, GraphicsUnit.Pixel);
+                GR.DrawImage(dwImg.Image, dstRc, srcRc, GraphicsUnit.Pixel);
                 GR.DrawImage(ResHelper.GetIconElement(ResHelper.IconElement.Frame, flower.Rarity), dstRc, srcRc, GraphicsUnit.Pixel);
                 if (flower.IsKnight) GR.DrawImage(ResHelper.GetIconElement(ResHelper.IconElement.Type, flower.AttackType), dstRc, srcRc, GraphicsUnit.Pixel);
             }
 
             pos.Loaded();
 
-            ifile.Dispose();
+            dwImg.Dispose();
         }
 
 
 
-        private void DrawToAtlasEq(ImageDownloader.DownloadedFile ifile)
+        private void DrawToAtlasEq(Downloader.DownloadedImage dwImg)
         {
-            EquipmentInfo equip = Program.DB.Equipments.Find(eq => eq.ImageID == ifile.ImageID);
+            EquipmentInfo equip = Program.DB.Equipments.Find(eq => eq.ImageID == dwImg.ImageID);
 
             if (equip == null)
             {
-                if (ifile.Image != null) ifile.Image.Dispose();
+                if (dwImg.Image != null) dwImg.Image.Dispose();
                 return;
             }
 
-            if (ifile.Image == null) return;
+            if (dwImg.Image == null) return;
 
-            IconPosition pos = Positions.Find(p => p.ID == ifile.ImageID);
+            IconPosition pos = Positions.Find(p => p.ID == dwImg.ImageID);
 
             Rectangle srcRc = new Rectangle(0, 0, IconWidth, IconHeight);
             Rectangle dstRc = new Rectangle(pos.X, pos.Y, IconWidth, IconHeight);
@@ -531,12 +530,12 @@ namespace FKG_Info
 
             lock (DrawLocker)
             {
-                GR.DrawImage(ifile.Image, dstRc, srcRc, GraphicsUnit.Pixel);
+                GR.DrawImage(dwImg.Image, dstRc, srcRc, GraphicsUnit.Pixel);
             }
 
             pos.Loaded();
 
-            ifile.Dispose();
+            dwImg.Dispose();
         }
 
 

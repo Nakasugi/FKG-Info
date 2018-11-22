@@ -56,7 +56,7 @@ namespace FKG_Info
 
 
 
-        public static void LoadNutakuNames(FlowersList flowers, string fname)
+        public static void LoadNutakuNames(FKG_GameData.FlowersList flowers, string fname)
         {
             string json = LoadJson(fname); if (json == null) return;
             json = json.Substring(1, json.Length - 2);
@@ -88,7 +88,7 @@ namespace FKG_Info
                 int.TryParse(fw_elms[0].Split(':')[1].Replace("\"", ""), out int id);
                 string name = fw_elms[5];
 
-                FlowerInfo flower = flowers.Find(fw => fw.ID == id);
+                var flower = flowers.Find(fw => fw.ID == id);
                 if (flower != null) flower.Name.EngNutaku = fw_elms[5].Split(':')[1].Replace("\"", "");
             }
         }
