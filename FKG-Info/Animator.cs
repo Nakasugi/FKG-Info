@@ -14,11 +14,18 @@ namespace FKG_Info
             EyesHalf, EyesClose
         }
 
-        public FlowerInfo Flower;
-        public Type ImageType;
-        public EmoType Emotion;
-        public int SkinIndex;
-        public bool Mobile;
+
+        public FlowerInfo Flower { get; private set; }
+        public Type ImageType { get; private set; }
+        public EmoType Emotion { get; private set; }
+        public int SkinIndex { get; private set; }
+        public bool Mobile { get; private set; }
+
+        public void SetFlower(FlowerInfo flower) { Flower = flower; ImageName = null; }
+        public void SetImageParams(Type type, EmoType emoti = EmoType.Normal) { ImageType = type; Emotion = emoti; ImageName = null; }
+        public void SetSkinIndex(int skinid) { SkinIndex = skinid; ImageName = null; }
+        public void SetMobile(bool mobile) { Mobile = mobile; ImageName = null; }
+
 
         /// <summary>
         /// If true then download original, no additional elements will placed (like icon BG, type, etc)
@@ -30,6 +37,8 @@ namespace FKG_Info
         private int LastFrameTime;
         private UserInterface.AdvPictureBox AnimPicBox;
         private Random RNG;
+
+        private string ImageName;
         
 
         private const int MAX_FRTIME = 5000;
@@ -43,6 +52,8 @@ namespace FKG_Info
             SkinIndex = 0;
             Mobile = false;
             RawImage = false;
+
+            ImageName = null;
         }
 
 
@@ -62,6 +73,8 @@ namespace FKG_Info
             SkinIndex = ani.SkinIndex;
             Mobile = ani.Mobile;
             RawImage = ani.RawImage;
+
+            ImageName = null;
         }
 
 
@@ -137,14 +150,16 @@ namespace FKG_Info
 
         public string GetImageName()
         {
+            if (ImageName != null) return ImageName;
+
             if (Flower == null) return null;
 
-            string name = Flower.GetImageStringID(SkinIndex);
-            name = GetPrefix() + name;
+            ImageName = Flower.GetImageStringID(SkinIndex);
+            ImageName = GetPrefix() + ImageName;
 
-            if ((ImageType == Type.Bustup) || (ImageType == Type.Home)) name += GetSuffix(Emotion);
+            if ((ImageType == Type.Bustup) || (ImageType == Type.Home)) ImageName += GetSuffix(Emotion);
 
-            return name;
+            return ImageName;
         }
 
 
@@ -339,37 +354,39 @@ namespace FKG_Info
 
             Animator ani;
 
-            ani = new Animator(flower);
-            frames.Add(ani);
+            bool mobile = false;
 
-            ani = new Animator(flower);
-            ani.ImageType = Type.StandSmall;
-            frames.Add(ani);
-
-            ani = new Animator(flower);
-            ani.ImageType = Type.Cutin;
-            frames.Add(ani);
-
-            foreach (EmoType etp in GetEmotionsForType(Type.Bustup))
+            while(true)
             {
                 ani = new Animator(flower);
-                ani.ImageType = Type.Bustup;
-                ani.Emotion = etp;
                 frames.Add(ani);
-            }
 
-            foreach (EmoType etp in GetEmotionsForType(Type.Home))
-            {
                 ani = new Animator(flower);
-                ani.ImageType = Type.Home;
-                ani.Emotion = etp;
+                ani.ImageType = Type.StandSmall;
                 frames.Add(ani);
+
+                ani = new Animator(flower);
+                ani.ImageType = Type.Cutin;
+                frames.Add(ani);
+
+                foreach (EmoType etp in GetEmotionsForType(Type.Bustup))
+                {
+                    ani = new Animator(flower);
+                    ani.ImageType = Type.Bustup;
+                    ani.Emotion = etp;
+                    frames.Add(ani);
+                }
+
+                foreach (EmoType etp in GetEmotionsForType(Type.Home))
+                {
+                    ani = new Animator(flower);
+                    ani.ImageType = Type.Home;
+                    ani.Emotion = etp;
+                    frames.Add(ani);
+                }
+
+                if (mobile) break; else mobile = true;
             }
-
-            List<Animator> mframes = new List<Animator>(frames);
-            foreach (Animator fr in mframes) fr.Mobile = true;
-
-            frames.AddRange(mframes);
 
             return frames;
         }

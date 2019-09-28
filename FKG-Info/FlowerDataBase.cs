@@ -20,12 +20,6 @@ namespace FKG_Info
         public MasterData Master;
 
 
-
-        public IconsAtlas FlowerIcons;
-        public IconsAtlas EquipmentIcons;
-
-
-
         public string DMMURL;
         public string MobileURL;
         public string NutakuURL;
@@ -323,21 +317,25 @@ namespace FKG_Info
 
 
 
+        public enum UrlType { CharaPC, CharaMobile, Equipment, Sound };
+
         /// <summary>
-        /// Get Nutaku or DMM urls
+        /// Get absolute url
         /// </summary>
-        /// <param name="type">1 = 1st, 2 = 2nd</param>
-        /// <returns></returns>
-        public string GetUrl(string relurl, bool mobile = false)
+        public string GetUrl(string relurl, UrlType type)
         {
             if ((relurl == null) || (relurl == "")) return null;
 
-            if (!mobile)
-                return DMMURL + "images/character/" + relurl;
-            else
-                return MobileURL + "medium/images/character/general/" + relurl;
-
+            switch(type)
+            {
+                case UrlType.CharaPC: return DMMURL + "images/character/" + relurl;
+                case UrlType.CharaMobile: return MobileURL + "medium/images/character/general/" + relurl;
+                case UrlType.Equipment: return DMMURL + "images/item/100x100/" + relurl;
+                case UrlType.Sound: return DMMURL + relurl;
+                default: return null;
+            }
         }
+
 
 
         public void SaveOptions(string fileName = "options.xml")

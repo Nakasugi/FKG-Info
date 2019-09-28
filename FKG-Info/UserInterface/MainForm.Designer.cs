@@ -45,7 +45,8 @@
             this.MMItemFileExportNames = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportCurrent = new System.Windows.Forms.ToolStripMenuItem();
             this.MMItemFileExportIcons = new System.Windows.Forms.ToolStripMenuItem();
-            this.downloadImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemFileDownloadImages = new System.Windows.Forms.ToolStripMenuItem();
+            this.MMItemFileDownloadByID = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MMItemFileExperimental = new System.Windows.Forms.ToolStripMenuItem();
             this.getMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,10 +69,10 @@
             this.BtVariations = new System.Windows.Forms.Button();
             this.BtPrevEvolution = new System.Windows.Forms.Button();
             this.CmBoxSkins = new System.Windows.Forms.ComboBox();
-            this.Icon3rd = new FastIcon(this.components);
-            this.Icon2nd = new FastIcon(this.components);
-            this.IconMain = new FastIcon(this.components);
-            this.PicBoxBig = new AdvPictureBox(this.components);
+            this.Icon3rd = new FKG_Info.UserInterface.FastIcon(this.components);
+            this.Icon2nd = new FKG_Info.UserInterface.FastIcon(this.components);
+            this.IconMain = new FKG_Info.UserInterface.FastIcon(this.components);
+            this.PicBoxBig = new FKG_Info.UserInterface.AdvPictureBox(this.components);
             this.PgBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.GridInfo)).BeginInit();
             this.MainMenu.SuspendLayout();
@@ -180,7 +181,7 @@
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.MainMenu.Size = new System.Drawing.Size(409, 24);
+            this.MainMenu.Size = new System.Drawing.Size(529, 24);
             this.MainMenu.TabIndex = 23;
             this.MainMenu.Text = "MainMenu";
             // 
@@ -192,7 +193,8 @@
             this.MMItemFileExportNames,
             this.MMItemFileExportCurrent,
             this.MMItemFileExportIcons,
-            this.downloadImagesToolStripMenuItem,
+            this.MMItemFileDownloadImages,
+            this.MMItemFileDownloadByID,
             this.toolStripSeparator1,
             this.MMItemFileExperimental});
             this.MMItemFile.Name = "MMItemFile";
@@ -234,12 +236,19 @@
             this.MMItemFileExportIcons.Text = "Export Icons";
             this.MMItemFileExportIcons.Click += new System.EventHandler(this.MMItemFileExportIcons_Click);
             // 
-            // downloadImagesToolStripMenuItem
+            // MMItemFileDownloadImages
             // 
-            this.downloadImagesToolStripMenuItem.Name = "downloadImagesToolStripMenuItem";
-            this.downloadImagesToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.downloadImagesToolStripMenuItem.Text = "Download Images";
-            this.downloadImagesToolStripMenuItem.Click += new System.EventHandler(this.MMItemFileDownloadImages_Click);
+            this.MMItemFileDownloadImages.Name = "MMItemFileDownloadImages";
+            this.MMItemFileDownloadImages.Size = new System.Drawing.Size(215, 22);
+            this.MMItemFileDownloadImages.Text = "Download Images";
+            this.MMItemFileDownloadImages.Click += new System.EventHandler(this.MMItemFileDownloadImages_Click);
+            // 
+            // MMItemFileDownloadByID
+            // 
+            this.MMItemFileDownloadByID.Name = "MMItemFileDownloadByID";
+            this.MMItemFileDownloadByID.Size = new System.Drawing.Size(215, 22);
+            this.MMItemFileDownloadByID.Text = "Download by ID";
+            this.MMItemFileDownloadByID.Click += new System.EventHandler(this.MMItemFileDownloadByID_Click);
             // 
             // toolStripSeparator1
             // 
@@ -557,7 +566,8 @@
         private FastIcon Icon3rd;
         private System.Windows.Forms.ToolStripMenuItem MMItemFileExportIcons;
         private System.Windows.Forms.ComboBox CmBoxSkins;
-        private System.Windows.Forms.ToolStripMenuItem downloadImagesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem MMItemFileDownloadImages;
         private System.Windows.Forms.ProgressBar PgBar;
+        private System.Windows.Forms.ToolStripMenuItem MMItemFileDownloadByID;
     }
 }

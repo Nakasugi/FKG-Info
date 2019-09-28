@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace FKG_Info
 {
-    public class Helper
+    public static class Helper
     {
         /// <summary>
         /// Converting string to MD5 hash

@@ -146,7 +146,7 @@ namespace FKG_Info.Downloader
             Image image = null;
 
             string relurl = ani.GetUrlSubFolder() + Helper.GetMD5Hash(ani.GetImageName()) + ".bin";
-            string url = Program.DB.GetUrl(relurl, ani.Mobile);
+            string url = Program.DB.GetUrl(relurl, ani.Mobile ? FlowerDataBase.UrlType.CharaMobile : FlowerDataBase.UrlType.CharaPC);
 
             MemoryStream stream;
             byte[] buffer;
@@ -216,8 +216,8 @@ namespace FKG_Info.Downloader
 
             Image image = null;
 
-            string relurl = "images/item/100x100/" + equip.GetImageName() + ".png";
-            string url = Program.DB.GetUrl(relurl);
+            string relurl = equip.GetImageName() + ".png";
+            string url = Program.DB.GetUrl(relurl, FlowerDataBase.UrlType.Equipment);
 
             MemoryStream stream;
             byte[] buffer;
@@ -352,7 +352,7 @@ namespace FKG_Info.Downloader
 
             DownloadedImage dwImage = null;
             Animator home = new Animator(ani);
-            home.Emotion = Animator.EmoType.Normal;
+            home.SetImageParams(home.ImageType, Animator.EmoType.Normal);
             string fname = home.GetImageName();
 
             int tries = 0;
@@ -390,6 +390,8 @@ namespace FKG_Info.Downloader
 
         public void DeleteImages(int flowerImageID)
         {
+            if (flowerImageID == 0) return;
+
             string pt = flowerImageID.ToString();
 
             foreach (var dwImg in Images.FindByPartName(pt)) Images.Delete(dwImg);

@@ -103,11 +103,11 @@ namespace FKG_Info.UserInterface
             FastIcon icon;
 
             Animator ani = new Animator();
-            ani.ImageType = Animator.Type.IconLarge;
+            ani.SetImageParams(Animator.Type.IconLarge);
             
             foreach (FlowerInfo flower in Flowers)
             {
-                ani.Flower = flower;
+                ani.SetFlower(flower);
                 icon = new FastIcon((MainForm)Parent, flower);
                 icon.Name = flower.ID.ToString();
                 icon.Visible = false;

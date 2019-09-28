@@ -9,8 +9,11 @@ namespace FKG_Info
         public static LifeContcol Life = new LifeContcol();
         public static FlowerDataBase DB;
         public static Downloader.ImageDownloader ImageLoader;
+        public static IconsAtlas FlowerIcons;
+        public static IconsAtlas EquipmentIcons;
 
-        
+
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -26,10 +29,10 @@ namespace FKG_Info
             DB = FlowerDataBase.Load();
             ImageLoader = new Downloader.ImageDownloader();
 
-            DB.FlowerIcons = IconsAtlas.Load(IconsAtlas.Type.FlowerIcons);
-            if (DB.FlowerIcons == null) DB.FlowerIcons = new IconsAtlas(DB.Flowers);
-            DB.EquipmentIcons = IconsAtlas.Load(IconsAtlas.Type.EquipmentIcons);
-            if (DB.EquipmentIcons == null) DB.EquipmentIcons = new IconsAtlas(DB.Equipments);
+            FlowerIcons = IconsAtlas.Load(IconsAtlas.Type.FlowerIcons);
+            if (FlowerIcons == null) FlowerIcons = new IconsAtlas(DB.Flowers);
+            EquipmentIcons = IconsAtlas.Load(IconsAtlas.Type.EquipmentIcons);
+            if (EquipmentIcons == null) EquipmentIcons = new IconsAtlas(DB.Equipments);
 
             DB.DeleteOldBloomCGs();
 
@@ -42,8 +45,8 @@ namespace FKG_Info
             Application.Run(mf);
 
             DB.SaveOptIfNeeded();
-            DB.FlowerIcons.SaveIfNeeded();
-            DB.EquipmentIcons.SaveIfNeeded();
+            FlowerIcons.SaveIfNeeded();
+            EquipmentIcons.SaveIfNeeded();
         }
     }
 }

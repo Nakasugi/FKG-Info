@@ -176,13 +176,13 @@ namespace FKG_Info.UserInterface
             if (FirstDraw)
             {
                 FirstDraw = false;
-                if (PictureType == Type.FlowerIcon) AtlasRect = Program.DB.FlowerIcons.GetPosition(Flower, this);
-                if (PictureType == Type.EquipmentIcon) AtlasRect = Program.DB.EquipmentIcons.GetPosition(Equipment, this);
+                if (PictureType == Type.FlowerIcon) AtlasRect = Program.FlowerIcons.GetPosition(Flower, this);
+                if (PictureType == Type.EquipmentIcon) AtlasRect = Program.EquipmentIcons.GetPosition(Equipment, this);
             }
 
 
-            if (PictureType == Type.FlowerIcon) Program.DB.FlowerIcons.Draw(ev.Graphics, AtlasRect);
-            if (PictureType == Type.EquipmentIcon) Program.DB.EquipmentIcons.Draw(ev.Graphics, AtlasRect);
+            if (PictureType == Type.FlowerIcon) Program.FlowerIcons.Draw(ev.Graphics, AtlasRect);
+            if (PictureType == Type.EquipmentIcon) Program.EquipmentIcons.Draw(ev.Graphics, AtlasRect);
         }
     }
 }

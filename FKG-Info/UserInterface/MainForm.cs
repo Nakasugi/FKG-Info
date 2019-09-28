@@ -100,7 +100,7 @@ namespace FKG_Info.UserInterface
 
         private void ImagePlatformChange()
         {
-            Animation.Mobile = !Animation.Mobile;
+            Animation.SetMobile(!Animation.Mobile);
             PicBoxBig.AsyncLoadImage(Animation);
             MenuPlatformChange(Animation.Mobile);
         }
@@ -135,8 +135,7 @@ namespace FKG_Info.UserInterface
         /// <param name="type"></param>
         private void MenuImageType_Click(Animator.Type type, Animator.EmoType emo = Animator.EmoType.Normal)
         {
-            Animation.ImageType = type;
-            Animation.Emotion = emo;
+            Animation.SetImageParams(type, emo);
 
             MenuItem ctmi = null;
             ToolStripMenuItem tsmi = null;
@@ -190,7 +189,7 @@ namespace FKG_Info.UserInterface
             // Diseble/enable mobile for home image
             if (Animation.ImageType == Animator.Type.Home)
             {
-                Animation.Mobile = false;
+                Animation.SetMobile(false);
                 MenuPlatformChange(false);
                 MenuPlatformEnabled(false);
             }
@@ -201,7 +200,7 @@ namespace FKG_Info.UserInterface
 
             if (!Program.DB.Flowers.IsSelected()) return;
 
-            Animation.Flower = Program.DB.Flowers.GetSelected();
+            Animation.SetFlower(Program.DB.Flowers.GetSelected());
             PicBoxBig.AsyncLoadImage(Animation);
         }
 
@@ -317,9 +316,11 @@ namespace FKG_Info.UserInterface
         private void CMenuDelBloom_Click()
         {
             if (!Program.DB.Flowers.IsSelected()) return;
-            int id = Program.DB.Flowers.GetSelected().GetImageID();
-            if (id == 0) return;
-            Program.ImageLoader.DeleteImages(id);
+
+            FlowerInfo flower = Program.DB.Flowers.GetSelected();
+
+            Program.ImageLoader.DeleteImages(flower.ID);
+            Program.FlowerIcons.UpdateIconImage(flower.ID);
             Program.DB.Flowers.Unselect();
             ReloadFlower();
 
@@ -412,8 +413,8 @@ namespace FKG_Info.UserInterface
             }
 
             FlowerInfo flower = Program.DB.Flowers.GetSelected();
-            Animation.Flower = flower;
-            Animation.SkinIndex = CmBoxSkins.SelectedIndex;
+            Animation.SetFlower(flower);
+            Animation.SetSkinIndex(CmBoxSkins.SelectedIndex);
             PicBoxBig.AsyncLoadImage(Animation);
             CmBoxSkins.Items.Clear();
             CmBoxSkins.Items.AddRange(flower.GetSkinNames());
@@ -620,7 +621,7 @@ namespace FKG_Info.UserInterface
 
         private void CmBoxSkins_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Animation.SkinIndex = CmBoxSkins.SelectedIndex;
+            Animation.SetSkinIndex(CmBoxSkins.SelectedIndex);
             PicBoxBig.AsyncLoadImage(Animation);
         }
 
@@ -711,8 +712,8 @@ namespace FKG_Info.UserInterface
         private void MMItemFileExportIcons_Click(object sender, EventArgs e)
         {
             bool res = false;
-            res |= Program.DB.FlowerIcons.Export();
-            res |= Program.DB.EquipmentIcons.Export();
+            res |= Program.FlowerIcons.Export();
+            res |= Program.EquipmentIcons.Export();
 
             if (res)
                 MessageBox.Show(this, "Icons export successfully completed.", "Export");
@@ -720,9 +721,14 @@ namespace FKG_Info.UserInterface
                 MessageBox.Show(this, "Some error occured.", "Export");
         }
 
-        private void MMItemFileDownloadImages_Click(object sender, EventArgs e)
+        private void MMItemFileDownloadImages_Click(object sender, EventArgs ev)
         {
             new MassDownloaderForm().ShowDialog(this);
+        }
+
+        private void MMItemFileDownloadByID_Click(object sender, EventArgs ev)
+        {
+            new InputDownloadID().ShowDialog(this);
         }
     }
 }

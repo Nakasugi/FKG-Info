@@ -17,6 +17,10 @@ namespace FKG_Info
         private static extern int mciSendString(string strCommand, StringBuilder strReturn, int iReturnLength, IntPtr hwndCallback);
 
 
+        private static int PlaysCounter = 0;
+        private static readonly object Locker = new object();
+
+
         public static void Play(string id, string hashname)
         {
             Thread th = new Thread(() => LoadAndPlay(id, hashname));
@@ -62,7 +66,7 @@ namespace FKG_Info
             string dir = Path.GetDirectoryName(path);
             if (!Helper.CheckFolder(dir)) return false;
 
-            string url = Program.DB.GetUrl(reluri);
+            string url = Program.DB.GetUrl(reluri, FlowerDataBase.UrlType.Sound);
 
             WebClient wc = new WebClient();
             byte[] buffer;
@@ -115,29 +119,38 @@ namespace FKG_Info
             string media = '"' + path + '"';
             int res = 0;
 
+            WindowsMediaPlayer player = new WindowsMediaPlayer();
+            player.settings.volume = Program.DB.SoundVolume;
+
             while (true)
             {
-                cmd = "open " + media + " alias FKGsnd0";
+                string alias;
+
+                lock (Locker)
+                {
+                    PlaysCounter++;
+                    alias = "FKGsnd" + PlaysCounter.ToString("D4");
+                }
+
+                cmd = "open " + media + " alias " + alias;
                 res = mciSendString(cmd, null, 0, IntPtr.Zero);
                 if (res != 0) break;
 
-                cmd = "setaudio FKGsnd0 volume to " + Program.DB.SoundVolume * 10;
-                mciSendString(cmd, null, 0, IntPtr.Zero);
-                if (res != 0) break;
+                //cmd = "setaudio " + alias + " volume to " + Program.DB.SoundVolume * 10;
+                //mciSendString(cmd, null, 0, IntPtr.Zero);
+                //if (res != 0) break;
 
-                cmd = "play FKGsnd0";
+                cmd = "play " + alias;
                 mciSendString(cmd, null, 0, IntPtr.Zero);
                 if (res != 0) break;
 
                 return;
             }
 
-
+            
             try
             {
-                WindowsMediaPlayer player = new WindowsMediaPlayer();
                 player.URL = path;
-                player.settings.volume = Program.DB.SoundVolume;
                 player.controls.play();
             }
             catch

@@ -23,7 +23,7 @@ namespace FKG_Info.Downloader
 
         public readonly object Locker = new object();
 
-        
+
         private static readonly long StartTime = System.DateTime.Now.Ticks;
 
         public uint LastTime { get; private set; }
@@ -73,6 +73,25 @@ namespace FKG_Info.Downloader
                 ImageContainer?.Dispose();
                 ImageContainer = null;
             }
+        }
+
+
+
+        public void SaveTemp(bool overwrite = false)
+        {
+            if (ImageContainer == null) return;
+
+            string tmpdir = "F:\\Temp\\FKG-Temp";
+            string tmpname = tmpdir + "\\" + Name;
+
+            if ((!overwrite) && System.IO.File.Exists(tmpname)) return;
+
+            if (!System.IO.Directory.Exists(tmpdir))
+            {
+                try { System.IO.Directory.CreateDirectory(tmpdir); } catch { return; }
+            }
+
+            ImageContainer.Save(tmpname + ".png", System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }

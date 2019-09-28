@@ -172,7 +172,7 @@ namespace FKG_Info.FKG_GameData
                 if (flower == null) continue;
 
                 Program.ImageLoader.DeleteImages(flower.ID);
-                Program.DB.FlowerIcons.UpdateIconImage(flower.ID);
+                Program.FlowerIcons.UpdateIconImage(flower.ID);
             }
         }
 

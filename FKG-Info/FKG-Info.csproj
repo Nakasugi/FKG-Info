@@ -130,6 +130,12 @@
     <Compile Include="FlowerDataBase.cs" />
     <Compile Include="FKG_GameData\FlowerInfo.cs" />
     <Compile Include="LifeContcol.cs" />
+    <Compile Include="UserInterface\InputDownloadID.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\InputDownloadID.Designer.cs">
+      <DependentUpon>InputDownloadID.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserInterface\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -185,6 +191,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserInterface\FlowerSelectControl.resx">
       <DependentUpon>FlowerSelectControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterface\InputDownloadID.resx">
+      <DependentUpon>InputDownloadID.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserInterface\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

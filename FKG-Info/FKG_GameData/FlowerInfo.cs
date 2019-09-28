@@ -87,20 +87,20 @@
             public const int Ability2ID = 11;
             public const int SkillID = 12;
             public const int SortCat = 30;
-            public const int isNotPreEvo = 32;
-            public const int IsKnight = 33;
-            public const int RefID = 37;
-            public const int Evolution = 38;
-            public const int IsBloomed = 45;
-            public const int CanBloom = 46;
-            public const int Name = 47;
-            public const int NoBloomCG = 48;
-            public const int LibararyID = 51;
-            public const int IsEventKnight = 53;
-            public const int Version = 57;
-            public const int GrownID = 58;
-            public const int IsGrown = 59;
-            public const int CanGrow = 60;
+            public const int isNotPreEvo = 33;
+            public const int IsKnight = 34;
+            public const int RefID = 38;
+            public const int Evolution = 39;
+            public const int IsBloomed = 46;
+            public const int CanBloom = 47;
+            public const int Name = 48;
+            public const int NoBloomCG = 49;
+            public const int LibararyID = 52;
+            public const int IsEventKnight = 54;
+            public const int Version = 58;
+            public const int GrownID = 59;
+            public const int IsGrown = 60;
+            public const int CanGrow = 61;
         }
 
 
@@ -182,6 +182,10 @@
             Ability1Value = null;
             Ability2Value = null;
         }
+
+
+
+        public FlowerInfo(int id) : this() { ID = id; Skins = new SkinsList(ID); }
 
 
 

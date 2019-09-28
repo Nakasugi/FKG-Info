@@ -58,12 +58,12 @@
             public const int HpApmEx = 26;
             public const int AtkAmpEx = 27;
             public const int DefAmpEx = 28;
-            public const int HPAff1 = 34;
-            public const int AtkAff1 = 35;
-            public const int DefAff1 = 36;
-            public const int HPAff2 = 40;
-            public const int AtkAff2 = 41;
-            public const int DefAff2 = 42;
+            public const int HPAff1 = 35;
+            public const int AtkAff1 = 36;
+            public const int DefAff1 = 37;
+            public const int HPAff2 = 41;
+            public const int AtkAff2 = 42;
+            public const int DefAff2 = 43;
         }
 
 

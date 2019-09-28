@@ -202,7 +202,7 @@ namespace FKG_Info
                 if (line == null) break;
 
                 string[] values = line.Split(',');
-                if (values[37] != refid.ToString()) continue;
+                if (values[38] != refid.ToString()) continue;
 
                 flowerData.Add(values);
             }
@@ -217,7 +217,7 @@ namespace FKG_Info
                 "HPLvMax",     "AtkLvMin",      "AtkLvMax",    "DefLvMin",
                 "DefLvMax",    "SpdLvMin",      "SpdLvMax",    "HpApm",
                 "AtkAmp",      "DefAmp",        "HpApmEx",     "AtkAmpEx",
-                "DefAmpEx",    "SellCost",      "SortCat",     "unknown",
+                "DefAmpEx",    "SellCost",      "SortCat",     "unknown",   "unknown",
                 "isNotPreEvo", "IsKnight",      "HPAff1",      "AtkAff1",
                 "DefAff1",     "RefID",         "Evolution",   "unknown",
                 "HPAff2",      "AtkAff2",       "DefAff2",     "unknown",

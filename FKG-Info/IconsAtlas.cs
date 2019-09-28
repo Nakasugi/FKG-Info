@@ -108,7 +108,7 @@ namespace FKG_Info
                 Positions.Add(new IconPosition(flower.ID, x, y));
 
                 Animator ani = new Animator(flower);
-                ani.ImageType = Animator.Type.IconLarge;
+                ani.SetImageParams(Animator.Type.IconLarge);
                 ani.RawImage = true;
 
                 Program.ImageLoader.GetImage(ani, DrawToAtlas);
@@ -158,7 +158,7 @@ namespace FKG_Info
 
 
             Animator ani = new Animator(flower);
-            ani.ImageType = Animator.Type.IconLarge;
+            ani.SetImageParams(Animator.Type.IconLarge);
             ani.RawImage = true;
 
             Program.ImageLoader.GetImage(ani, DrawToAtlas);
@@ -177,8 +177,8 @@ namespace FKG_Info
             IncAtlasSize();
 
             Animator ani = new Animator();
-            ani.Flower = flower;
-            ani.ImageType = Animator.Type.IconLarge;
+            ani.SetFlower(flower);
+            ani.SetImageParams(Animator.Type.IconLarge);
             ani.RawImage = true;
 
             Program.ImageLoader.GetImage(ani, DrawToAtlas, toRefresh);
@@ -479,6 +479,8 @@ namespace FKG_Info
 
         private void DrawToAtlasFw(Downloader.DownloadedImage dwImg)
         {
+            //dwImg.SaveTemp();
+
             FlowerInfo flower = Program.DB.Flowers.Find(fw => fw.ID == dwImg.ImageID);
 
             if (flower == null)
